@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\MiMascota\Entries\Domain\Entry" table="entries">
+        <id name="id" type="string" column="id" length="36" />
+        <field name="title" column="title" length="60" />
+        <field name="content" column="content" type="text" />
+        <field name="date" type="date" column="date" />
+        <many-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal">
+            <join-column name="journal_id" nullable="false" />
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

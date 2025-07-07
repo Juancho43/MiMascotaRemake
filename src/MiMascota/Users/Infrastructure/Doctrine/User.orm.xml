@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\MiMascota\Users\Domain\User" table="users">
+        <id name="id" type="string" column="id" length="36" />
+        <field name="name" column="name" length="255" />
+        <field name="email" column="email" length="255" unique="true" />
+
+        <embedded name="token" class="App\MiMascota\Users\Domain\ValueObject\UserToken" use-column-prefix="false"/>
+        <embedded name="password" class="App\MiMascota\Users\Domain\ValueObject\UserPassword" use-column-prefix="false" />
+        <one-to-many field="journals" target-entity="App\MiMascota\Journals\Domain\Journal" mapped-by="user" />
+    </entity>
+
+</doctrine-mapping>

@@ -1,0 +1,24 @@
+api_platform:
+    title: 'Mi API'
+    version: '1.0.0'
+    description: 'API para gestión de usuarios'
+
+    # Configuración para incluir controllers con documentación OpenAPI
+    openapi:
+        contact:
+            name: 'Tu Nombre'
+            email: 'tu@email.com'
+        license:
+            name: 'MIT'
+
+    # Esto permite que API Platform lea los atributos OpenAPI de tus controllers
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Controller'
+
+    # Configuración para documentar endpoints que no son recursos API Platform
+    docs_formats:
+        jsonapi: ['application/vnd.api+json']
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\MiMascota\Journals\Domain\Journal" table="journals">
+        <id name="id" type="string" column="id" length="36" />
+        <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="journals">
+            <join-column name="user_id" />
+        </many-to-one>
+        <one-to-one field="animal" target-entity="App\MiMascota\Animals\Domain\Animal" inversed-by="journal">
+            <join-column name="animal_id" />
+        </one-to-one>
+       <one-to-many field="entries" target-entity="App\MiMascota\Entries\Domain\Entry" mapped-by="journal" orphan-removal="true" />
+    </entity>
+
+</doctrine-mapping>
