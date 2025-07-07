@@ -9,10 +9,24 @@ final class Image
         private readonly string $name,
         private readonly string $path,
         private readonly string $type,
-        private readonly int $size
-    )
+        private readonly int $size,
+        private readonly string $mimeType,
+        private ?string $imageableType = null,
+        private ?int $imageableId = null,
+        private ?ImageableInterface $imageable = null,
+)
     {
 
+    }
+
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    public function getImageable(): ?ImageableInterface
+    {
+        return $this->imageable;
     }
 
     public function getId(): string
@@ -39,4 +53,40 @@ final class Image
     {
         return $this->size;
     }
+    public function setImageable(?ImageableInterface $imageable): self
+    {
+        $this->imageable = $imageable;
+
+        if ($imageable) {
+            $this->imageableType = get_class($imageable);
+            $this->imageableId = $imageable->getId();
+        } else {
+            $this->imageableType = null;
+            $this->imageableId = null;
+        }
+
+        return $this;
+    }
+
+    public function getImageableId(): ?int
+    {
+        return $this->imageableId;
+    }
+
+    public function setImageableId(?int $imageableId): void
+    {
+        $this->imageableId = $imageableId;
+    }
+
+    public function getImageableType(): ?string
+    {
+        return $this->imageableType;
+    }
+
+    public function setImageableType(?string $imageableType): void
+    {
+        $this->imageableType = $imageableType;
+    }
+
+
 }

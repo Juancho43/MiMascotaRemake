@@ -12,6 +12,12 @@
         <many-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal">
             <join-column name="journal_id" nullable="false" />
         </many-to-one>
+        <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\Image" orphan-removal="true" mapped-by="imageable">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

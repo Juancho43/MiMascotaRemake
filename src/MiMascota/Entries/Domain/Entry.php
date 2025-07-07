@@ -2,13 +2,15 @@
 namespace App\MiMascota\Entries\Domain;
 
 use App\MiMascota\Images\Domain\Image;
+use App\MiMascota\Images\Domain\ImageableInterface;
 use App\MiMascota\Journals\Domain\Journal;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-final class Entry
+final class Entry implements ImageableInterface
 {
+    private Collection $images;
 
-    /** @var array<Image> */
-    private array $images = [];
     public function __construct(
         private readonly string $id,
         private readonly string $title,
@@ -16,6 +18,7 @@ final class Entry
         private readonly \DateTimeImmutable $date,
         private readonly Journal $journal,
     ) {
+        $this->images = new ArrayCollection();
     }
 
     public function getJournal(): Journal
@@ -23,10 +26,7 @@ final class Entry
         return $this->journal;
     }
 
-    public function getImages(): array
-    {
-        return $this->images;
-    }
+
 
     public function getId(): string
     {
@@ -46,5 +46,43 @@ final class Entry
     public function getDate(): \DateTimeImmutable
     {
         return $this->date;
+    }
+
+
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setImageable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getImageable() === $this) {
+                $image->setImageable(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+    public function getImage(string $id): ?Image
+    {
+        foreach ($this->images as $image) {
+            if ($image->getId() === $id) {
+                return $image;
+            }
+        }
+
+        return null;
     }
 }

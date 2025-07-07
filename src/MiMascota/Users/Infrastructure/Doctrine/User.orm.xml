@@ -12,6 +12,12 @@
         <embedded name="token" class="App\MiMascota\Users\Domain\ValueObject\UserToken" use-column-prefix="false"/>
         <embedded name="password" class="App\MiMascota\Users\Domain\ValueObject\UserPassword" use-column-prefix="false" />
         <one-to-many field="journals" target-entity="App\MiMascota\Journals\Domain\Journal" mapped-by="user" />
+        <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\Image" orphan-removal="true" mapped-by="imageable">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

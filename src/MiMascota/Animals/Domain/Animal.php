@@ -2,11 +2,17 @@
 
 namespace App\MiMascota\Animals\Domain;
 
+use App\MiMascota\Images\Domain\Image;
+use App\MiMascota\Images\Domain\ImageableInterface;
 use App\MiMascota\Journals\Domain\Journal;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-final class Animal
+final class Animal implements ImageableInterface
 {
     private Journal $journal;
+    private Collection $images;
+
     private function __construct(
         private readonly string $id,
         private string $name,
@@ -15,6 +21,7 @@ final class Animal
         private string $gender,
         private float $weight,
     ) {
+        $this->images = new ArrayCollection();
     }
 
     public function getJournal(): Journal
@@ -88,4 +95,40 @@ final class Animal
         );
     }
 
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setImageable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getImageable() === $this) {
+                $image->setImageable(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+   public function getImage(string $id): ?Image
+   {
+       foreach ($this->images as $image) {
+           if ($image->getId() === $id) {
+               return $image;
+           }
+       }
+
+       return null;
+   }
 }
