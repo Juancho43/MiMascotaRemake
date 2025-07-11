@@ -6,19 +6,23 @@ use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Images\Domain\Image;
 use App\MiMascota\Users\Domain\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-final class Journal
+class Journal
 {
 
     /** @var array<Entry> */
-    private array $entries = [];
-    /** @var array<Image> */
-    private array $images = [];
+    private Collection $entries;
+
+
+
     private function __construct(
         private readonly string $id,
         private readonly User $user,
         private readonly Animal $animal,
     ) {
+        $this->entries = new ArrayCollection();
     }
 
 
@@ -46,6 +50,21 @@ final class Journal
     {
         return $this->animal;
     }
+    public function getEntries(): Collection
+    {
+        return $this->entries;
+    }
 
+    public function setEntries(Collection $entries): void
+    {
+        $this->entries = $entries;
+    }
+
+    public function addEntry(Entry $entry): void
+    {
+        if (!$this->entries->contains($entry)) {
+            $this->entries->add($entry);
+        }
+    }
 
 }

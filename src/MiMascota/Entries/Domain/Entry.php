@@ -7,7 +7,7 @@ use App\MiMascota\Journals\Domain\Journal;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-final class Entry implements ImageableInterface
+class Entry implements ImageableInterface
 {
     private Collection $images;
 
@@ -15,15 +15,27 @@ final class Entry implements ImageableInterface
         private readonly string $id,
         private readonly string $title,
         private readonly string $content,
-        private readonly \DateTimeImmutable $date,
-        private readonly Journal $journal,
+        private readonly \DateTime $date,
+        private Journal $journal,
     ) {
         $this->images = new ArrayCollection();
+    }
+
+
+    public static function create($id, string $title, string $content, \DateTime $date, Journal $journal): self
+    {
+        return new self($id, $title, $content, $date, $journal);
     }
 
     public function getJournal(): Journal
     {
         return $this->journal;
+    }
+
+
+    public function setImages(Collection $images): void
+    {
+        $this->images = $images;
     }
 
 
@@ -43,7 +55,7 @@ final class Entry implements ImageableInterface
         return $this->content;
     }
 
-    public function getDate(): \DateTimeImmutable
+    public function getDate(): \DateTime
     {
         return $this->date;
     }

@@ -4,30 +4,35 @@ namespace App\MiMascota\Images\Domain;
 
 final class Image
 {
+
     public function __construct(
         private readonly string $id,
         private readonly string $name,
         private readonly string $path,
         private readonly string $type,
         private readonly int $size,
-        private readonly string $mimeType,
         private ?string $imageableType = null,
-        private ?int $imageableId = null,
-        private ?ImageableInterface $imageable = null,
-)
+        private ?string $imageableId = null,
+    )
     {
 
     }
 
-    public function getMimeType(): string
-    {
-        return $this->mimeType;
+    public static function create(
+        string $id,
+        string $name,
+        string $path,
+        string $type,
+        int $size,
+        ?string $imageableType = null,
+        ?string $imageableId = null,
+
+    ): self {
+        return new self($id, $name, $path, $type, $size, $imageableType, $imageableId);
     }
 
-    public function getImageable(): ?ImageableInterface
-    {
-        return $this->imageable;
-    }
+
+
 
     public function getId(): string
     {
@@ -55,7 +60,6 @@ final class Image
     }
     public function setImageable(?ImageableInterface $imageable): self
     {
-        $this->imageable = $imageable;
 
         if ($imageable) {
             $this->imageableType = get_class($imageable);
@@ -68,12 +72,12 @@ final class Image
         return $this;
     }
 
-    public function getImageableId(): ?int
+    public function getImageableId(): ?string
     {
         return $this->imageableId;
     }
 
-    public function setImageableId(?int $imageableId): void
+    public function setImageableId(?string $imageableId): void
     {
         $this->imageableId = $imageableId;
     }

@@ -1,15 +1,16 @@
 <?php
 namespace App\Controller\User;
 
+use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Users\Application\UserLogin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserLoginController extends AbstractController
 {
+    use ApiResponseTrait;
     #[Route('/user/login', name: 'user_login', methods:  ['POST'])]
     public function login(Request $request, UserLogin $userLogin) : Response
     {
@@ -19,9 +20,10 @@ class UserLoginController extends AbstractController
             $data['email'] ?? '',
             $data['password'] ?? ''
         );
-        return new JsonResponse([
+        return $this->successResponse(
+            [
             'token' => $token,
-        ], $token ? Response::HTTP_OK : Response::HTTP_UNAUTHORIZED);
+            ], "Usuario autenticado correctamente");
 
     }
 }

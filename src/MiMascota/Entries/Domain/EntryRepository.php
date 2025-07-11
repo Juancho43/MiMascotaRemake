@@ -2,7 +2,6 @@
 
 namespace App\MiMascota\Entries\Domain;
 
-use App\MiMascota\Entries\Domain\Entry;
 
 interface EntryRepository
 {
@@ -11,4 +10,6 @@ interface EntryRepository
     public function save(Entry $entry): void;
 
     public function remove(Entry $entry): void;
+
+    public function getPhotos(string $id): array;
 }

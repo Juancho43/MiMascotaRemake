@@ -14,9 +14,10 @@ final readonly class UserCreator
 
      }
 
-     public function __invoke(string $name, string $email, string $password): void
+     public function __invoke(string $name, string $email, string $password): User
      {
          $user = User::create(Uuid::uuid4()->toString(), $name,$email, UserPassword::create($password));
          $this->repository->save($user);
+         return $user;
      }
 }

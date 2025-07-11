@@ -2,7 +2,6 @@
 
 namespace App\MiMascota\Images\Domain;
 
-use App\MiMascota\Images\Domain\Image;
 
 interface ImageRepository
 {

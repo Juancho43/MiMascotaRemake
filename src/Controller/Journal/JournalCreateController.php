@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class JournalPostController extends AbstractController
+class JournalCreateController extends AbstractController
 {
     #[Route('/journal/create', name: 'journal_create', methods: ['POST'])]
     public function create(Request $request, UserLogin $login, JournalCreator $creator) : Response
@@ -27,10 +27,11 @@ class JournalPostController extends AbstractController
             $data['breed'],
             $data['age'],
             $data['gender'],
+            $data['weight']
         );
        return new JsonResponse(
               [
-                'message' => 'Journals created successfully!',
+                'message' => 'Journal created successfully!',
                 'journal' => [
                      'id' => $journal->getId(),
                      'animal' => $journal->getAnimal()->__toString(),

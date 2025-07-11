@@ -2,6 +2,8 @@
 
 namespace App\MiMascota\Users\Domain;
 
+use Doctrine\Common\Collections\Collection;
+
 interface UserRepository
 {
     public function search(string $id): ?User;
@@ -11,4 +13,6 @@ interface UserRepository
     public function save(User $user): void;
 
     public function remove(User $user): void;
+
+    public function getJournals(string $userId): Collection;
 }

@@ -15,10 +15,10 @@ class AnimalCreator
 
     }
 
-    public function __invoke(string $name, string $breed, int $age, string $gender): Animal
+    public function __invoke(string $name, string $breed, int $age, string $gender, string $weight): Animal
     {
-        $animal = Animal::create(Uuid::uuid4()->toString(), $name,$breed, $age, $gender);
-       $this->repository->save($animal);
+        $animal = Animal::create(Uuid::uuid4()->toString(), $name,$breed, $age, $gender,$weight);
+        $this->repository->save($animal);
         return $animal;
     }
 }

@@ -9,12 +9,11 @@
         <field name="name" column="name" length="60" />
         <field name="path" column="path" length="255" />
         <field name="type" column="type" length="50" />
-        <field name="mimeType" column="mimeType" length="50" />
         <field name="size" column="size" type="integer" />
 
         <!-- Polymorphic relationship fields -->
-        <field name="imageableType" type="string" column="imageable_type" length="100" nullable="false"/>
-        <field name="imageableId" type="integer" column="imageable_id" nullable="false"/>
+        <field name="imageableType" type="string" column="imageable_type" length="100"/>
+        <field name="imageableId" type="string " column="imageable_id" length="36" />
 
         <!-- Indexes for performance -->
         <indexes>

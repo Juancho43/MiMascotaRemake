@@ -1,0 +1,48 @@
+<?php
+
+namespace App\MiMascota\Images\Application;
+
+use App\MiMascota\Images\Domain\Image;
+use App\MiMascota\Images\Domain\ImageRepository;
+use Ramsey\Uuid\Nonstandard\Uuid;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+class SaveImage
+{
+
+    public function __construct(
+        private ImageRepository $imageRepository,
+    )
+    {
+        // Constructor logic if needed
+    }
+
+     public function __invoke(
+        UploadedFile $file,
+         string $imageableType,
+         string $imageableId,
+    )
+    {
+        $path = 'images/' . $imageableType . '/' . $imageableId . '/' . $file->getClientOriginalName();
+        $image = Image::create(
+            id: Uuid::uuid4()->toString(),
+            name: $file->getClientOriginalName(),
+            path: $path,
+            type: $file->getClientMimeType(),
+            size: $file->getSize(),
+            imageableType: $imageableType,
+            imageableId: $imageableId,
+     );
+     // Create directory structure
+     $dirPath = dirname($path);
+     if (!file_exists($dirPath)) {
+         mkdir($dirPath, 0755, true);
+     }
+     // Move the uploaded file
+     if ($file->move($dirPath, $file->getClientOriginalName())) {
+         $this->imageRepository->save($image);
+         return $path;
+     }
+        return null;
+    }
+}

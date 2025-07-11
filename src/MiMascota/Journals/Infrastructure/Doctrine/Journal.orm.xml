@@ -11,8 +11,17 @@
         </many-to-one>
         <one-to-one field="animal" target-entity="App\MiMascota\Animals\Domain\Animal" inversed-by="journal">
             <join-column name="animal_id" />
+            <cascade>
+                <cascade-persist />
+                <cascade-remove />
+            </cascade>
         </one-to-one>
-       <one-to-many field="entries" target-entity="App\MiMascota\Entries\Domain\Entry" mapped-by="journal" orphan-removal="true" />
+     <one-to-many field="entries" target-entity="App\MiMascota\Entries\Domain\Entry" mapped-by="journal" orphan-removal="true">
+           <cascade>
+               <cascade-persist />
+               <cascade-remove />
+           </cascade>
+       </one-to-many>
     </entity>
 
 </doctrine-mapping>

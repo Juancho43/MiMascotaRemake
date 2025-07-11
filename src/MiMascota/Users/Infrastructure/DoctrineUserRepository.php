@@ -5,6 +5,8 @@ namespace App\MiMascota\Users\Infrastructure;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -50,5 +52,20 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
         ->setParameter('token', $token)
         ->getQuery()
         ->getOneOrNullResult();
+    }
+
+
+    public function getJournals(string $userId): Collection
+    {
+       return new ArrayCollection(
+           $this->createQueryBuilder('users')
+               ->join('users.journals', 'journals')
+               ->join('journals.animal', 'animals')
+               ->select('animals.name', 'journals.id')
+               ->where('users.id = :userId')
+               ->setParameter('userId', $userId)
+               ->getQuery()
+               ->getResult()
+       );
     }
 }

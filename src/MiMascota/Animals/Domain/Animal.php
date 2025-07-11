@@ -8,7 +8,7 @@ use App\MiMascota\Journals\Domain\Journal;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-final class Animal implements ImageableInterface
+class Animal implements ImageableInterface
 {
     private Journal $journal;
     private Collection $images;
@@ -131,4 +131,9 @@ final class Animal implements ImageableInterface
 
        return null;
    }
+
+    public function setJournal(Journal $journal)
+    {
+        $this->journal = $journal;
+    }
 }
