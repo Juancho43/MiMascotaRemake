@@ -3,10 +3,10 @@
 namespace App\MiMascota\Shared;
 
 use App\MiMascota\Users\Domain\User;
+use App\MiMascota\Users\Infrastructure\UserLogin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\MiMascota\Users\Infrastructure\UserLogin;
 
 trait AuthorizationCheckerTrait
 {

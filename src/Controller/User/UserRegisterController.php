@@ -2,8 +2,6 @@
 
 namespace App\Controller\User;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Post;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Users\Application\UserCreator;
 use Symfony\Component\HttpFoundation\Request;

@@ -17,12 +17,9 @@
                 <cascade-remove/>
             </cascade>
         </one-to-many>
-        <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\Image" orphan-removal="true" mapped-by="imageable">
-            <cascade>
-                <cascade-persist/>
-                <cascade-remove/>
-            </cascade>
-        </one-to-many>
+     <one-to-one field="image">
+         <join-column name="user_id" nullable="false" />
+     </one-to-one>
     </entity>
 
 </doctrine-mapping>

@@ -12,8 +12,8 @@
         <field name="size" column="size" type="integer" />
 
         <!-- Polymorphic relationship fields -->
-        <field name="imageableType" type="string" column="imageable_type" length="100"/>
-        <field name="imageableId" type="string " column="imageable_id" length="36" />
+        <field name="imageableType" column="imageable_type" length="100"/>
+        <field name="imageableId" column="imageable_id" length="36" />
 
         <!-- Indexes for performance -->
         <indexes>

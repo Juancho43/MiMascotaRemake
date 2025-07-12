@@ -23,10 +23,11 @@ class SaveImage
          string $imageableId,
     )
     {
+        $name= (new \DateTime())->getTimestamp();
         $path = 'images/' . $imageableType . '/' . $imageableId . '/' . $file->getClientOriginalName();
         $image = Image::create(
             id: Uuid::uuid4()->toString(),
-            name: $file->getClientOriginalName(),
+            name: $name,
             path: $path,
             type: $file->getClientMimeType(),
             size: $file->getSize(),
@@ -39,7 +40,8 @@ class SaveImage
          mkdir($dirPath, 0755, true);
      }
      // Move the uploaded file
-     if ($file->move($dirPath, $file->getClientOriginalName())) {
+
+     if ($file->move($dirPath, $name)) {
          $this->imageRepository->save($image);
          return $path;
      }

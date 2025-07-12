@@ -8,11 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AddEntryImage extends AbstractController
+class AddEntryImageController extends AbstractController
 {
     use ApiResponseTrait;
     #[Route('/entry/add/image', name: 'entry_add_image', methods: ['POST'])]
-    public function upload(Request $request, SaveImage $saveImage)
+    public function __invoke(Request $request, SaveImage $saveImage)
     {
         $response = [];
         $uploadedFiles = $request->files->all();

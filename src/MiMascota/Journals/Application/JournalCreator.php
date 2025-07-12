@@ -2,10 +2,9 @@
 
 namespace App\MiMascota\Journals\Application;
 
-use App\MiMascota\Animals\Application\AnimalCreator;
 use App\MiMascota\Animals\Domain\Animal;
-use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Users\Domain\User;
 use Ramsey\Uuid\Uuid;
 

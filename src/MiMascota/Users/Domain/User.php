@@ -2,8 +2,7 @@
 
 namespace App\MiMascota\Users\Domain;
 
-use App\MiMascota\Images\Domain\Image;
-use App\MiMascota\Images\Domain\ImageableInterface;
+use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
@@ -11,12 +10,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class User implements UserInterface, ImageableInterface
+final class User implements UserInterface
 {
 
     private Collection $journals;
     private UserToken $token;
-    private Collection $images;
+    private UserImage $image;
  public function __construct(
      private readonly string       $id,
      private string                $name,
@@ -25,7 +24,6 @@ final class User implements UserInterface, ImageableInterface
 
  ) {
         $this->journals = new ArrayCollection();
-        $this->images = new ArrayCollection();
  }
     /**
      * @param string $id
@@ -121,42 +119,6 @@ final class User implements UserInterface, ImageableInterface
         return $this->getName();
     }
 
-    public function addImage(Image $image): self
-    {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-            $image->setImageable($this);
-        }
 
-        return $this;
-    }
-
-    public function removeImage(Image $image): self
-    {
-        if ($this->images->removeElement($image)) {
-            if ($image->getImageable() === $this) {
-                $image->setImageable(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getImages(): Collection
-    {
-        return $this->images;
-    }
-
-
-    public function getImage(string $id): ?Image
-    {
-        foreach ($this->images as $image) {
-            if ($image->getId() === $id) {
-                return $image;
-            }
-        }
-
-        return null;
-    }
 }
 

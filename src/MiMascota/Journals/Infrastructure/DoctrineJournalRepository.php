@@ -6,10 +6,10 @@ use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * @extends ServiceEntityRepository<Journal>
@@ -31,6 +31,18 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
         return $this->getEntityManager()->find(Journal::class, $id);
     }
 
+    public function getOneById(string $id): ?array
+    {
+       return $this->createQueryBuilder('journal')
+                   ->select('journal.id AS id', 'animal.name AS animalName', 'image.id AS imageId', 'imageFile.path AS imagePath')
+                   ->innerJoin('journal.animal', 'animal')
+                   ->leftJoin('animal.images','image')
+                   ->leftJoin('image.image', 'imageFile')
+                   ->where('journal.id = :id')
+                   ->setParameter('id', $id)
+                   ->getQuery()
+                   ->getOneOrNullResult();
+       }
     public function save(Journal $journal): void
     {
         $this->getEntityManager()->persist($journal);

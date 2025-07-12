@@ -4,7 +4,6 @@ namespace App\MiMascota\Journals\Domain;
 
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Entries\Domain\Entry;
-use App\MiMascota\Images\Domain\Image;
 use App\MiMascota\Users\Domain\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

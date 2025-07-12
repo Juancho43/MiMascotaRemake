@@ -3,7 +3,6 @@
 namespace App\Controller\Journal;
 
 use App\MiMascota\Journals\Application\AddEntry;
-use App\MiMascota\Journals\Application\JournalCreator;
 use App\MiMascota\Users\Infrastructure\UserLogin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

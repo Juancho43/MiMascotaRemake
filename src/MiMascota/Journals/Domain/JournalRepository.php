@@ -11,6 +11,7 @@ interface JournalRepository
 
 
     public function save(Journal $journal): void;
+    public function getOneById(string $id): ?array;
 
     public function update(Journal $journal): void;
 

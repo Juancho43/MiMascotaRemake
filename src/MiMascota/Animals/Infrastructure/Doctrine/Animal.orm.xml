@@ -14,10 +14,9 @@
         <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="journal">
             <join-column name="journal_id" />
         </one-to-one>
-        <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\Image" orphan-removal="true" mapped-by="imageable">
+        <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\AnimalImage" mapped-by="animal">
             <cascade>
-                <cascade-persist/>
-                <cascade-remove/>
+                <cascade-all/>
             </cascade>
         </one-to-many>
     </entity>

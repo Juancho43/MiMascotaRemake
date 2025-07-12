@@ -2,7 +2,7 @@
 
 namespace App\MiMascota\Images\Domain;
 
-final class Image
+class Image
 {
 
     public function __construct(
@@ -25,13 +25,11 @@ final class Image
         string $type,
         int $size,
         ?string $imageableType = null,
-        ?string $imageableId = null,
-
-    ): self {
-        return new self($id, $name, $path, $type, $size, $imageableType, $imageableId);
+        ?string $imageableId = null
+    ): self
+    {
+        return new self($id, $name, $path, $type, $size, $imageableType, $imageableId, $type);
     }
-
-
 
 
     public function getId(): string
