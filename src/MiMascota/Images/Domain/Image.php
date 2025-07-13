@@ -2,9 +2,14 @@
 
 namespace App\MiMascota\Images\Domain;
 
+use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
+use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
+
 class Image
 {
 
+    private SoftDelete $softDelete;
+    private TimeStamp $timeStamp;
     public function __construct(
         private readonly string $id,
         private readonly string $name,

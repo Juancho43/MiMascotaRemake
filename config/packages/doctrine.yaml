@@ -48,6 +48,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/MiMascota/Images/Infrastructure/Doctrine'
                 prefix: 'App\MiMascota\Images\Domain'
                 alias: Image
+            Shared:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/MiMascota/Shared/Infrastructure/Doctrine'
+                prefix: 'App\MiMascota\Shared\Domain\ValueObject'
+                alias: Shared
         controller_resolver:
             auto_mapping: false
 

@@ -1,15 +1,20 @@
 <?php
 namespace App\MiMascota\Entries\Domain;
 
+use App\MiMascota\Images\Domain\EntryImage;
 use App\MiMascota\Images\Domain\Image;
 use App\MiMascota\Images\Domain\ImageableInterface;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
+use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-class Entry implements ImageableInterface
+class Entry
 {
-    private Collection $images;
+    private EntryImage $images;
+    private SoftDelete $softDelete;
+    private TimeStamp $timeStamp;
 
     public function __construct(
         private readonly string $id,
@@ -18,7 +23,7 @@ class Entry implements ImageableInterface
         private readonly \DateTime $date,
         private Journal $journal,
     ) {
-        $this->images = new ArrayCollection();
+
     }
 
 
@@ -33,10 +38,6 @@ class Entry implements ImageableInterface
     }
 
 
-    public function setImages(Collection $images): void
-    {
-        $this->images = $images;
-    }
 
 
 
@@ -62,39 +63,4 @@ class Entry implements ImageableInterface
 
 
 
-    public function addImage(Image $image): self
-    {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-            $image->setImageable($this);
-        }
-
-        return $this;
-    }
-
-    public function removeImage(Image $image): self
-    {
-        if ($this->images->removeElement($image)) {
-            if ($image->getImageable() === $this) {
-                $image->setImageable(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getImages(): Collection
-    {
-        return $this->images;
-    }
-    public function getImage(string $id): ?Image
-    {
-        foreach ($this->images as $image) {
-            if ($image->getId() === $id) {
-                return $image;
-            }
-        }
-
-        return null;
-    }
 }

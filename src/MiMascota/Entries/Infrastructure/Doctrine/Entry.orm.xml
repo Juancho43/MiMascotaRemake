@@ -12,7 +12,8 @@
         <many-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal">
             <join-column name="journal_id" nullable="false" />
         </many-to-one>
-
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
     </entity>
 
 </doctrine-mapping>

@@ -9,8 +9,11 @@
         <many-to-one field="entry" target-entity="App\MiMascota\Entries\Domain\Entry" inversed-by="images">
             <join-column name="entry_id" referenced-column-name="id" nullable="false" />
         </many-to-one>
-        <one-to-one field="image" target-entity="App\MiMascota\Images\Domain\Image"  >
-            <join-column name="image_id" referenced-column-name="id" nullable="false" />
+        <one-to-one field="image" target-entity="App\MiMascota\Images\Domain\Image">
+            <join-column name="image_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+            <cascade>
+                <cascade-remove />
+            </cascade>
         </one-to-one>
         <field name="position" type="smallint"/>
     </entity>

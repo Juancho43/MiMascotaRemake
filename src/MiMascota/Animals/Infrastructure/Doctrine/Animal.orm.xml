@@ -11,6 +11,8 @@
         <field name="gender" column="gender" length="255" />
         <field name="age" column="age" type="integer" />
         <field name="weight" column="weight" type="float" />
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
         <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="journal">
             <join-column name="journal_id" />
         </one-to-one>

@@ -2,16 +2,20 @@
 
 namespace App\MiMascota\Animals\Domain;
 
+use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\Image;
 use App\MiMascota\Images\Domain\ImageableInterface;
 use App\MiMascota\Journals\Domain\Journal;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
+use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 
-class Animal implements ImageableInterface
+
+class Animal
 {
     private Journal $journal;
-    private Collection $images;
+    private AnimalImage $images;
+    private TimeStamp $timeStamp;
+    private SoftDelete $softDelete;
 
     private function __construct(
         private readonly string $id,
@@ -21,7 +25,6 @@ class Animal implements ImageableInterface
         private string $gender,
         private float $weight,
     ) {
-        $this->images = new ArrayCollection();
     }
 
     public function getJournal(): Journal
@@ -95,42 +98,7 @@ class Animal implements ImageableInterface
         );
     }
 
-    public function addImage(Image $image): self
-    {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-            $image->setImageable($this);
-        }
 
-        return $this;
-    }
-
-    public function removeImage(Image $image): self
-    {
-        if ($this->images->removeElement($image)) {
-            if ($image->getImageable() === $this) {
-                $image->setImageable(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getImages(): Collection
-    {
-        return $this->images;
-    }
-
-   public function getImage(string $id): ?Image
-   {
-       foreach ($this->images as $image) {
-           if ($image->getId() === $id) {
-               return $image;
-           }
-       }
-
-       return null;
-   }
 
     public function setJournal(Journal $journal)
     {

@@ -5,7 +5,7 @@ namespace App\MiMascota\Users\Infrastructure;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 
-final readonly class UserLogin
+final readonly class IsUserLoggedIn
 {
     public function __construct(private UserRepository $repository){
 

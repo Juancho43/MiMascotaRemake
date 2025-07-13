@@ -5,7 +5,7 @@ namespace App\Controller\Entries;
 use App\MiMascota\Entries\Application\EntryGetOne;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
-use App\MiMascota\Users\Infrastructure\UserLogin;
+use App\MiMascota\Users\Infrastructure\IsUserLoggedIn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,10 +18,10 @@ class EntryGetController extends AbstractController
 
     #[Route('/entry/{id}', name: 'entry_get', methods: ['GET'])]
     public function __invoke(
-        Request $request,
-        UserLogin $login,
-        string $id,
-        EntryGetOne $getOne,
+        Request             $request,
+        IsUserLoggedIn      $login,
+        string              $id,
+        EntryGetOne         $getOne,
         NormalizerInterface $normalizer
     ): JsonResponse
     {

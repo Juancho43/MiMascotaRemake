@@ -6,5 +6,7 @@
 
     <embeddable name="App\MiMascota\Users\Domain\ValueObject\UserToken">
         <field name="value" column="token" length="255" nullable="true" />
+        <field name="expireAt" column="expires_at" type="datetime" nullable="true" />
+        <field name="createdAt" column="created_at" type="datetime" nullable="true" />
     </embeddable>
 </doctrine-mapping>

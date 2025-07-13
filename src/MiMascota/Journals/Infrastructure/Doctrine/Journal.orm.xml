@@ -6,6 +6,8 @@
 
     <entity name="App\MiMascota\Journals\Domain\Journal" table="journals">
         <id name="id" type="string" column="id" length="36" />
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
         <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="journals">
             <join-column name="user_id" />
         </many-to-one>

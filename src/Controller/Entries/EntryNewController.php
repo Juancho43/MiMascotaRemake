@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Controller\Journal;
+namespace App\Controller\Entries;
 
 use App\MiMascota\Journals\Application\AddEntry;
-use App\MiMascota\Users\Infrastructure\UserLogin;
+use App\MiMascota\Users\Infrastructure\IsUserLoggedIn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class JournalAddEntryPostController extends AbstractController
+class EntryNewController extends AbstractController
 {
-    #[Route('/journal/add/entry', name: 'entry_create', methods: ['POST'])]
-    public function create(Request $request, UserLogin $login, AddEntry $creator) : Response
+    #[Route('/entry', name: 'entry_create', methods: ['POST'])]
+    public function create(Request $request, IsUserLoggedIn $login, AddEntry $creator) : Response
     {
         $user =$login->__invoke($request->headers->get('Authorization'));
         if(!$user) {

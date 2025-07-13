@@ -24,7 +24,7 @@ trait ApiResponseTrait
      *                         data: mixed
      *                     }
      */
-    protected function successResponse(mixed $data, string | null $message = null, int $code = Response::HTTP_OK) : JsonResponse
+    protected function successResponse(mixed $data = null, string | null $message = null, int $code = Response::HTTP_OK) : JsonResponse
     {
         return new JsonResponse([
             'success' => true,

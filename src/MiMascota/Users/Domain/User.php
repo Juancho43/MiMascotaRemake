@@ -4,6 +4,8 @@ namespace App\MiMascota\Users\Domain;
 
 use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
+use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +18,8 @@ final class User implements UserInterface
     private Collection $journals;
     private UserToken $token;
     private UserImage $image;
+    private TimeStamp $timeStamp;
+    private SoftDelete $softDelete;
  public function __construct(
      private readonly string       $id,
      private string                $name,
@@ -94,8 +98,13 @@ final class User implements UserInterface
         return $this->token->getValue();
     }
 
+    public function getTokenObject(): UserToken
+    {
+        return $this->token;
+    }
     public function login(): void{
         $this->token = UserToken::generate();
+
     }
 
     public function logout(): void

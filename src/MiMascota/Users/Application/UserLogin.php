@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Users\Application;
 
+use App\MiMascota\Shared\AuthorizationCheckerTrait;
 use App\MiMascota\Users\Domain\UserRepository;
 
 class UserLogin
@@ -17,13 +18,13 @@ class UserLogin
     {
         $user = $this->repository->findByMail($email);
 
-        if (!password_verify($password,$user->getPassword()->getValue())) {
-           echo 'falso';
-            return null; // Invalid credentials
-        }
-        if ($user->getToken() !== null) {
+        $user->getPassword()->verify($password);
+
+
+        if ($user->getToken() !== null ) {
             return $user->getToken();
         }
+
         $user->login();
         $this->repository->save($user);
         return $user->getToken();

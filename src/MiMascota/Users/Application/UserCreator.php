@@ -6,8 +6,7 @@ use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use Ramsey\Uuid\Uuid;
-
-final readonly class UserCreator
+class UserCreator
 {
      public function __construct(private UserRepository $repository)
      {

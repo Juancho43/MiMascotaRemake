@@ -19,7 +19,8 @@
         <indexes>
             <index name="idx_imageable" columns="imageable_type,imageable_id"/>
         </indexes>
-
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
     </entity>
 
 </doctrine-mapping>

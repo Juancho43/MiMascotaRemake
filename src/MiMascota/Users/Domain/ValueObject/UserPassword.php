@@ -16,7 +16,11 @@ class UserPassword
     }
     public function verify($password): bool
     {
-        return password_verify($password,$this->value);
+
+        if(!password_verify($password,$this->value)) {
+            throw new \Exception('Password is not valid');
+        }
+        return true;
     }
 
     public function getValue()
