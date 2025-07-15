@@ -2,13 +2,17 @@
 
 namespace App\Controller\User;
 
+use App\MiMascota\Shared\ApiResponseTrait;
+use App\MiMascota\Shared\AuthorizationCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserChangePasswordController extends AbstractController
 {
-    #[Route('/user/image/change', name: 'user_change_image', methods: ['POST'])]
-    public function __invoke(){
-
+    use ApiResponseTrait,AuthorizationCheckerTrait;
+    #[Route('/user/password', name: 'user_change_password', methods: ['PUT'])]
+    public function __invoke(Request $request){
+        $user = $this->checkAuthorization($request);
     }
 }

@@ -17,10 +17,11 @@ class SaveAnimalImage
         UploadedFile $imageFile,
         string $animalId
     ): ?string {
-        return $this->saveImage->__invoke(
+        $path = $this->saveImage->__invoke(
             $imageFile,
             'animal',
             $animalId,
         );
+        return $path->getPath();
     }
 }

@@ -7,21 +7,19 @@
     <entity name="App\MiMascota\Users\Domain\User" table="users">
         <id name="id" type="string" column="id" length="36" />
         <field name="name" column="name" length="255" />
-        <field name="email" column="email" length="255" unique="true" />
-
+        <embedded name="email" class="App\MiMascota\Users\Domain\ValueObject\UserEmail" use-column-prefix="false" />
         <embedded name="token" class="App\MiMascota\Users\Domain\ValueObject\UserToken" use-column-prefix="false"/>
         <embedded name="password" class="App\MiMascota\Users\Domain\ValueObject\UserPassword" use-column-prefix="false" />
-        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
-        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
         <one-to-many field="journals" target-entity="App\MiMascota\Journals\Domain\Journal" mapped-by="user">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>
             </cascade>
         </one-to-many>
-     <one-to-one field="image">
-         <join-column name="user_id" nullable="false" />
-     </one-to-one>
+<!--        <one-to-many field="image" target-entity="App\MiMascota\Images\Domain\UserImage" mapped-by="user"/>-->
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
+
     </entity>
 
 </doctrine-mapping>

@@ -3,7 +3,7 @@
 namespace App\Controller\Entries;
 
 use App\MiMascota\Journals\Application\AddEntry;
-use App\MiMascota\Users\Infrastructure\IsUserLoggedIn;
+use App\MiMascota\Users\Infrastructure\CheckToken;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class EntryNewController extends AbstractController
 {
     #[Route('/entry', name: 'entry_create', methods: ['POST'])]
-    public function create(Request $request, IsUserLoggedIn $login, AddEntry $creator) : Response
+    public function create(Request $request, CheckToken $login, AddEntry $creator) : Response
     {
         $user =$login->__invoke($request->headers->get('Authorization'));
         if(!$user) {

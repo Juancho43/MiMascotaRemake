@@ -5,7 +5,7 @@ namespace App\Controller\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
-use App\MiMascota\Users\Infrastructure\IsUserLoggedIn;
+use App\MiMascota\Users\Infrastructure\CheckToken;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ class JournalGetController extends AbstractController
     #[Route('/journal/{id}', name: 'journal_get', methods: ['GET'])]
     public function __invoke(
         Request             $request,
-        IsUserLoggedIn      $login,
+        CheckToken          $login,
         string              $id,
         JournalRepository   $repository,
         NormalizerInterface $normalizer

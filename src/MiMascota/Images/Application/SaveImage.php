@@ -43,7 +43,7 @@ class SaveImage
 
      if ($file->move($dirPath, $name)) {
          $this->imageRepository->save($image);
-         return $path;
+         return $image;
      }
         return null;
     }

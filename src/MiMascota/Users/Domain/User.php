@@ -6,28 +6,31 @@ use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
+use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Twig\Token;
 
-final class User implements UserInterface
+class User
 {
-
     private Collection $journals;
     private UserToken $token;
-    private UserImage $image;
+//    private ?UserImage $image = null;
     private TimeStamp $timeStamp;
     private SoftDelete $softDelete;
+
  public function __construct(
      private readonly string       $id,
      private string                $name,
-     private string                $email,
-     private readonly UserPassword $password,
+     private UserEmail              $email,
+     private UserPassword $password,
 
  ) {
         $this->journals = new ArrayCollection();
+        $this->timeStamp = new TimeStamp();
+        $this->softDelete = new SoftDelete();
  }
     /**
      * @param string $id
@@ -36,7 +39,7 @@ final class User implements UserInterface
      * @param UserPassword $password
      * @return self
      */
-    public static function create(string $id, string $name, string $email, UserPassword $password): self
+    public static function create(string $id, string $name, UserEmail $email, UserPassword $password): self
     {
         return new self($id, $name, $email, $password);
     }
@@ -48,27 +51,28 @@ final class User implements UserInterface
 
     public function getEmail(): string
     {
+        return $this->email->getEmail();
+    }
+    public function getValidationCode(): string
+    {
+        return $this->email->getCode();
+    }
+    public function getEmailObject(): UserEmail
+    {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): UserPassword
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function changePassword(string $password): void
     {
-        UserPassword::create($password);
-        return $this;
+        $this->password = UserPassword::create($password);
     }
+
 
     public function getName(): string
     {
@@ -102,6 +106,7 @@ final class User implements UserInterface
     {
         return $this->token;
     }
+
     public function login(): void{
         $this->token = UserToken::generate();
 
@@ -112,20 +117,9 @@ final class User implements UserInterface
         $this->token->reset();
     }
 
-    public function getRoles(): array
+    public function setTimeStamp(): void
     {
-        // TODO: Implement getRoles() method.
-        return ['ROLE_USER'];
-    }
-
-    public function eraseCredentials(): void
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return $this->getName();
+        $this->timeStamp = new TimeStamp();
     }
 
 

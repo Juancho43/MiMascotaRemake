@@ -4,7 +4,7 @@ namespace App\Controller\Journal;
 
 
 use App\MiMascota\Journals\Application\JournalCreator;
-use App\MiMascota\Users\Infrastructure\IsUserLoggedIn;
+use App\MiMascota\Users\Infrastructure\CheckToken;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class JournalCreateController extends AbstractController
 {
     #[Route('/journal', name: 'journal_create', methods: ['POST'])]
-    public function create(Request $request, IsUserLoggedIn $login, JournalCreator $creator) : Response
+    public function create(Request $request, CheckToken $login, JournalCreator $creator) : Response
     {
         $user =$login->__invoke($request->headers->get('Authorization'));
         if(!$user) {
