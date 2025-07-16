@@ -4,6 +4,7 @@ namespace App\Controller\User;
 
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
+use App\MiMascota\Shared\SerializerTrait;
 use App\MiMascota\Users\Application\UserGetData;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserGetDataController extends AbstractController
 {
-    use ApiResponseTrait,AuthorizationCheckerTrait;
+    use ApiResponseTrait,AuthorizationCheckerTrait,SerializerTrait;
 
     #[Route('/user', name: 'user_data', methods: ['GET'])]
     public function __invoke(Request $request, UserGetData $userGetData)
@@ -21,6 +22,6 @@ class UserGetDataController extends AbstractController
         if ($data === null) {
             return $this->errorResponse('User not found');
         }
-        return $this->successResponse($data, 'User data retrieved successfully');
+        return $this->successResponse($this->serialize($data), 'User data retrieved successfully');
     }
 }
