@@ -4,6 +4,7 @@ namespace App\MiMascota\Users\Domain;
 
 use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
@@ -11,13 +12,17 @@ use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Twig\Token;
+
+use App\MiMascota\Locations\Domain\UserLocation;
 
 class User
 {
     private Collection $journals;
     private UserToken $token;
 //    private ?UserImage $image = null;
+    private UserLocation $location;
+
+
     private TimeStamp $timeStamp;
     private SoftDelete $softDelete;
 
@@ -26,6 +31,7 @@ class User
      private string                $name,
      private UserEmail              $email,
      private UserPassword $password,
+
 
  ) {
         $this->journals = new ArrayCollection();
@@ -121,7 +127,15 @@ class User
     {
         $this->timeStamp = new TimeStamp();
     }
+    public function getLocation(): UserLocation
+    {
+        return $this->location;
+    }
 
+    public function setLocation(UserLocation $location): void
+    {
+        $this->location = $location;
+    }
 
 }
 

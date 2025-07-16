@@ -16,6 +16,12 @@
                 <cascade-remove/>
             </cascade>
         </one-to-many>
+      <one-to-one field="location" target-entity="App\MiMascota\Locations\Domain\UserLocation" mapped-by="user">
+          <cascade>
+              <cascade-persist/>
+              <cascade-remove/>
+          </cascade>
+      </one-to-one>
 <!--        <one-to-many field="image" target-entity="App\MiMascota\Images\Domain\UserImage" mapped-by="user"/>-->
         <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
         <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>

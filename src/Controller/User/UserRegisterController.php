@@ -2,6 +2,8 @@
 
 namespace App\Controller\User;
 
+use App\MiMascota\Locations\Application\LocationManager;
+use App\MiMascota\Locations\Infrastructure\ReverseGeocodeClient;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Users\Application\UserRegister;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserRegisterController extends AbstractController
 {
     use ApiResponseTrait;
-    public function __construct(private MailerInterface $mailer)
+    public function __construct(
+        private MailerInterface $mailer,
+
+    )
     {
 
     }
@@ -22,20 +27,24 @@ class UserRegisterController extends AbstractController
     public function __invoke(
         Request         $request,
         UserRegister    $creator,
-
     ): Response
     {
         $data = $request->toArray();
+
+
         $user = $creator->__invoke(
             $data['name'] ?? '',
             $data['email'] ?? '',
-            $data['password'] ?? ''
+            $data['password'] ?? '',
+            $data['latitude'] ?? '',
+            $data['longitude'] ?? '',
         );
         $code = $user->getValidationCode();
+
         $text = sprintf("Por favor, valida tu cuenta con el siguiente código %s", $code);
-        $from = $_ENV['SUPPORT_EMAIL'] ??'';
+
         $email = (new Email())
-            ->from($from)
+            ->from($_ENV['SUPPORT_EMAIL'])
             ->to($user->getEmail())
             ->subject('Validar cuenta')
             ->text($text);

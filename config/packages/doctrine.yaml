@@ -54,6 +54,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/MiMascota/Shared/Infrastructure/Doctrine'
                 prefix: 'App\MiMascota\Shared\Domain\ValueObject'
                 alias: Shared
+            Location:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/MiMascota/Locations/Infrastructure/Doctrine'
+                prefix: 'App\MiMascota\Locations\Domain'
+                alias: Location
+
         controller_resolver:
             auto_mapping: false
 
