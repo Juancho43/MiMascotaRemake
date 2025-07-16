@@ -2,8 +2,6 @@
 
 namespace App\Controller\User;
 
-use App\MiMascota\Locations\Application\LocationManager;
-use App\MiMascota\Locations\Infrastructure\ReverseGeocodeClient;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\Infrastructure\Mailer;
 use App\MiMascota\Shared\SerializerTrait;
@@ -11,19 +9,15 @@ use App\MiMascota\Users\Application\UserRegister;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserRegisterController extends AbstractController
 {
     use ApiResponseTrait,SerializerTrait;
-    public function __construct(
-        private Mailer $mailer,
-
-    )
+    public function __construct(private readonly Mailer $mailer)
     {
-
     }
+
     #[Route('/user/register', name: 'user_register', methods:  ['POST'])]
     public function __invoke(Request $request, UserRegister $creator): Response
     {
@@ -39,14 +33,18 @@ class UserRegisterController extends AbstractController
 
         $code = $user->getValidationCode();
 
-        $text = sprintf("Por favor, valida tu cuenta con el siguiente código %s", $code);
-        $this->mailer->sendEmail(
+
+        $response = $this->mailer->sendEmail(
             $_ENV['SUPPORT_EMAIL'],
             $user->getEmail(),
             'Validar cuenta',
-            $text
+            sprintf("Por favor, valida tu cuenta con el siguiente código %s", $code)
         );
-        
-        return $this->successResponse($this->serialize($user), "Usuario creado correctamente", Response::HTTP_CREATED);
+
+        if ($response) {
+            return $this->successResponse($this->serialize($user), "Usuario creado correctamente", Response::HTTP_CREATED);
+        }else{
+            return $response;
+        }
     }
 }
