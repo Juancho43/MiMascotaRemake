@@ -19,7 +19,7 @@ class User
 {
     private Collection $journals;
     private UserToken $token;
-//    private ?UserImage $image = null;
+    private UserImage $image;
     private UserLocation $location;
 
 
@@ -137,5 +137,14 @@ class User
         $this->location = $location;
     }
 
+    public function setImage(UserImage $image): void
+    {
+        $this->image = $image;
+    }
+    public function getImage() : ?UserImage
+    {
+        return $this->image;
+    }
+    
 }
 

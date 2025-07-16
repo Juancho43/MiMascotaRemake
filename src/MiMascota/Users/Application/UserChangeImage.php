@@ -22,7 +22,7 @@ class UserChangeImage
     public function __invoke(
         UploadedFile $imageFile,
         string $userId
-    )
+    ) :? UserImage
     {
 
         $user = $this->userRepository->search($userId);
@@ -35,7 +35,8 @@ class UserChangeImage
             $userId,
         );
         $user_image = new UserImage(Uuid::uuid4()->toString(),$user,$image,1);
-        $user->addImage($user_image);
+        $user->setImage($user_image);
         $this->userRepository->save($user);
+        return $user->getImage();
     }
 }
