@@ -127,7 +127,7 @@ class User
     {
         $this->timeStamp = new TimeStamp();
     }
-    public function getLocation(): UserLocation
+    public function getUserLocation(): UserLocation
     {
         return $this->location;
     }
@@ -145,6 +145,6 @@ class User
     {
         return $this->image;
     }
-    
+
 }
 

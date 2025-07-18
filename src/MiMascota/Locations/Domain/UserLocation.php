@@ -4,7 +4,7 @@ use App\MiMascota\Users\Domain\User;
 
 class UserLocation
 {
-    private string $id;
+    private readonly string $id;
     private User $user;
     private Location $location;
 
@@ -15,4 +15,33 @@ class UserLocation
         $this->user = $user;
         $this->location = $location;
     }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getLocation(): Location
+    {
+        return $this->location;
+    }
+
+    public function setLocation(Location $location): void
+    {
+        $this->location = $location;
+    }
+
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
+    }
+
+
+
+
 }
