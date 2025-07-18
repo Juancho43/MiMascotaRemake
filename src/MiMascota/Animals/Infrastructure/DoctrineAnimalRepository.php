@@ -42,11 +42,36 @@ class DoctrineAnimalRepository extends ServiceEntityRepository implements Animal
 
     public function searchByName(string $name): ?Animal
     {
-        // TODO: Implement searchByName() method.
+        return $this->findOneBy(['name' => $name]);
+        //Todo :filter by user
     }
 
     public function update(Animal $animal): void
     {
         // TODO: Implement update() method.
+    }
+
+    public function getAnimals(string $userId): array
+    {
+        return $this->createQueryBuilder('animal')
+            ->select('animal.name','journal.id AS journalId' ,'imageFile.path')
+            ->join('animal.journal', 'journal')
+            ->leftJoin('animal.images', 'images')
+            ->leftJoin('images.image', 'imageFile')
+            ->where('journal.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getAnimal(string $journalId): ?Animal
+    {
+        return $this->createQueryBuilder('animal')
+            ->innerJoin('animal.journal', 'journal')
+            ->select('animal')
+            ->where('journal.id = :journalId')
+            ->setParameter('journalId', $journalId)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

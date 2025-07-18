@@ -2,6 +2,7 @@
 
 namespace App\Controller\Journal;
 
+use App\MiMascota\Journals\Application\JournalGetData;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
@@ -21,21 +22,14 @@ class JournalGetController extends AbstractController
         Request             $request,
         CheckToken          $login,
         string              $id,
-        JournalRepository   $repository,
-        NormalizerInterface $normalizer
+        JournalGetData      $journalGetData,
     ): JsonResponse
     {
-        $this->checkAuthorization($request, $login);
+        $this->checkAuthorization($request);
 
-        $data = $repository->getOneById($id);
-        $normalizedData = $normalizer->normalize($data, null, [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
-        ]);
 
         return $this->successResponse(
-            $normalizedData,
+            $journalGetData->__invoke($id),
             'Journal retrieved successfully'
         );
 

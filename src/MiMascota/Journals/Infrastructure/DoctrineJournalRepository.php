@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Journals\Infrastructure;
 
+use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -33,21 +34,23 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
 
     public function getOneById(string $id): ?array
     {
-       return $this->createQueryBuilder('journal')
-                   ->select('journal.id AS id', 'animal.name AS animalName', 'image.id AS imageId', 'imageFile.path AS imagePath')
-                   ->innerJoin('journal.animal', 'animal')
-                   ->leftJoin('animal.images','image')
-                   ->leftJoin('image.image', 'imageFile')
-                   ->where('journal.id = :id')
-                   ->setParameter('id', $id)
-                   ->getQuery()
-                   ->getOneOrNullResult();
-       }
+        return $this->createQueryBuilder('journal')
+            ->select('journal.id AS id', 'animal.name AS animalName', 'image.id AS imageId', 'imageFile.path AS imagePath')
+            ->innerJoin('journal.animal', 'animal')
+            ->leftJoin('animal.images', 'image')
+            ->leftJoin('image.image', 'imageFile')
+            ->where('journal.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function save(Journal $journal): void
     {
         $this->getEntityManager()->persist($journal);
         $this->getEntityManager()->flush();
     }
+
     public function remove(Journal $user): void
     {
         // TODO: Implement remove() method.
@@ -59,20 +62,32 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
         // TODO: Implement update() method.
     }
 
-  public function getEntries(string $journalId, int $page = 1, int $limit = 3): Collection
-{
-    $offset = ($page - 1) * $limit;
-    $entries = $this->createQueryBuilder('journal')
-        ->innerJoin('journal.entries', 'entry')
-        ->select('entry.content','entry.date','entry.title', 'entry.id')  // Properly alias the entry
-        ->where('journal.id = :journalId')
-        ->setParameter('journalId', $journalId)
-        ->setFirstResult($offset)
-        ->setMaxResults($limit)
-        ->orderBy('entry.date', 'DESC')
-        ->getQuery()
-        ->getResult();
+    public function getEntries(string $journalId, int $page = 1, int $limit = 3): Collection
+    {
+        $offset = ($page - 1) * $limit;
+        $entries = $this->createQueryBuilder('journal')
+            ->innerJoin('journal.entries', 'entry')
+            ->select('entry.content', 'entry.date', 'entry.title', 'entry.id')
+            ->where('journal.id = :journalId')
+            ->setParameter('journalId', $journalId)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->orderBy('entry.date', 'DESC')
+            ->getQuery()
+            ->getResult();
 
-    return new ArrayCollection($entries);
-}
+        return new ArrayCollection($entries);
+    }
+
+
+   public function getAnimal(string $journalId): ?array
+    {
+        return $this->createQueryBuilder('journal')
+            ->innerJoin('journal.animal', 'animal')
+            ->select('journal.id AS journalId', 'animal')
+            ->where('journal.id = :journalId')
+            ->setParameter('journalId', $journalId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

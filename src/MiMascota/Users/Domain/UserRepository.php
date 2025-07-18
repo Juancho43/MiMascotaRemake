@@ -14,5 +14,4 @@ interface UserRepository
 
     public function remove(User $user): void;
 
-    public function getJournals(string $userId): Collection;
 }

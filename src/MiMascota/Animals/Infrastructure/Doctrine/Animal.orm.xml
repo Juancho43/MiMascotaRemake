@@ -7,13 +7,16 @@
     <entity name="App\MiMascota\Animals\Domain\Animal" table="animals">
         <id name="id" type="string" column="id" length="36" />
         <field name="name" column="name" length="255" />
+        <field name="description" column="description" type="text" />
+        <field name="color" column="color" length="10" />
+        <field name="size" column="size" length="20" />
         <field name="breed" column="breed" length="255" />
-        <field name="gender" column="gender" length="255" />
-        <field name="age" column="age" type="integer" />
+        <field name="gender" column="gender" length="6" />
+        <field name="birthDate" column="birthdate" type="date" />
         <field name="weight" column="weight" type="float" />
         <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
         <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
-        <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="journal">
+        <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="animal">
             <join-column name="journal_id" />
         </one-to-one>
         <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\AnimalImage" mapped-by="animal">

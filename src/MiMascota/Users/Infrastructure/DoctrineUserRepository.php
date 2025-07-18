@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Users\Infrastructure;
 
+use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -55,17 +56,19 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
     }
 
 
-    public function getJournals(string $userId): Collection
+    public function getJournals(string $userId): array
     {
-       return new ArrayCollection(
-           $this->createQueryBuilder('users')
-               ->join('users.journals', 'journals')
-               ->join('journals.animal', 'animals')
-               ->select('animals.name', 'journals.id')
-               ->where('users.id = :userId')
+       return
+           $this->createQueryBuilder('user')
+               ->select('user','animal.name', 'journals.id','image.path')
+               ->join('user.journals', 'journals')
+               ->join('journals.animal', 'animal')
+               ->leftJoin('animal.images', 'images')
+               ->leftJoin('images.image', 'image')
+               ->where('user.id = :userId')
                ->setParameter('userId', $userId)
                ->getQuery()
-               ->getResult()
-       );
+               ->getResult();
+
     }
 }

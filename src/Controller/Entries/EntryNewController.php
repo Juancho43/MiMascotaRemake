@@ -2,23 +2,23 @@
 
 namespace App\Controller\Entries;
 
+use App\MiMascota\Entries\Application\DTO\EntryCreatedResponse;
 use App\MiMascota\Journals\Application\AddEntry;
-use App\MiMascota\Users\Infrastructure\CheckToken;
+use App\MiMascota\Shared\ApiResponseTrait;
+use App\MiMascota\Shared\AuthorizationCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EntryNewController extends AbstractController
 {
+    use ApiResponseTrait, AuthorizationCheckerTrait;
     #[Route('/entry', name: 'entry_create', methods: ['POST'])]
-    public function create(Request $request, CheckToken $login, AddEntry $creator) : Response
+    public function create(Request $request, AddEntry $creator) : Response
     {
-        $user =$login->__invoke($request->headers->get('Authorization'));
-        if(!$user) {
-            return new JsonResponse(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-        }
+        $this->checkAuthorization($request);
+
         $data = $request->toArray();
         $entry = $creator->__invoke(
             $data['journal_id'],
@@ -26,21 +26,8 @@ class EntryNewController extends AbstractController
             $data['content'],
             $data['date']
         );
-        return new JsonResponse(
-            [
-                'message' => 'Entry created successfully!',
-                'entry' => [
-                    'id' => $entry->getId(),
-                    'title' => $entry->getTitle(),
-                    'content' => $entry->getContent(),
-                    'date' => $entry->getDate()->format('Y-m-d H:i:s'),
-//                    'journal' => [
-//                        'id' => $entry->getJournal()->getId(),
-//                        'animal' => $entry->getJournal()->getAnimal()->__toString(),
-//                    ],
-                ],
-            ],
-            Response::HTTP_CREATED
-        );
+
+        return $this->successResponse(EntryCreatedResponse::fromEntity($entry), 'Entry created successfully', Response::HTTP_CREATED);
+
     }
 }

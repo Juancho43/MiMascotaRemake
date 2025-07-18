@@ -25,6 +25,8 @@ class Journal
         private readonly Animal $animal,
     ) {
         $this->entries = new ArrayCollection();
+        $this->timeStamp = new TimeStamp();
+        $this->softDelete = new SoftDelete();
     }
 
 

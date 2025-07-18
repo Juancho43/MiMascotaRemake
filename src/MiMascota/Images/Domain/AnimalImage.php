@@ -15,5 +15,8 @@ class AnimalImage
     ) {
 
     }
-
+    public function setAnimal(?Animal $animal): void
+    {
+        $this->animal = $animal;
+    }
 }
