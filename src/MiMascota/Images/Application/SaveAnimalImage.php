@@ -2,12 +2,16 @@
 
 namespace App\MiMascota\Images\Application;
 
+use App\MiMascota\Animals\Domain\AnimalRepository;
+use App\MiMascota\Images\Domain\AnimalImage;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class SaveAnimalImage
 {
     public function __construct(
-        private SaveImage $saveImage,
+        private readonly SaveImage $saveImage,
+        private readonly AnimalRepository $animalRepository,
     )
     {
 
@@ -15,13 +19,18 @@ class SaveAnimalImage
 
     public function __invoke(
         UploadedFile $imageFile,
-        string $animalId
+        string $animalId,
+        int $position
     ): ?string {
-        $path = $this->saveImage->__invoke(
+        $animal = $this->animalRepository->search($animalId);
+        $image = $this->saveImage->__invoke(
             $imageFile,
             'animal',
             $animalId,
         );
-        return $path->getPath();
+        $animalImage = AnimalImage::create(Uuid::uuid4()->toString(),$animal,$image,$position);
+        $animal->addImage($animalImage);
+        $this->animalRepository->save($animal);
+        return $image->getPath();
     }
 }

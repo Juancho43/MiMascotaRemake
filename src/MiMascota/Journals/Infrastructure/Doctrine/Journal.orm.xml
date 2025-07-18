@@ -11,8 +11,7 @@
         <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="journals">
             <join-column name="user_id" />
         </many-to-one>
-        <one-to-one field="animal" target-entity="App\MiMascota\Animals\Domain\Animal" inversed-by="journal">
-            <join-column name="animal_id" />
+        <one-to-one field="animal" target-entity="App\MiMascota\Animals\Domain\Animal" inversed-by="journal" orphan-removal="true" mapped-by="journal">
             <cascade>
                 <cascade-persist />
                 <cascade-remove />

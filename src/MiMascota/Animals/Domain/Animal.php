@@ -117,7 +117,6 @@ class Animal
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
-            $image->setAnimal($this); // Asumiendo que tienes este método
         }
     }
 
@@ -126,9 +125,7 @@ class Animal
      */
     public function removeImage(AnimalImage $image): void
     {
-        if ($this->images->removeElement($image)) {
-            $image->setAnimal(null); // Asumiendo que tienes este método
-        }
+        $this->images->removeElement($image);
     }
 
     /**

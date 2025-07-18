@@ -15,8 +15,14 @@ class AnimalImage
     ) {
 
     }
-    public function setAnimal(?Animal $animal): void
-    {
-        $this->animal = $animal;
+
+    public static function create(
+        string $id,
+        Animal $animal,
+        Image $image,
+        int $position
+    ): self {
+        return new self($id, $animal, $image, $position);
     }
+
 }

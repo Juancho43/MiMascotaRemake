@@ -1,6 +1,7 @@
 <?php
 namespace App\MiMascota\Entries\Domain;
 
+use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\EntryImage;
 use App\MiMascota\Images\Domain\Image;
 use App\MiMascota\Images\Domain\ImageableInterface;
@@ -12,7 +13,7 @@ use Doctrine\Common\Collections\Collection;
 
 class Entry
 {
-    private EntryImage $images;
+    private Collection $images;
     private SoftDelete $softDelete;
     private TimeStamp $timeStamp;
 
@@ -23,7 +24,9 @@ class Entry
         private readonly \DateTime $date,
         private Journal $journal,
     ) {
-
+        $this->images = new ArrayCollection();
+        $this->timeStamp = new TimeStamp();
+        $this->softDelete = new SoftDelete();
     }
 
 
@@ -60,7 +63,39 @@ class Entry
     {
         return $this->date;
     }
+    /**
+     * @return Collection<int, AnimalImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
 
+    /**
+     * Añadir una imagen al animal
+     */
+    public function addImage(EntryImage $image): void
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+    }
+
+    /**
+     * Remover una imagen del animal
+     */
+    public function removeImage(EntryImage $image): void
+    {
+        $this->images->removeElement($image);
+    }
+
+    /**
+     * Obtener imágenes como array (si lo necesitas)
+     */
+    public function getImagesArray(): array
+    {
+        return $this->images->toArray();
+    }
 
 
 }

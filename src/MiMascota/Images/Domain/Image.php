@@ -20,7 +20,8 @@ class Image
         private ?string $imageableId = null,
     )
     {
-
+        $this->timeStamp = new TimeStamp();
+        $this->softDelete = new SoftDelete();
     }
 
     public static function create(
@@ -33,7 +34,7 @@ class Image
         ?string $imageableId = null
     ): self
     {
-        return new self($id, $name, $path, $type, $size, $imageableType, $imageableId, $type);
+        return new self($id, $name, $path, $type, $size, $imageableType, $imageableId);
     }
 
 

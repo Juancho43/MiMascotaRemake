@@ -21,7 +21,7 @@ class SaveImage
         UploadedFile $file,
          string $imageableType,
          string $imageableId,
-    )
+    ): ?Image
     {
         $name= (new \DateTime())->getTimestamp();
         $path = 'images/' . $imageableType . '/' . $imageableId . '/' . $file->getClientOriginalName();
