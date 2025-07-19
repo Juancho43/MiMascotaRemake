@@ -10,20 +10,20 @@ class UserValidate
     {
     }
 
-    public function __invoke(string $email, string $code): ?string
+    public function __invoke(string $email, string $code): string
     {
-        $user = $this->repository->findByMail($email);
-
-        if ($user === null) {
-            return null;
+        try {
+            $user = $this->repository->findByMail($email);
+            if ($user === null) {
+                throw new \Exception('User not found');
+            }
+            $user->verifyCodeAndLogin($code);
+            $this->repository->save($user);
+            return $user->getToken();
+        } catch (\Exception $e) {
+            throw $e;
         }
 
-        $response = $user->verifyCodeAndLogin($code);
-        if($response) {
-            $this->repository->save($user);
-        };
-
-        return $user->getToken();
     }
 
 }

@@ -13,9 +13,7 @@ class UserLogin
 
     }
 
-    /**
-     * @throws \Exception
-     */
+
     public function __invoke(string $email, string $password): ?string
     {
         try {
@@ -28,7 +26,7 @@ class UserLogin
             $this->repository->save($user);
             return $user->getToken();
         } catch (\Exception $e) {
-           return null;
+           throw $e;
         }
 
     }

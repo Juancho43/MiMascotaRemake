@@ -14,16 +14,16 @@ class UserLoginController extends AbstractController
     #[Route('/user/login', name: 'user_login', methods:  ['POST'])]
     public function login(Request $request, UserLogin $userLogin) : Response
     {
-
-        $data = $request->toArray();
-        $token = $userLogin->__invoke(
-            $data['email'] ?? '',
-            $data['password'] ?? ''
-        );
-        return $this->successResponse(
-            [
-            'token' => $token,
-            ], "Usuario autenticado correctamente");
+        try {
+            $data = $request->toArray();
+            $token = $userLogin->__invoke(
+                $data['email'] ?? '',
+                $data['password'] ?? ''
+            );
+            return $this->successResponse($token, "Usuario autenticado correctamente");
+        }catch (\Exception $exception){
+            return $this->errorResponse($exception->getMessage());
+        }
 
     }
 }

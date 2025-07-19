@@ -13,10 +13,10 @@ use Doctrine\Common\Collections\Collection;
 class Journal
 {
 
-    /** @var array<Entry> */
     private Collection $entries;
     private TimeStamp $timeStamp;
     private SoftDelete $softDelete;
+
 
 
     private function __construct(
@@ -40,16 +40,6 @@ class Journal
         return $this->id;
     }
 
-    public function __toString(): string
-    {
-        return sprintf(
-            'Journals ID: %s, User: %s, Animal: %s',
-            $this->id,
-            $this->user->getId(),
-            $this->animal
-        );
-    }
-
     public function getAnimal(): Animal
     {
         return $this->animal;
@@ -59,16 +49,34 @@ class Journal
         return $this->entries;
     }
 
-    public function setEntries(Collection $entries): void
+    public function getEntryById($id): ?Entry
     {
-        $this->entries = $entries;
+        foreach ($this->entries as $entry) {
+            if ($entry->getId() === $id) {
+                return $entry;
+            }
+        }
+        return null;
     }
-
     public function addEntry(Entry $entry): void
     {
         if (!$this->entries->contains($entry)) {
             $this->entries->add($entry);
         }
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+    public function getTimeStamp(): TimeStamp
+    {
+        return $this->timeStamp;
+    }
+
+    public function getSoftDelete(): SoftDelete
+    {
+        return $this->softDelete;
     }
 
 }

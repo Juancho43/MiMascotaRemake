@@ -21,30 +21,29 @@ class UserRegisterController extends AbstractController
     #[Route('/user/register', name: 'user_register', methods:  ['POST'])]
     public function __invoke(Request $request, UserRegister $creator): Response
     {
+        try {
+            $data = $request->toArray();
+            $user = $creator->__invoke(
+                $data['name'] ?? '',
+                $data['email'] ?? '',
+                $data['password'] ?? '',
+                $data['latitude'] ?? '',
+                $data['longitude'] ?? '',
+            );
 
-        $data = $request->toArray();
-        $user = $creator->__invoke(
-            $data['name'] ?? '',
-            $data['email'] ?? '',
-            $data['password'] ?? '',
-            $data['latitude'] ?? '',
-            $data['longitude'] ?? '',
-        );
+            $code = $user->getValidationCode();
+            $this->mailer->sendEmail(
+                $_ENV['SUPPORT_EMAIL'],
+                $user->getEmail(),
+                'Validar cuenta',
+                sprintf("Por favor, valida tu cuenta con el siguiente código %s", $code)
+            );
 
-        $code = $user->getValidationCode();
-
-
-        $response = $this->mailer->sendEmail(
-            $_ENV['SUPPORT_EMAIL'],
-            $user->getEmail(),
-            'Validar cuenta',
-            sprintf("Por favor, valida tu cuenta con el siguiente código %s", $code)
-        );
-
-        if ($response) {
-            return $this->successResponse($this->serialize($user), "Usuario creado correctamente", Response::HTTP_CREATED);
-        }else{
-            return $response;
+            return $this->successResponse($user, "Usuario creado correctamente", Response::HTTP_CREATED);
+        }catch (\Exception $exception){
+            return $this->errorResponse($exception->getMessage());
         }
+
+
     }
 }

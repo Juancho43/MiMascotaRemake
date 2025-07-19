@@ -15,15 +15,17 @@ class UserValidationController extends AbstractController
     #[Route('/user/validate', name: 'user_validate', methods: ['POST'])]
     public function __invoke(Request $request, UserValidate $userValidate) : JsonResponse
     {
-        $data = $request->toArray();
-        $response = $userValidate->__invoke(
-            $data['email'],
-            $data['code'],
-        );
-        if ($response !== null) {
+        try{
+            $data = $request->toArray();
+            $response = $userValidate->__invoke(
+                $data['email'],
+                $data['code'],
+            );
             return $this->successResponse(['token' => $response,], "Usuario validado correctamente");
-        } else {
-            return $this->errorResponse("Error al validar el usuario");
+        }catch (\Exception $exception){
+            return $this->errorResponse("Error al validar el usuario: " . $exception->getMessage());
         }
+
+
     }
 }

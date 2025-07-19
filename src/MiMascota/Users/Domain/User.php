@@ -4,7 +4,6 @@ namespace App\MiMascota\Users\Domain;
 
 use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
-use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
@@ -27,11 +26,10 @@ class User
     private SoftDelete $softDelete;
 
  public function __construct(
-     private readonly string       $id,
-     private string                $name,
-     private UserEmail              $email,
-     private UserPassword $password,
-
+    private readonly string        $id,
+    private string                 $name,
+    private UserEmail              $email,
+    private UserPassword           $password,
 
  ) {
         $this->token = UserToken::generate()->reset();
@@ -39,13 +37,7 @@ class User
         $this->timeStamp = new TimeStamp();
         $this->softDelete = new SoftDelete();
  }
-    /**
-     * @param string $id
-     * @param string $name
-     * @param string $email
-     * @param UserPassword $password
-     * @return self
-     */
+
     public static function create(string $id, string $name, UserEmail $email, UserPassword $password): self
     {
         return new self($id, $name, $email, $password);
@@ -77,10 +69,8 @@ class User
 
     public function changePassword(string $password): bool
     {
-        if (empty($password)) {
-            return false;
-        }
         $this->password = UserPassword::create($password);
+        $this->token->reset();
         return true;
     }
 
@@ -135,9 +125,20 @@ class User
         }
         return $this->token->getValue();
     }
-    public function logout(): void
+    public function logout(): bool
     {
-        $this->token->reset();
+        try {
+            if($this->getToken() == null) {
+                throw new \Exception("User logout failed");
+            }
+
+            $this->token->reset();
+            return true;
+        }catch (\Exception $exception){
+            throw $exception;
+        }
+
+
     }
 
 

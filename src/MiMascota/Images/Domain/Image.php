@@ -10,7 +10,7 @@ class Image
 
     private SoftDelete $softDelete;
     private TimeStamp $timeStamp;
-    public function __construct(
+    private function __construct(
         private readonly string $id,
         private readonly string $name,
         private readonly string $path,
@@ -62,19 +62,6 @@ class Image
     {
         return $this->size;
     }
-    public function setImageable(?ImageableInterface $imageable): self
-    {
-
-        if ($imageable) {
-            $this->imageableType = get_class($imageable);
-            $this->imageableId = $imageable->getId();
-        } else {
-            $this->imageableType = null;
-            $this->imageableId = null;
-        }
-
-        return $this;
-    }
 
     public function getImageableId(): ?string
     {
@@ -94,6 +81,16 @@ class Image
     public function setImageableType(?string $imageableType): void
     {
         $this->imageableType = $imageableType;
+    }
+
+    public function getSoftDelete(): SoftDelete
+    {
+        return $this->softDelete;
+    }
+
+    public function getTimeStamp(): TimeStamp
+    {
+        return $this->timeStamp;
     }
 
 

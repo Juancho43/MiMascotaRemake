@@ -14,14 +14,19 @@ class UserLogout
 
     public function __invoke(string $token): void
     {
-        $user = $this->repository->findByToken($token);
+        try {
+            $user = $this->repository->findByToken($token);
 
-        if ($user === null) {
-            throw new \Exception('User not found or already logged out');
+            if ($user === null) {
+                throw new \Exception('User not found or already logged out');
+            }
+
+            $user->logout();
+            $this->repository->save($user);
+        }catch (\Exception $exception){
+            throw new \Exception($exception->getMessage());
         }
 
-        $user->logout();
-        $this->repository->save($user);
     }
 
 

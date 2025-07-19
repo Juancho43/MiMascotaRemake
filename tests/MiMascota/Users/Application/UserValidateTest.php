@@ -57,6 +57,7 @@ class UserValidateTest extends KernelTestCase
 
     public function test__invoke_fails()
     {
+        $this->expectException(\Exception::class);
         $name = "Juan";
         $email= "Juan@mail.com";
         $password = "Pepe";

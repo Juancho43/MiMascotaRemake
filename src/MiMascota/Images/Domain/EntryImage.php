@@ -7,7 +7,7 @@ use App\MiMascota\Entries\Domain\Entry;
 
 class EntryImage
 {
-    public function __construct(
+    private function __construct(
         private readonly string $id,
         private Entry $entry,
         private Image $image,
@@ -16,5 +16,36 @@ class EntryImage
     ) {
 
     }
+
+    public static function create($id, Entry $entry, Image $image, int $position): self{
+        return new self(
+            id: $id,
+            entry: $entry,
+            image: $image,
+            position: $position
+        );
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getEntry(): Entry
+    {
+        return $this->entry;
+    }
+
+    public function getImage(): Image
+    {
+        return $this->image;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+
 
 }

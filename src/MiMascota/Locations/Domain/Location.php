@@ -8,7 +8,7 @@ use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 class Location
 {
 
-    public function __construct
+    private function __construct
     (
         private readonly string $id,
         private string $city,
