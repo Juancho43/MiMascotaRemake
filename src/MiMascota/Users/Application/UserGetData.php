@@ -23,7 +23,7 @@ class UserGetData
 
         return [
 //            'id' => $user->getId(),
-            'email' => $user->getEmailObject()->getEmail(),
+            'email' => $user->getEmailObject()->getValue(),
             'name' => $user->getName(),
 
 //            'surname' => $user->getSurname(),

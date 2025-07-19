@@ -25,7 +25,7 @@ class UserRegister
          $user = User::create(
              Uuid::uuid4()->toString(),
              $name,
-             UserEmail::create($email),
+             UserEmail::createNew($email),
              UserPassword::create($password),
          );
 

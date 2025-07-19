@@ -34,6 +34,7 @@ class User
 
 
  ) {
+        $this->token = UserToken::generate()->reset();
         $this->journals = new ArrayCollection();
         $this->timeStamp = new TimeStamp();
         $this->softDelete = new SoftDelete();
@@ -57,7 +58,7 @@ class User
 
     public function getEmail(): string
     {
-        return $this->email->getEmail();
+        return $this->email->getValue();
     }
     public function getValidationCode(): string
     {
@@ -74,9 +75,13 @@ class User
         return $this->password;
     }
 
-    public function changePassword(string $password): void
+    public function changePassword(string $password): bool
     {
+        if (empty($password)) {
+            return false;
+        }
         $this->password = UserPassword::create($password);
+        return true;
     }
 
 
@@ -108,25 +113,34 @@ class User
         return $this->token->getValue();
     }
 
-    public function getTokenObject(): UserToken
+
+    public function login(string $password): string
     {
-        return $this->token;
+        try {
+            $this->getPassword()->verify($password);
+            if(!$this->getEmailObject()->isVerified()){
+                throw new \Exception("Email not verified");
+            }
+
+            return $this->setToken();
+        } catch (\Exception $exception){
+            throw new \Exception("User login failed" . $exception);
+        }
     }
 
-    public function login(): void{
-        $this->token = UserToken::generate();
-
+    public function setToken() : string
+    {
+        if ($this->getToken() == null) {
+            $this->token = UserToken::generate();
+        }
+        return $this->token->getValue();
     }
-
     public function logout(): void
     {
         $this->token->reset();
     }
 
-    public function setTimeStamp(): void
-    {
-        $this->timeStamp = new TimeStamp();
-    }
+
     public function getUserLocation(): UserLocation
     {
         return $this->location;
@@ -144,6 +158,14 @@ class User
     public function getImage() : ?UserImage
     {
         return $this->image;
+    }
+    public function verifyCodeAndLogin(string $code) : bool
+    {
+        $response = $this->email->verifyCode($code);
+        if ($response) {
+            $this->setToken();
+        }
+        return $response;
     }
 
 }

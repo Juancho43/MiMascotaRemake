@@ -13,13 +13,13 @@ class UserValidate
     public function __invoke(string $email, string $code): ?string
     {
         $user = $this->repository->findByMail($email);
+
         if ($user === null) {
             return null;
         }
 
-        $response = $user->getEmailObject()->verifyCode($code);
+        $response = $user->verifyCodeAndLogin($code);
         if($response) {
-            $user->login();
             $this->repository->save($user);
         };
 

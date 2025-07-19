@@ -11,14 +11,15 @@ class UserChangePassword
     {
     }
 
-    public function __invoke(string $userId, string $newPassword): void
+    public function __invoke(string $email, string $newPassword): bool
     {
-        $user = $this->repository->search($userId);
+        $user = $this->repository->findByMail($email);
         if ($user === null) {
-            throw new \Exception("User not found");
+            return false;
         }
 
-        $user->changePassword($newPassword);
+        $response = $user->changePassword($newPassword);
         $this->repository->save($user);
+        return $response;
     }
 }

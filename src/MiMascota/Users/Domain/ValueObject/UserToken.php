@@ -4,6 +4,7 @@ namespace App\MiMascota\Users\Domain\ValueObject;
 
 class UserToken
 {
+
     private ?string $value;
     private ?\DateTime $createdAt;
     private ?\DateTime $expireAt;
@@ -37,16 +38,17 @@ class UserToken
         return $this->value;
     }
 
-    public function reset() : void
+    public function reset() : self
     {
         $this->value = null;
         $this->createdAt = null;
         $this->expireAt = null;
+        return $this;
     }
 
     public function isExpired() : bool
     {
-        return $this->value !== null && $this->expireAt > new \DateTime();
+        return $this->expireAt < new \DateTime();
     }
 
     public function checkExpired(): void

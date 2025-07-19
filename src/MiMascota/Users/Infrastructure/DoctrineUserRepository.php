@@ -29,7 +29,7 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
      */
     public function search(string $id): ?User
     {
-        return $this->getEntityManager()->find(User::class, $id);
+        return $this->findOneBy(['id' => $id]);
     }
 
     public function save(User $user): void

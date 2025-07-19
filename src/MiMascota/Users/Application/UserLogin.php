@@ -18,21 +18,19 @@ class UserLogin
      */
     public function __invoke(string $email, string $password): ?string
     {
-        $user = $this->repository->findByMail( $email);
+        try {
+            $user = $this->repository->findByMail($email);
+            if( $user === null) {
+                throw new \Exception('User not found');
+            }
 
-        if(!$user->getEmailObject()->isVerified()) {
-            throw new \InvalidArgumentException("Email not verified");
-        }
-
-        $user->getPassword()->verify($password);
-
-        if ($user->getToken() !== null ) {
+            $user->login($password);
+            $this->repository->save($user);
             return $user->getToken();
+        } catch (\Exception $e) {
+           return null;
         }
 
-        $user->login();
-        $this->repository->save($user);
-        return $user->getToken();
     }
 
 }
