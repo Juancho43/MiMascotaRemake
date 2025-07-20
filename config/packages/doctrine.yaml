@@ -60,6 +60,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/MiMascota/Locations/Infrastructure/Doctrine'
                 prefix: 'App\MiMascota\Locations\Domain'
                 alias: Location
+            Forum:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/MiMascota/Forums/Infrastructure/Doctrine'
+                prefix: 'App\MiMascota\Forums\Domain'
+                alias: Forum
+            Post:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/MiMascota/Posts/Infrastructure/Doctrine'
+                prefix: 'App\MiMascota\Posts\Domain'
+                alias: Post
 
         controller_resolver:
             auto_mapping: false

@@ -6,10 +6,17 @@
 
     <entity name="App\MiMascota\Users\Domain\User" table="users">
         <id name="id" type="string" column="id" length="36" />
-        <field name="name" column="name" length="255" />
+        <embedded name="name" class="App\MiMascota\Users\Domain\ValueObject\UserName" use-column-prefix="false" />
+        <embedded name="telephone" class="App\MiMascota\Users\Domain\ValueObject\UserTelephone" use-column-prefix="false" />
         <embedded name="email" class="App\MiMascota\Users\Domain\ValueObject\UserEmail" use-column-prefix="false" />
-        <embedded name="token" class="App\MiMascota\Users\Domain\ValueObject\UserToken" use-column-prefix="false"/>
+        <one-to-many field="tokens" target-entity="App\MiMascota\Users\Domain\ValueObject\UserToken" mapped-by="user" />
         <embedded name="password" class="App\MiMascota\Users\Domain\ValueObject\UserPassword" use-column-prefix="false" />
+        <one-to-many field="preferences" target-entity="App\MiMascota\Users\Domain\ValueObject\UserPreference" mapped-by="user">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
         <one-to-many field="journals" target-entity="App\MiMascota\Journals\Domain\Journal" mapped-by="user">
             <cascade>
                 <cascade-persist/>
@@ -28,6 +35,7 @@
                 <cascade-remove/>
             </cascade>
         </one-to-one>
+        <one-to-many field="posts" target-entity="App\MiMascota\Posts\Domain\Post" mapped-by="user"/>
         <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
         <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
 

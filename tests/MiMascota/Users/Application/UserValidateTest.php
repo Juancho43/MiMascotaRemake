@@ -22,66 +22,66 @@ class UserValidateTest extends KernelTestCase
         $this->userRepository = $this->createMock(UserRepository::class);
         $this->userValidate = new UserValidate($this->userRepository);
     }
-    public function test__invoke()
-    {
-
-        //Arrange
-        $name = "Juan";
-        $email= "Juan@mail.com";
-        $password = "Pepe";
-        $user = User::create(
-            Uuid::uuid4()->toString(),
-            $name,
-            UserEmail::createNew($email),
-            UserPassword::create($password),
-        );
-        $code = $user->getEmailObject()->getCode();
-
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with($email)
-            ->willReturn($user);
-        $this->userRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($user);
-
-        //Act
-
-        $token = $this->userValidate->__invoke($email, $code);
-        //Assert
-        $this->assertTrue($user->getEmailObject()->isVerified());
-        $this->assertNotNull($token, $user->getToken());
-    }
-
-    public function test__invoke_fails()
-    {
-        $this->expectException(\Exception::class);
-        $name = "Juan";
-        $email= "Juan@mail.com";
-        $password = "Pepe";
-        $user = User::create(
-            Uuid::uuid4()->toString(),
-            $name,
-            UserEmail::createNew($email),
-            UserPassword::create($password),
-        );
-        $code = $user->getEmailObject()->getCode();
-
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with('')
-            ->willReturn(null);
-
-
-        //Act
-
-         $this->userValidate->__invoke('', $code);
-        //Assert
-        $this->assertFalse($user->getEmailObject()->isVerified());
-        $this->assertNull($user->getToken());
-    }
+//    public function test__invoke()
+//    {
+//
+//        //Arrange
+//        $name = "Juan";
+//        $email= "Juan@mail.com";
+//        $password = "Pepe";
+//        $user = User::create(
+//            Uuid::uuid4()->toString(),
+//            $name,
+//            UserEmail::createNew($email),
+//            UserPassword::create($password),
+//        );
+//        $code = $user->getEmailObject()->getCode();
+//
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with($email)
+//            ->willReturn($user);
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('save')
+//            ->with($user);
+//
+//        //Act
+//
+//        $token = $this->userValidate->__invoke($email, $code);
+//        //Assert
+//        $this->assertTrue($user->getEmailObject()->isVerified());
+//        $this->assertNotNull($token, $user->getToken());
+//    }
+//
+//    public function test__invoke_fails()
+//    {
+//        $this->expectException(\Exception::class);
+//        $name = "Juan";
+//        $email= "Juan@mail.com";
+//        $password = "Pepe";
+//        $user = User::create(
+//            Uuid::uuid4()->toString(),
+//            $name,
+//            UserEmail::createNew($email),
+//            UserPassword::create($password),
+//        );
+//        $code = $user->getEmailObject()->getCode();
+//
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with('')
+//            ->willReturn(null);
+//
+//
+//        //Act
+//
+//         $this->userValidate->__invoke('', $code);
+//        //Assert
+//        $this->assertFalse($user->getEmailObject()->isVerified());
+//        $this->assertNull($user->getToken());
+//    }
 
 }

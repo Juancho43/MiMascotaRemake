@@ -5,86 +5,69 @@ namespace App\Tests\MiMascota\Users\Domain;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
+use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
+use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase
 {
+    private User $user;
+
+    public function setUp(): void
+    {
+        $this->user = $this->generateMockUser('12345', 'John Doe', '1234567890', 'email@mail.com', 'password123');
+    }
+    private function generateMockUser($id, $name, $telephone, $email, $password)
+    {
+        return User::create(
+            $id,
+            UserName::create($name),
+            UserTelephone::create($telephone),
+            UserEmail::createNew($email),
+            UserPassword::create($password)
+        );
+    }
 
     public function testLogout(){
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@m.com"),
-            UserPassword::create('hola'),
-        );
-        $this->assertTrue($user->verifyCodeAndLogin($user->getValidationCode()));
-        $this->assertTrue($user->logout());
+        $this->assertTrue($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
+        $this->assertTrue($this->user->logout());
     }
 
     public function testLogoutFails()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("User logout failed");
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@s.com"),
-            UserPassword::create('hola'),
-            );
-        $user->logout();
+        $this->user->logout();
     }
     public function testVerifyCodeAndLogin()
     {
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@m.com"),
-            UserPassword::create('hola'),
-        );
-        $this->assertTrue($user->verifyCodeAndLogin($user->getValidationCode()));
-        $this->assertNotNull($user->getToken());
+
+        $this->assertTrue($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
+        $this->assertNotNull($this->user->getToken());
     }
 
 
     public function testRemoveJournal()
     {
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@m.com"),
-            UserPassword::create('hola'),
-        );
+
         $journal = $this->createMock(Journal::class);
-        $user->addJournal($journal);
-        $user->removeJournal($journal);
-        $this->assertEquals(0, $user->getJournals()->count());
+        $this->user->addJournal($journal);
+        $this->user->removeJournal($journal);
+        $this->assertEquals(0, $this->user->getJournals()->count());
     }
 
     public function testLogin()
     {
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@m.com"),
-            UserPassword::create('hola'),
-        );
-        $user->getEmailObject()->verifyCode($user->getValidationCode());
-        $this->assertNotNull($user->login('hola'));
-        $this->assertNotNull($user->getToken());
+        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
+        $this->assertNotNull($this->user->login('password123'));
+        $this->assertNotNull($this->user->getToken());
     }
 
     public function testCreate()
     {
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@m.com"),
-            UserPassword::create('hola'),
-        );
-
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals('12345', $user->getId());
+        $this->assertInstanceOf(User::class, $this->user);
+        $this->assertEquals('12345', $this->user->getId());
     }
 
     public function testChangePassword()
@@ -94,32 +77,40 @@ class UserTest extends TestCase
         $oldPassword = "OldPassword123";
         $newPassword = "NewPassword123";
         // Crear usuario con contraseña antigua
-        $user = User::create(
-            '12345',
-            $name,
-            UserEmail::createNew($email),
-            UserPassword::create($oldPassword)
-        );
+        $user = $this->generateMockUser('12', $name, '1234567890', $email, $oldPassword);
         $response = $user->changePassword($newPassword);
 
         $this->assertTrue($response);
         $this->assertTrue($user->getPassword()->verify($newPassword));
-        $this->assertNull($user->getToken());
+        $this->assertCount(0,$user->getToken());
 
     }
 
     public function testAddJournal()
     {
-        $user = User::create(
-            '12345',
-            'John Doe',
-            UserEmail::createNew("hola@m.com"),
-            UserPassword::create('hola'),
-        );
         $journal = $this->createMock(Journal::class);
-        $user->addJournal($journal);
-        $userJournals = $user->getJournals();
+        $this->user->addJournal($journal);
+        $userJournals = $this->user->getJournals();
         $this->assertInstanceOf(Journal::class, $userJournals->get(0));
 
+    }
+    public function testUserCanPost()
+    {
+        $this->user->addPost($this->createMock(\App\MiMascota\Posts\Domain\Post::class));
+        $this->assertCount(1, $this->user->getPosts());
+    }
+    public function testUserCanDeletePost()
+    {
+        $post = $this->createMock(\App\MiMascota\Posts\Domain\Post::class);
+        $this->user->addPost($post);
+        $this->user->removePost($post);
+        $this->assertCount(0, $this->user->getPosts());
+    }
+
+    public function testUserCanEditPost(){
+        $post = $this->createMock(\App\MiMascota\Posts\Domain\Post::class);
+        $this->user->addPost($post);
+        $post->edit('New Title', 'New Content');
+        $this->assertCount(1, $this->user->getPosts());
     }
 }

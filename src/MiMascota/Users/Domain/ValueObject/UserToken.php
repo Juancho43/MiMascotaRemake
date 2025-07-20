@@ -2,6 +2,8 @@
 
 namespace App\MiMascota\Users\Domain\ValueObject;
 
+use App\MiMascota\Users\Domain\User;
+
 class UserToken
 {
 
@@ -10,15 +12,17 @@ class UserToken
     private ?\DateTime $expireAt;
 
     private function __construct(
+        private string $id,
+        private User $user
     ) {
         $this->value = bin2hex(random_bytes(16));
         $this->createdAt = new \DateTime();
-        $this->expireAt = (new \DateTime())->modify('+7 days');
+        $this->genereExpiredAt();
     }
 
-    public static function generate(): self
+    public static function generate(string $id, User $user): self
     {
-        return new self();
+        return new self($id, $user);
     }
 
     public function getExpireAt(): ?\DateTime
@@ -46,15 +50,31 @@ class UserToken
         return $this;
     }
 
-    public function isExpired() : bool
+    private function isExpired($date = 'now') : bool
     {
-        return $this->expireAt < new \DateTime();
+        if (!$this->expireAt) {
+            throw new \Exception('Token has not been generated');
+        }
+        if ($this->expireAt < (new \DateTime($date))) {
+            return true;
+        }
+        $this->expireAt->modify('+7 day');
+        return false;
     }
 
-    public function checkExpired(): void
+
+
+
+
+    public function checkExpired($date = 'now'): bool
     {
-        if ($this->isExpired()) {
+        if ($this->isExpired($date)) {
             throw new \Exception('Token is expired');
         }
+        return false;
+    }
+    private function genereExpiredAt($days = '+7 days'): void
+    {
+        $this->expireAt = (new \DateTime())->modify($days);
     }
 }

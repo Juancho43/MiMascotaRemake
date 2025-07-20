@@ -4,43 +4,53 @@ namespace App\MiMascota\Users\Domain;
 
 use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Locations\Domain\UserLocation;
+use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
+use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
+use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
-use App\MiMascota\Locations\Domain\UserLocation;
+use Ramsey\Uuid\Uuid;
 
 class User
 {
+    private Collection $posts;
     private Collection $journals;
-    private UserToken $token;
+    private Collection $tokens;
+    private Collection $preferences;
+
+
     private UserImage $image;
     private UserLocation $location;
-
 
     private TimeStamp $timeStamp;
     private SoftDelete $softDelete;
 
  public function __construct(
     private readonly string        $id,
-    private string                 $name,
+    private UserName               $name,
+    private UserTelephone          $telephone,
     private UserEmail              $email,
     private UserPassword           $password,
 
+
  ) {
-        $this->token = UserToken::generate()->reset();
+        $this->posts = new ArrayCollection();
+        $this->preferences = new ArrayCollection();
+        $this->tokens = new ArrayCollection();
         $this->journals = new ArrayCollection();
         $this->timeStamp = new TimeStamp();
         $this->softDelete = new SoftDelete();
  }
 
-    public static function create(string $id, string $name, UserEmail $email, UserPassword $password): self
+    public static function create(string $id, UserName $name, UserTelephone $telephone, UserEmail $email, UserPassword $password): self
     {
-        return new self($id, $name, $email, $password);
+        return new self($id, $name, $telephone ,$email, $password);
     }
 
     public function getId(): string
@@ -70,19 +80,19 @@ class User
     public function changePassword(string $password): bool
     {
         $this->password = UserPassword::create($password);
-        $this->token->reset();
+        $this->tokens->clear();
         return true;
     }
 
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->name->getValue();
     }
 
     public function rename(string $name): void
     {
-        $this->name = $name;
+        $this->name = UserName::create($name);
     }
 
     public function addJournal(Journal $journal): void
@@ -97,10 +107,21 @@ class User
     {
         $this->journals->removeElement($journal);
     }
-
-    public function getToken(): ?string
+    public function addPost(Post $post): void
     {
-        return $this->token->getValue();
+        $this->posts[] = $post;
+    }
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+    public function removePost(Post $post): void
+    {
+        $this->posts->removeElement($post);
+    }
+    public function getToken(): ?array
+    {
+        return $this->tokens->getValues();
     }
 
 
@@ -121,9 +142,10 @@ class User
     public function setToken() : string
     {
         if ($this->getToken() == null) {
-            $this->token = UserToken::generate();
+            $newToken = UserToken::generate(Uuid::uuid4()->toString(), $this);
+            $this->tokens->add($newToken);
         }
-        return $this->token->getValue();
+        return $newToken->getValue();
     }
     public function logout(): bool
     {
@@ -132,7 +154,7 @@ class User
                 throw new \Exception("User logout failed");
             }
 
-            $this->token->reset();
+            $this->tokens->removeElement($this->getToken());
             return true;
         }catch (\Exception $exception){
             throw $exception;

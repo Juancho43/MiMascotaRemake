@@ -14,15 +14,16 @@
         <field name="gender" column="gender" length="6" />
         <field name="birthDate" column="birthdate" type="date" />
         <field name="weight" column="weight" type="float" />
-        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
-        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
-        <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="animal" />
 
+        <one-to-many field="posts" target-entity="App\MiMascota\Posts\Domain\Post" mapped-by="animal"/>
+        <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="animal" />
         <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\AnimalImage" mapped-by="animal">
             <cascade>
                 <cascade-all/>
             </cascade>
         </one-to-many>
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
     </entity>
 
 </doctrine-mapping>

@@ -2,12 +2,9 @@
 
 namespace App\MiMascota\Users\Infrastructure;
 
-use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;

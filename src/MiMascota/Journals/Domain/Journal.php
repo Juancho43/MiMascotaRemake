@@ -21,6 +21,7 @@ class Journal
 
     private function __construct(
         private readonly string $id,
+        private string $slug,
         private readonly User $user,
         private readonly Animal $animal,
     ) {
@@ -30,9 +31,11 @@ class Journal
     }
 
 
-    public static function create(string $id, User $user,Animal $animal): self
+
+
+    public static function create(string $id,string $slug, User $user,Animal $animal): self
     {
-        return new self($id, $user, $animal);
+        return new self($id, $slug,$user, $animal);
     }
 
     public function getId(): string
@@ -77,6 +80,10 @@ class Journal
     public function getSoftDelete(): SoftDelete
     {
         return $this->softDelete;
+    }
+    public function getSlug(): string
+    {
+        return $this->slug;
     }
 
 }

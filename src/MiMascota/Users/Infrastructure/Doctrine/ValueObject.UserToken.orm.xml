@@ -3,10 +3,11 @@
                   xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                   https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-
-    <embeddable name="App\MiMascota\Users\Domain\ValueObject\UserToken">
+    <entity name="App\MiMascota\Users\Domain\ValueObject\UserToken" table="user_tokens"  >
+        <id name="id" type="string" column="id" length="36" />
+        <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="tokens"/>
         <field name="value" column="token" length="255" nullable="true" />
+        <field name="createdAt" column="createdAt" type="datetime"/>
         <field name="expireAt" column="expires_at" type="datetime" nullable="true" />
-        <field name="createdAt" column="created_at" type="datetime" nullable="true" />
-    </embeddable>
+    </entity>
 </doctrine-mapping>

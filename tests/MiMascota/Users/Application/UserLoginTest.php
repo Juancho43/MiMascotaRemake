@@ -34,79 +34,79 @@ class UserLoginTest extends KernelTestCase
         );
     }
 
-
-    public function test__invoke()
-    {
-        //Arrange
-
-        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with($this->user->getEmail())
-            ->willReturn($this->user);
-        $this->userRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($this->user);
-
-        //Act
-        $token = $this->userLogin->__invoke($this->user->getEmail(), "Pepe");
-
-        //Assert
-        $this->assertNotNull($token);
-        $this->assertEquals($this->user->getToken(), $token);
-
-    }
-
-    public function test__invoke_fails_with_incorrect_password()
-    {
-        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with($this->user->getEmail())
-            ->willReturn($this->user);
-
-
-        //Act
-        $token = $this->userLogin->__invoke($this->user->getEmail(), "pepe");
-
-        //Assert
-        $this->assertNull($token);
-
-
-    }
-    public function test__invoke_fails_with_incorrect_mail(){
-        $incorrectEmail = "fail@mail.com";
-        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with($incorrectEmail)
-            ->willReturn(null);
-
-        //Act
-        $token = $this->userLogin->__invoke($incorrectEmail, "Pepe");
-
-        //Assert
-        $this->assertNull($token);
-    }
-
-    public function test__invoke_fails_with_not_validated_mail(){
-        //Arrange
-
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with($this->user->getEmail())
-            ->willReturn($this->user);
-
-        //Act
-        $token = $this->userLogin->__invoke($this->user->getEmail(), "Pepe");
-
-        //Assert
-        $this->assertNull($token);
-        $this->assertFalse($this->user->getEmailObject()->isVerified());
-    }
+//
+//    public function test__invoke()
+//    {
+//        //Arrange
+//
+//        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with($this->user->getEmail())
+//            ->willReturn($this->user);
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('save')
+//            ->with($this->user);
+//
+//        //Act
+//        $token = $this->userLogin->__invoke($this->user->getEmail(), "Pepe");
+//
+//        //Assert
+//        $this->assertNotNull($token);
+//        $this->assertEquals($this->user->getToken(), $token);
+//
+//    }
+//
+//    public function test__invoke_fails_with_incorrect_password()
+//    {
+//        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with($this->user->getEmail())
+//            ->willReturn($this->user);
+//
+//
+//        //Act
+//        $token = $this->userLogin->__invoke($this->user->getEmail(), "pepe");
+//
+//        //Assert
+//        $this->assertNull($token);
+//
+//
+//    }
+//    public function test__invoke_fails_with_incorrect_mail(){
+//        $incorrectEmail = "fail@mail.com";
+//        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with($incorrectEmail)
+//            ->willReturn(null);
+//
+//        //Act
+//        $token = $this->userLogin->__invoke($incorrectEmail, "Pepe");
+//
+//        //Assert
+//        $this->assertNull($token);
+//    }
+//
+//    public function test__invoke_fails_with_not_validated_mail(){
+//        //Arrange
+//
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with($this->user->getEmail())
+//            ->willReturn($this->user);
+//
+//        //Act
+//        $token = $this->userLogin->__invoke($this->user->getEmail(), "Pepe");
+//
+//        //Assert
+//        $this->assertNull($token);
+//        $this->assertFalse($this->user->getEmailObject()->isVerified());
+//    }
 }

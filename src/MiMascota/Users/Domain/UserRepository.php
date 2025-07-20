@@ -2,8 +2,6 @@
 
 namespace App\MiMascota\Users\Domain;
 
-use Doctrine\Common\Collections\Collection;
-
 interface UserRepository
 {
     public function search(string $id): ?User;

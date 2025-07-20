@@ -4,9 +4,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                   https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <embeddable name="App\MiMascota\Users\Domain\ValueObject\UserEmail">
-        <field name="value" column="email" length="100"  unique="true" />
-        <field name="code" length="6"/>
-        <field name="isVerified" column="is_verified" type="boolean"/>
+    <embeddable name="App\MiMascota\Users\Domain\ValueObject\UserTelephone">
+        <field name="value" column="telephone" length="25" />
     </embeddable>
 </doctrine-mapping>

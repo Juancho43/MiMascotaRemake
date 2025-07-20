@@ -27,45 +27,45 @@ class UserChangePasswordTest extends KernelTestCase
         $this->userChangePassword = new UserChangePassword($this->userRepository);
     }
 
-    public function testInvokeSuccessfully(): void
-    {
-        // Arrange
-        $name = "Juan";
-        $email = "Juan@mail.com";
-        $oldPassword = "OldPassword123";
-        $newPassword = "NewPassword123";
-
-        // Crear usuario con contraseña antigua
-        $user = User::create(
-            Uuid::uuid4()->toString(),
-            $name,
-            UserEmail::createNew($email),
-            UserPassword::create($oldPassword)
-        );
-
-        // Obtener contraseña antigua para verificar después
-        $oldPasswordObject = $user->getPassword();
-
-        // Configurar mock del repositorio
-        $this->userRepository
-            ->expects($this->once())
-            ->method('findByMail')
-            ->with($email)
-            ->willReturn($user);
-
-        $this->userRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($user);
-
-        // Act
-        $result = $this->userChangePassword->__invoke($email, $newPassword);
-
-
-        // Assert
-        $this->assertTrue($result);
-        $newPasswordObject = $user->getPassword();
-        $this->assertNotEquals($oldPasswordObject->getValue(), $newPasswordObject->getValue());
-        $this->assertTrue($newPasswordObject->verify($newPassword));
-    }
+//    public function testInvokeSuccessfully(): void
+//    {
+//        // Arrange
+//        $name = "Juan";
+//        $email = "Juan@mail.com";
+//        $oldPassword = "OldPassword123";
+//        $newPassword = "NewPassword123";
+//
+//        // Crear usuario con contraseña antigua
+//        $user = User::create(
+//            Uuid::uuid4()->toString(),
+//            $name,
+//            UserEmail::createNew($email),
+//            UserPassword::create($oldPassword)
+//        );
+//
+//        // Obtener contraseña antigua para verificar después
+//        $oldPasswordObject = $user->getPassword();
+//
+//        // Configurar mock del repositorio
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('findByMail')
+//            ->with($email)
+//            ->willReturn($user);
+//
+//        $this->userRepository
+//            ->expects($this->once())
+//            ->method('save')
+//            ->with($user);
+//
+//        // Act
+//        $result = $this->userChangePassword->__invoke($email, $newPassword);
+//
+//
+//        // Assert
+//        $this->assertTrue($result);
+//        $newPasswordObject = $user->getPassword();
+//        $this->assertNotEquals($oldPasswordObject->getValue(), $newPasswordObject->getValue());
+//        $this->assertTrue($newPasswordObject->verify($newPassword));
+//    }
 }

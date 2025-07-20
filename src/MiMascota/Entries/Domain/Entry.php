@@ -3,8 +3,6 @@ namespace App\MiMascota\Entries\Domain;
 
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\EntryImage;
-use App\MiMascota\Images\Domain\Image;
-use App\MiMascota\Images\Domain\ImageableInterface;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
@@ -76,6 +74,9 @@ class Entry
      */
     public function addImage(EntryImage $image): void
     {
+        if ($this->images->count() >= 3) {
+            throw new \Exception('An entry can have a maximum of 3 images.');
+        }
         if (!$this->images->contains($image)) {
             $this->images->add($image);
         }
@@ -89,13 +90,7 @@ class Entry
         $this->images->removeElement($image);
     }
 
-    /**
-     * Obtener imágenes como array (si lo necesitas)
-     */
-    public function getImagesArray(): array
-    {
-        return $this->images->toArray();
-    }
+
 
 
 }

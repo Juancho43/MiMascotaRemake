@@ -4,9 +4,11 @@ namespace App\MiMascota\Animals\Domain;
 
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -18,6 +20,7 @@ class Animal
      * @var Collection<int, AnimalImage>
      */
     private Collection $images;
+    private Collection $posts;
 
     private TimeStamp $timeStamp;
     private SoftDelete $softDelete;
@@ -30,9 +33,10 @@ class Animal
         private string $size,
         private string $breed,
         private string $gender,
-        private DateTime $birthDate,
+        private DateTimeImmutable $birthDate,
         private float $weight,
     ) {
+        $this->posts = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->timeStamp = new TimeStamp();
         $this->softDelete = new SoftDelete();
@@ -46,7 +50,7 @@ class Animal
         string $size,
         string $breed,
         string $gender,
-        DateTime $birthDate,
+        DateTimeImmutable $birthDate,
         float $weight
     ) {
         return new self($id, $name, $description, $color, $size, $breed, $gender, $birthDate, $weight);
@@ -115,6 +119,9 @@ class Animal
      */
     public function addImage(AnimalImage $image): void
     {
+        if ($this->images->count() >= 3) {
+            throw new \Exception('Un animal no puede tener más de 3 imágenes.');
+        }
         if (!$this->images->contains($image)) {
             $this->images->add($image);
         }
@@ -161,8 +168,52 @@ class Animal
         return $this->size;
     }
 
-    public function getBirthDate(): DateTime
+    public function getBirthDate(): DateTimeImmutable
     {
         return $this->birthDate;
     }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+    public function setColor(string $color): void
+    {
+        $this->color = $color;
+    }
+    public function setSize(string $size): void
+    {
+        $this->size = $size;
+    }
+    public function setBirthDate(DateTimeImmutable $birthDate): void
+    {
+        $this->birthDate = $birthDate;
+    }
+    public function addPost(Post $post): void
+    {
+        if (!isset($this->posts)) {
+            $this->posts = new ArrayCollection();
+        }
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+        }
+    }
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function removePost(Post $post): void
+    {
+        if ($this->posts->contains($post)) {
+            $this->posts->removeElement($post);
+        }
+    }
+
+    public function getImage(int $index): ?AnimalImage
+    {
+        return $this->images->get($index) ?: null;
+    }
+
+
 }

@@ -9,110 +9,84 @@ use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\User;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
 class JournalTest extends TestCase
 {
+    private Journal $journal;
 
+    public function setUp() : void
+    {
+        $this->journal = $this->generateJournal();
+    }
+
+    private function generateJournal(): Journal
+    {
+        $animal = $this->createMock(Animal::class);
+        return Journal::create(
+            id: Uuid::uuid4()->toString(),
+            slug: $animal->getName(),
+            user: $this->createMock(User::class),
+            animal: $animal
+        );
+    }
     public function testGetTimeStamp()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
-        $this->assertInstanceOf(TimeStamp::class, $journal->getTimeStamp());
+
+        $this->assertInstanceOf(TimeStamp::class, $this->journal->getTimeStamp());
     }
 
     public function testGetId()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
-        $this->assertEquals('12345', $journal->getId());
+        $this->assertNotNull( $this->journal->getId());
     }
 
     public function testGetUser()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
-        $this->assertInstanceOf(User::class, $journal->getUser());
+
+        $this->assertInstanceOf(User::class, $this->journal->getUser());
     }
 
     public function testAddEntry()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
+
         $entry = $this->createMock(Entry::class);
-        $journal->addEntry($entry);
-        $this->assertTrue($journal->getEntries()->contains($entry));
+        $this->journal->addEntry($entry);
+        $this->assertTrue($this->journal->getEntries()->contains($entry));
     }
 
     public function testGetSoftDelete()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
-        $this->assertInstanceOf(SoftDelete::class, $journal->getSoftDelete());
+
+        $this->assertInstanceOf(SoftDelete::class, $this->journal->getSoftDelete());
     }
 
     public function testGetAnimal()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
-        $this->assertInstanceOf(Animal::class, $journal->getAnimal());
+
+        $this->assertInstanceOf(Animal::class, $this->journal->getAnimal());
     }
 
-    public function testCreate()
-    {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
-        $this->assertInstanceOf(Journal::class, $journal);
-
-    }
 
     public function testGetEntries()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
+
         $entry = $this->createMock(Entry::class);
         $entry2 = $this->createMock(Entry::class);
-        $journal->addEntry($entry);
-        $journal->addEntry($entry2);
-        $entries = $journal->getEntries();
+        $this->journal->addEntry($entry);
+        $this->journal->addEntry($entry2);
+        $entries = $this->journal->getEntries();
         $this->assertCount(2, $entries);
     }
 
     public function testGetOneEntyById()
     {
-        $journal = Journal::create(
-            id: '12345',
-            user: $this->createMock(User::class),
-            animal: $this->createMock(Animal::class)
-        );
+
         $entry = $this->createMock(Entry::class);
         $entry2 = $this->createMock(Entry::class);
-        $journal->addEntry($entry);
-        $journal->addEntry($entry2);
-        $entryResult = $journal->getEntryById($entry->getId());
+        $this->journal->addEntry($entry);
+        $this->journal->addEntry($entry2);
+        $entryResult = $this->journal->getEntryById($entry->getId());
         $this->assertInstanceOf(Entry::class, $entry);
         $this->assertEquals($entry->getId(), $entryResult->getId());
 
