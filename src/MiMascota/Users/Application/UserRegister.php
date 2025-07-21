@@ -7,7 +7,9 @@ use App\MiMascota\Locations\Domain\UserLocation;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
+use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
+use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 use Ramsey\Uuid\Uuid;
 
 class UserRegister
@@ -19,13 +21,14 @@ class UserRegister
      {
      }
 
-     public function __invoke(string $name, string $email, string $password, string $latitude, string $longitude): User
+     public function __invoke(string $name, string $telephone, string $email, string $password, string $latitude, string $longitude): User
      {
          try {
              $location = $this->locationManager->__invoke($latitude, $longitude);
              $user = User::create(
                  Uuid::uuid4()->toString(),
-                 $name,
+                 UserName::create($name),
+                 UserTelephone::create($telephone),
                  UserEmail::createNew($email),
                  UserPassword::create($password),
              );

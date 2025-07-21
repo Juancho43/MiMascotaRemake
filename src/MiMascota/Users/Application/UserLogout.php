@@ -12,7 +12,7 @@ class UserLogout
     {
     }
 
-    public function __invoke(string $token): void
+    public function __invoke(string $token,string $ip, string $agent): bool
     {
         try {
             $user = $this->repository->findByToken($token);
@@ -21,8 +21,9 @@ class UserLogout
                 throw new \Exception('User not found or already logged out');
             }
 
-            $user->logout();
+            $response = $user->logoutFromDevice($ip,$agent);
             $this->repository->save($user);
+            return $response;
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }

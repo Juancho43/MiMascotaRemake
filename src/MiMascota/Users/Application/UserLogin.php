@@ -14,7 +14,7 @@ class UserLogin
     }
 
 
-    public function __invoke(string $email, string $password): ?string
+    public function __invoke(string $email, string $password,string $ip, string $agent): ?string
     {
         try {
             $user = $this->repository->findByMail($email);
@@ -22,9 +22,9 @@ class UserLogin
                 throw new \Exception('User not found');
             }
 
-            $user->login($password);
+            $token =  $user->loginWithDevice($password,$ip,$agent);
             $this->repository->save($user);
-            return $user->getToken();
+            return $token;
         } catch (\Exception $e) {
            throw $e;
         }

@@ -6,23 +6,57 @@ use App\MiMascota\Users\Domain\User;
 
 class UserToken
 {
-
     private ?string $value;
     private ?\DateTime $createdAt;
     private ?\DateTime $expireAt;
+    private ?string $ipAddress;
+    private ?string $userAgent;
 
     private function __construct(
         private string $id,
-        private User $user
+        private User $user,
+        ?string $ipAddress = null,
+        ?string $userAgent = null
     ) {
-        $this->value = bin2hex(random_bytes(16));
+        $this->value = bin2hex(random_bytes(32)); // Incrementé el tamaño por seguridad
         $this->createdAt = new \DateTime();
-        $this->genereExpiredAt();
+        $this->ipAddress = $ipAddress;
+        $this->userAgent = $userAgent;
+        $this->generateExpiredAt();
     }
 
-    public static function generate(string $id, User $user): self
+    public static function generate(
+        string $id,
+        User $user,
+        ?string $ipAddress = null,
+        ?string $userAgent = null
+    ): self {
+        return new self($id, $user, $ipAddress, $userAgent);
+    }
+
+    public static function generateWithIP(string $id, User $user, string $ipAddress, ?string $userAgent = null): self
     {
-        return new self($id, $user);
+        return new self($id, $user, $ipAddress, $userAgent);
+    }
+
+    public function getIpAddress(): ?string
+    {
+        return $this->ipAddress;
+    }
+
+    public function getUserAgent(): ?string
+    {
+        return $this->userAgent;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
     }
 
     public function getExpireAt(): ?\DateTime
@@ -30,50 +64,68 @@ class UserToken
         return $this->expireAt;
     }
 
-
     public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
-
 
     public function getValue(): ?string
     {
         return $this->value;
     }
 
-    public function reset() : self
+    public function getHashedValue(): ?string
+    {
+        return $this->value ? hash('sha256', $this->value) : null;
+    }
+
+    public function reset(): self
     {
         $this->value = null;
         $this->createdAt = null;
         $this->expireAt = null;
+        $this->ipAddress = null;
+        $this->userAgent = null;
         return $this;
     }
 
-    private function isExpired($date = 'now') : bool
+    public function isValidForIP(string $ipAddress): bool
+    {
+        if (!$this->ipAddress) {
+            return true; // Token sin restricción de IP
+        }
+
+        return $this->ipAddress === $ipAddress;
+    }
+
+    private function isExpired($date = 'now'): bool
     {
         if (!$this->expireAt) {
             throw new \Exception('Token has not been generated');
         }
-        if ($this->expireAt < (new \DateTime($date))) {
-            return true;
-        }
-        $this->expireAt->modify('+7 day');
-        return false;
+
+        return $this->expireAt < (new \DateTime($date));
     }
 
-
-
-
-
-    public function checkExpired($date = 'now'): bool
+    public function checkExpired($date = 'now'): string
     {
         if ($this->isExpired($date)) {
             throw new \Exception('Token is expired');
         }
-        return false;
+        $this->expireAt->modify('+7 days');
+        return $this->getValue();
     }
-    private function genereExpiredAt($days = '+7 days'): void
+
+    public function validateWithIP(string $ipAddress, $date = 'now'): string
+    {
+        if (!$this->isValidForIP($ipAddress)) {
+            throw new \Exception('Token not valid for this IP address');
+        }
+
+        return $this->checkExpired($date);
+    }
+
+    private function generateExpiredAt($days = '+7 days'): void
     {
         $this->expireAt = (new \DateTime())->modify($days);
     }

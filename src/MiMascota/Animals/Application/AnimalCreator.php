@@ -23,7 +23,7 @@ class AnimalCreator
         string $size,
         string $breed,
         string $gender,
-        \DateTime $birthDate,
+        \DateTimeImmutable $birthDate,
         float $weight
     ): Animal
     {

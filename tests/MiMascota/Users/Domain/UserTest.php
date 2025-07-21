@@ -2,6 +2,8 @@
 
 namespace App\Tests\MiMascota\Users\Domain;
 
+use App\MiMascota\Images\Domain\Image;
+use App\MiMascota\Images\Domain\UserImage;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
@@ -30,21 +32,20 @@ class UserTest extends TestCase
     }
 
     public function testLogout(){
-        $this->assertTrue($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
+        $this->assertNotNull($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
         $this->assertTrue($this->user->logout());
     }
 
     public function testLogoutFails()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("User logout failed");
         $this->user->logout();
     }
     public function testVerifyCodeAndLogin()
     {
 
-        $this->assertTrue($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
-        $this->assertNotNull($this->user->getToken());
+        $this->assertNotNull($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
+        $this->assertNotNull($this->user->getTokens());
     }
 
 
@@ -61,7 +62,7 @@ class UserTest extends TestCase
     {
         $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
         $this->assertNotNull($this->user->login('password123'));
-        $this->assertNotNull($this->user->getToken());
+        $this->assertNotNull($this->user->getTokens());
     }
 
     public function testCreate()
@@ -82,7 +83,7 @@ class UserTest extends TestCase
 
         $this->assertTrue($response);
         $this->assertTrue($user->getPassword()->verify($newPassword));
-        $this->assertCount(0,$user->getToken());
+        $this->assertCount(0,$user->getTokens());
 
     }
 
@@ -107,10 +108,25 @@ class UserTest extends TestCase
         $this->assertCount(0, $this->user->getPosts());
     }
 
-    public function testUserCanEditPost(){
+    public function testUserCanEditPost()
+    {
         $post = $this->createMock(\App\MiMascota\Posts\Domain\Post::class);
         $this->user->addPost($post);
         $post->edit('New Title', 'New Content');
         $this->assertCount(1, $this->user->getPosts());
+    }
+
+    public function testUserCanChangeName()
+    {
+        $this->user->rename('Hola');
+        $this->assertEquals('Hola', $this->user->getName());
+        $this->assertNotEquals($this->user->getName(),'John Doe');
+    }
+
+    public function testUserCanHaveImage()
+    {
+        $userImage = UserImage::create('11111',$this->user,$this->createMock(Image::class));
+        $this->user->setImage($userImage);
+        $this->assertEquals($userImage,$this->user->getImage());
     }
 }

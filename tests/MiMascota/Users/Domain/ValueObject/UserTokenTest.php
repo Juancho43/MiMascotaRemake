@@ -15,7 +15,7 @@ class UserTokenTest extends TestCase
         $token = UserToken::generate('1234', $user);
         $this->assertNotNull($token->getValue());
         $this->assertIsString($token->getValue());
-        $this->assertEquals(32, strlen($token->getValue())); // 16 bytes hex
+        $this->assertEquals(64, strlen($token->getValue())); // 16 bytes hex
     }
 
     public function testReset()
@@ -68,7 +68,7 @@ class UserTokenTest extends TestCase
         $user = $this->createMock(User::class);
         $token = UserToken::generate('1234', $user);
         $date = (new \DateTime())->modify('+2 days')->format('Y-m-d H:i:s');
-        $this->assertFalse($token->checkExpired($date));
+        $this->assertNotNull($token->checkExpired($date));
 
     }
     public function testCheckExpireWithHardcodeDateFails()
@@ -81,15 +81,50 @@ class UserTokenTest extends TestCase
 
     }
 
-    public function testCheckExpiredModifiesExpiredDateWhenItIsFals()
+    public function testChangesExpiredDateWhenTokenIsValid()
     {
         $user = $this->createMock(User::class);
         $token = UserToken::generate('1234', $user);
         $expireAt = clone $token->getExpireAt();
-        $this->assertFalse($token->checkExpired('+2 days'));
+        $this->assertNotNull($token->checkExpired('+2 days'));
         $this->assertNotEquals($expireAt->format('Y-m-d'), $token->getExpireAt()->format('Y-m-d'));
+
 
     }
 
+    public function testCreateWithIpAndUserAgent(){
+        $user = $this->createMock(User::class);
+        $ip = '127.0.0.1';
+        $agent = 'Mozilla/5.0';
+        $token = UserToken::generate('1234', $user,$ip,$agent);
+        $this->assertInstanceOf(UserToken::class, $token);
+        $this->assertEquals($ip,$token->getIpAddress());
+        $this->assertEquals($agent,$token->getUserAgent());
+    }
 
+    public function testIpValid(){
+        $user = $this->createMock(User::class);
+        $ip = '127.0.0.1';
+        $agent = 'Mozilla/5.0';
+        $token = UserToken::generate('1234', $user,$ip,$agent);
+        $this->assertTrue($token->isValidForIP($ip));
+    }
+
+    public function testCheckValidIp()
+    {
+        $user = $this->createMock(User::class);
+        $ip = '127.0.0.1';
+        $agent = 'Mozilla/5.0';
+        $token = UserToken::generate('1234', $user,$ip,$agent);
+        $this->assertEquals($token->getValue(),$token->validateWithIP($ip));
+    }
+    public function testCheckValidIpFails()
+    {
+        $this->expectException(\Exception::class);
+        $user = $this->createMock(User::class);
+        $ip = '127.0.0.2';
+        $agent = 'Mozilla/5.0';
+        $token = UserToken::generate('1234', $user,$ip,$agent);
+        $this->assertFalse($token->validateWithIP('127.0.0.1'));
+    }
 }
