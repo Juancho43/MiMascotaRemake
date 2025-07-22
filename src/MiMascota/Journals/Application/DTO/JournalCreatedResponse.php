@@ -9,7 +9,7 @@ class JournalCreatedResponse
 {
     public function __construct(
         public string $id,
-        public AnimalResponse $animalResponse
+        public array $animalResponse
     )
     {
 
@@ -17,6 +17,6 @@ class JournalCreatedResponse
 
     public static function fromJournal(Journal $journal) : self
     {
-        return new self($journal->getId(),AnimalResponse::fromAnimal($journal->getAnimal()));
+        return new self($journal->getId(),AnimalResponse::generate($journal->getAnimal()));
     }
 }

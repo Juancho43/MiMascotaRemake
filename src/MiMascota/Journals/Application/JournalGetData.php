@@ -13,9 +13,9 @@ class JournalGetData
 
     }
 
-    public function __invoke(string $journal_id)
+    public function __invoke(string $journal_id) : array
     {
-        return AnimalResponse::fromAnimal($this->animalGetData->__invoke($journal_id));
+        return AnimalResponse::generate($this->animalGetData->__invoke($journal_id));
 
     }
 

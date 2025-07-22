@@ -12,7 +12,7 @@
         <field name="size" column="size" length="20" />
         <field name="breed" column="breed" length="255" />
         <field name="gender" column="gender" length="6" />
-        <field name="birthDate" column="birthdate" type="date" />
+        <field name="birthDate" column="birthdate" type="date_immutable" />
         <field name="weight" column="weight" type="float" />
 
         <one-to-many field="posts" target-entity="App\MiMascota\Posts\Domain\Post" mapped-by="animal"/>

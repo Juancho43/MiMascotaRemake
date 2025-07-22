@@ -28,7 +28,7 @@ class JournalCreateController extends AbstractController
             $user,
             $data['name'],
             $data['breed'],
-            new DateTime($data['birthdate']),
+            new \DateTimeImmutable($data['birthdate']),
             $data['gender'],
             $data['weight'],
             $data['size'],
