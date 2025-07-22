@@ -11,7 +11,7 @@ class UserEmailTest extends TestCase
     public function testCreateUserEmailObject()
     {
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
 
         $this->assertNotEmpty($userEmail->getValue());
         $this->assertNotEmpty($userEmail->getCode());
@@ -23,25 +23,25 @@ class UserEmailTest extends TestCase
     {
         $this->expectException(\Exception::class);
         $email = 'apiapi.com';
-        UserEmail::createNew($email);
+        UserEmail::create($email);
     }
     public function testGetEmail()
     {
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $this->assertEquals($email, $userEmail->getValue());
     }
     public function testGetCode()
     {
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $this->assertNotNull($email, $userEmail->getCode());
     }
 
     public function testVerifyCode()
     {
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $code = $userEmail->getCode();
         $this->assertTrue($userEmail->verifyCode($code));
 
@@ -50,7 +50,7 @@ class UserEmailTest extends TestCase
     {
         $this->expectException(\Exception::class);
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $code = 'wrong_code';
         $this->assertFalse($userEmail->verifyCode($code));
         $this->assertNotEquals($userEmail->getCode(), $code);
@@ -60,7 +60,7 @@ class UserEmailTest extends TestCase
     public function testIsVerified()
     {
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $code = $userEmail->getCode();
         $this->assertTrue($userEmail->verifyCode($code));
         $this->assertIsBool($userEmail->isVerified());
@@ -69,7 +69,7 @@ class UserEmailTest extends TestCase
 
     public function testIsAlreadyVerified(){
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $code = $userEmail->getCode();
         $userEmail->verifyCode($code);
 
@@ -78,7 +78,7 @@ class UserEmailTest extends TestCase
     public function testIsNotVerified()
     {
         $email = 'api@api.com';
-        $userEmail = UserEmail::createNew($email);
+        $userEmail = UserEmail::create($email);
         $this->assertFalse($userEmail->isVerified());
     }
 
@@ -86,20 +86,20 @@ class UserEmailTest extends TestCase
     public function testCreateUserEmailObjectWithEmptyString()
     {
         $this->expectException(\Exception::class);
-        UserEmail::createNew('');
+        UserEmail::create('');
     }
 
 
     public function testCreateUserEmailObjectWithWhitespace()
     {
         $this->expectException(\Exception::class);
-        UserEmail::createNew('   ');
+        UserEmail::create('   ');
     }
 
     public function testCreateUserEmailObjectWithSpecialCharacters()
     {
         $this->expectException(\Exception::class);
-        UserEmail::createNew('api@api!.com');
+        UserEmail::create('api@api!.com');
     }
 }
 

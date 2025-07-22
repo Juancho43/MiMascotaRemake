@@ -3,11 +3,13 @@
 namespace App\MiMascota\Users\Application;
 
 use App\MiMascota\Users\Domain\UserRepository;
+use App\MiMascota\Users\Domain\UserTokenRepository;
 
 class UserLogout
 {
     public function __construct(
         private UserRepository $repository,
+        private UserTokenRepository $tokenRepository
     )
     {
     }
@@ -21,6 +23,7 @@ class UserLogout
                 throw new \Exception('User not found or already logged out');
             }
 
+            $this->tokenRepository->remove($user->findTokenByIpAndUserAgent($ip, $agent));
             $response = $user->logoutFromDevice($ip,$agent);
             $this->repository->save($user);
             return $response;

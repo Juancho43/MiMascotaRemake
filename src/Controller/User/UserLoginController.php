@@ -18,9 +18,11 @@ class UserLoginController extends AbstractController
             $data = $request->toArray();
             $token = $userLogin->__invoke(
                 $data['email'] ?? '',
-                $data['password'] ?? ''
+                $data['password'] ?? '',
+                $request->getClientIp(),
+                $request->headers->get('User-Agent', 'unknown')
             );
-            return $this->successResponse($token, "Usuario autenticado correctamente");
+            return $this->successResponse(["token"=>$token], "Usuario autenticado correctamente");
         }catch (\Exception $exception){
             return $this->errorResponse($exception->getMessage());
         }

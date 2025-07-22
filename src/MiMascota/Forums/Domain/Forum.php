@@ -21,6 +21,10 @@ class Forum
 
     )
     {
+        $this->setId($id);
+        $this->setName($name);
+        $this->setSlug($slug);
+        $this->setDescription($description);
         $this->posts = new ArrayCollection();
         $this->timeStamp = new TimeStamp();
         $this->softDelete = new SoftDelete();
@@ -37,16 +41,23 @@ class Forum
 
     public function setId(string $id): void
     {
+        if (empty($id)) {
+            throw new \InvalidArgumentException('Forum ID cannot be empty.');
+        }
         $this->id = $id;
     }
 
     public function getName(): string
     {
+
         return $this->name;
     }
 
     public function setName(string $name): void
     {
+        if (empty($name)) {
+            throw new \InvalidArgumentException('Forum name cannot be empty.');
+        }
         $this->name = $name;
     }
 
@@ -57,6 +68,9 @@ class Forum
 
     public function setSlug(string $slug): void
     {
+        if (empty($slug)) {
+            throw new \InvalidArgumentException('Forum slug cannot be empty.');
+        }
         $this->slug = $slug;
     }
 
@@ -67,6 +81,9 @@ class Forum
 
     public function setDescription(string $description): void
     {
+        if (empty($description)) {
+            throw new \InvalidArgumentException('Forum description cannot be empty.');
+        }
         $this->description = $description;
     }
 

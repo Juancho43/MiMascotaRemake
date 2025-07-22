@@ -1,6 +1,6 @@
 <?php
 
-namespace App\MiMascota\Journals\Application;
+namespace App\MiMascota\Entries\Application;
 
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
@@ -8,7 +8,7 @@ use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use Ramsey\Uuid\Nonstandard\Uuid;
 
-class AddEntry
+class EntryCreator
 {
     public function __construct(
         private EntryRepository $repository,

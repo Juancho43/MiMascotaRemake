@@ -29,7 +29,7 @@ class UserRegister
                  Uuid::uuid4()->toString(),
                  UserName::create($name),
                  UserTelephone::create($telephone),
-                 UserEmail::createNew($email),
+                 UserEmail::create($email),
                  UserPassword::create($password),
              );
 

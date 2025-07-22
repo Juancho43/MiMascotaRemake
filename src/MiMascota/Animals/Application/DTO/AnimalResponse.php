@@ -6,38 +6,21 @@ use DateTime;
 
 class AnimalResponse
 {
-    public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        public readonly string $description,
-        public readonly string $color,
-        public readonly string $size,
-        public readonly string $breed,
-        public readonly string $gender,
-        public readonly DateTime $birthDate,
-        public readonly float $weight,
-        public readonly string $journalId,
-        public readonly array $images = []
-    ) {}
-
-    public static function fromAnimal(Animal $animal): self
+    public static function generate(Animal $animal): array
     {
-        return new self(
-            id: $animal->getId(),
-            name: $animal->getName(),
-            description: $animal->getDescription(),
-            color: $animal->getColor(),
-            size: $animal->getSize(),
-            breed: $animal->getBreed(),
-            gender: $animal->getGender(),
-            birthDate: $animal->getBirthDate(),
-            weight: $animal->getWeight(),
-            journalId: $animal->getJournal()->getId(),
-//            images: $animal->getImages()->map(fn($image) => [
-//                'id' => $image->getId(),
-//                'position' => $image->getPosition(),
-//                // Añade más campos si necesitas
-//            ])->toArray()
-        );
+        return [
+            'id' => $animal->getId(),
+            'name' => $animal->getName(),
+            'description' => $animal->getDescription(),
+            'breed' => $animal->getBreed(),
+            'birthDate' => $animal->getBirthDate() ? $animal->getBirthDate()->format('Y-m-d') : null,
+            'color' => $animal->getColor(),
+            'size' => $animal->getSize(),
+            'weight' => $animal->getWeight(),
+            'journal' =>[
+                'id' => $animal->getJournal()->getId(),
+                'slug' => $animal->getJournal()->getSlug(),
+            ]
+        ];
     }
 }

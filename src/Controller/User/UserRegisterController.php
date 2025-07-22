@@ -25,6 +25,7 @@ class UserRegisterController extends AbstractController
             $data = $request->toArray();
             $user = $creator->__invoke(
                 $data['name'] ?? '',
+                $data['telephone'] ?? '',
                 $data['email'] ?? '',
                 $data['password'] ?? '',
                 $data['latitude'] ?? '',

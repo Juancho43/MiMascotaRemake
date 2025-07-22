@@ -8,6 +8,7 @@ interface UserTokenRepository
 {
 
     public function save(UserToken $token): void;
+    public function remove(UserToken $token): void;
 
     public function findByTokenAndIP(string $tokenValue, string $ipAddress): ?UserToken;
 

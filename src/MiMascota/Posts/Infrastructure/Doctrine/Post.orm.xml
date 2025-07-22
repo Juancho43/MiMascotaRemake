@@ -14,7 +14,7 @@
         <many-to-one field="animal" target-entity="App\MiMascota\Animals\Domain\Animal" inversed-by="posts"/>
         <many-to-one field="location" target-entity="App\MiMascota\Locations\Domain\Location"/>
         <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
-        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
+        <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false" />
     </entity>
 
 </doctrine-mapping>

@@ -20,6 +20,8 @@ class UserValidationController extends AbstractController
             $response = $userValidate->__invoke(
                 $data['email'],
                 $data['code'],
+                $request->getClientIp(),
+                $request->headers->get('User-Agent', 'unknown')
             );
             return $this->successResponse(['token' => $response,], "Usuario validado correctamente");
         }catch (\Exception $exception){

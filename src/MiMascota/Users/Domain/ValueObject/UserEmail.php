@@ -21,7 +21,7 @@ class UserEmail
       }
     }
 
-    public static function createNew(string $email): self
+    public static function create(string $email): self
     {
         if (empty($email)) {
             throw new \Exception("Email cannot be empty");

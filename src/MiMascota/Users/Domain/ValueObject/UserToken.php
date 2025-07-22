@@ -34,10 +34,6 @@ class UserToken
         return new self($id, $user, $ipAddress, $userAgent);
     }
 
-    public static function generateWithIP(string $id, User $user, string $ipAddress, ?string $userAgent = null): self
-    {
-        return new self($id, $user, $ipAddress, $userAgent);
-    }
 
     public function getIpAddress(): ?string
     {
@@ -91,10 +87,6 @@ class UserToken
 
     public function isValidForIP(string $ipAddress): bool
     {
-        if (!$this->ipAddress) {
-            return true; // Token sin restricción de IP
-        }
-
         return $this->ipAddress === $ipAddress;
     }
 

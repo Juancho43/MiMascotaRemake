@@ -26,29 +26,24 @@ class UserTest extends TestCase
             $id,
             UserName::create($name),
             UserTelephone::create($telephone),
-            UserEmail::createNew($email),
+            UserEmail::create($email),
             UserPassword::create($password)
         );
     }
 
-    public function testLogout(){
-        $this->assertNotNull($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
-        $this->assertTrue($this->user->logout());
-    }
-
-    public function testLogoutFails()
+    public function testCreate()
     {
-        $this->expectException(\Exception::class);
-        $this->user->logout();
+        $this->assertInstanceOf(User::class, $this->user);
+        $this->assertEquals('12345', $this->user->getId());
     }
-    public function testVerifyCodeAndLogin()
+    public function testAddJournal()
     {
+        $journal = $this->createMock(Journal::class);
+        $this->user->addJournal($journal);
+        $userJournals = $this->user->getJournals();
+        $this->assertInstanceOf(Journal::class, $userJournals->get(0));
 
-        $this->assertNotNull($this->user->verifyCodeAndLogin($this->user->getValidationCode()));
-        $this->assertNotNull($this->user->getTokens());
     }
-
-
     public function testRemoveJournal()
     {
 
@@ -57,20 +52,12 @@ class UserTest extends TestCase
         $this->user->removeJournal($journal);
         $this->assertEquals(0, $this->user->getJournals()->count());
     }
-
-    public function testLogin()
+    public function testChangeName()
     {
-        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
-        $this->assertNotNull($this->user->login('password123'));
-        $this->assertNotNull($this->user->getTokens());
+        $this->user->rename('Hola');
+        $this->assertEquals('Hola', $this->user->getName());
+        $this->assertNotEquals($this->user->getName(),'John Doe');
     }
-
-    public function testCreate()
-    {
-        $this->assertInstanceOf(User::class, $this->user);
-        $this->assertEquals('12345', $this->user->getId());
-    }
-
     public function testChangePassword()
     {
         $name = "Juan";
@@ -86,15 +73,6 @@ class UserTest extends TestCase
         $this->assertCount(0,$user->getTokens());
 
     }
-
-    public function testAddJournal()
-    {
-        $journal = $this->createMock(Journal::class);
-        $this->user->addJournal($journal);
-        $userJournals = $this->user->getJournals();
-        $this->assertInstanceOf(Journal::class, $userJournals->get(0));
-
-    }
     public function testUserCanPost()
     {
         $this->user->addPost($this->createMock(\App\MiMascota\Posts\Domain\Post::class));
@@ -107,7 +85,6 @@ class UserTest extends TestCase
         $this->user->removePost($post);
         $this->assertCount(0, $this->user->getPosts());
     }
-
     public function testUserCanEditPost()
     {
         $post = $this->createMock(\App\MiMascota\Posts\Domain\Post::class);
@@ -115,18 +92,35 @@ class UserTest extends TestCase
         $post->edit('New Title', 'New Content');
         $this->assertCount(1, $this->user->getPosts());
     }
-
-    public function testUserCanChangeName()
-    {
-        $this->user->rename('Hola');
-        $this->assertEquals('Hola', $this->user->getName());
-        $this->assertNotEquals($this->user->getName(),'John Doe');
-    }
-
     public function testUserCanHaveImage()
     {
         $userImage = UserImage::create('11111',$this->user,$this->createMock(Image::class));
         $this->user->setImage($userImage);
         $this->assertEquals($userImage,$this->user->getImage());
     }
+
+    public function testUserHasMultiplesPreferences()
+    {
+        $preference1 = $this->user->addPreference('1111','preference1','value1');
+        $preference2 =$this->user->addPreference('11111','preference2','value2');
+        $preferences = $this->user->getPreferences();
+        $this->assertCount(2, $preferences);
+        $this->assertContains($preference1, $preferences);
+        $this->assertContains($preference2, $preferences);
+    }
+    public function testUserCanDeletePreferences()
+    {
+        $preference = $this->user->addPreference('1222','preference1', 'value1');
+        $this->user->addPreference('12222','preference2', 'value2');
+        $this->user->removePreference($preference);
+        $preferences = $this->user->getPreferences();
+        $this->assertCount(1, $preferences);
+    }
+    public function testUserGetPreference()
+    {
+        $preference = $this->user->addPreference('1222','preference1', 'value1');
+        $this->assertEquals($preference, $this->user->getPreference('preference1'));
+
+    }
+
 }

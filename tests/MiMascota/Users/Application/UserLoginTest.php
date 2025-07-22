@@ -34,7 +34,7 @@ class UserLoginTest extends KernelTestCase
             Uuid::uuid4()->toString(),
             UserName::create($name),
             UserTelephone::create('12345678'),
-            UserEmail::createNew($email),
+            UserEmail::create($email),
             UserPassword::create($password),
         );
     }

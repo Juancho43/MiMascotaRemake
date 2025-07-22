@@ -54,4 +54,10 @@ class DoctrineUserTokenRepository extends ServiceEntityRepository implements Use
     {
         // TODO: Implement countActiveTokensByIP() method.
     }
+
+    public function remove(UserToken $token): void
+    {
+        $this->getEntityManager()->remove($token);
+        $this->getEntityManager()->flush();
+    }
 }

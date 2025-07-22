@@ -23,14 +23,10 @@ class UserGetData
 
         return [
 //            'id' => $user->getId(),
-            'email' => $user->getEmailObject()->getValue(),
             'name' => $user->getName(),
-
-//            'surname' => $user->getSurname(),
-//            'phone' => $user->getPhone(),
-//            'address' => $user->getAddress(),
-//            'city' => $user->getCity(),
-//            'country' => $user->getCountry(),
+            'email' => $user->getEmail(),
+            'telephone' => $user->getTelephone(),
+            'location' => $user->getUserLocation()->getLocation()->getCity(),
         ];
     }
 }

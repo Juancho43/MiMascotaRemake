@@ -8,8 +8,8 @@
         <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="tokens"/>
         <field name="value" column="token" length="80" nullable="true" />
         <field name="ipAddress" column="ipAddress" length="60" nullable="true"/>
-        <field name="userAgent" column="userAgent" length="60" nullable="true"/>
+        <field name="userAgent" column="userAgent" length="255" nullable="true"/>
         <field name="createdAt" column="createdAt" type="datetime"/>
-        <field name="expireAt" column="expires_at" type="datetime" nullable="true" />
+        <field name="expireAt" column="expiresAt" type="datetime" nullable="true" />
     </entity>
 </doctrine-mapping>

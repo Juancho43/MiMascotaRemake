@@ -32,5 +32,10 @@ class UserName
     {
         return $this->value;
     }
+    public function rename(string $newName): string
+    {
+        $this->setValue($newName);
+        return $this->value;
+    }
 }
 

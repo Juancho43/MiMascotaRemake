@@ -18,12 +18,16 @@ class UserLogoutController extends AbstractController
      * @throws \Exception
      */
     #[Route('/user/logout', name: 'user_logout', methods:  ['POST'])]
-    public function login(Request $request, UserLogout $userlogout) : Response
+    public function login(Request $request, UserLogout $logout) : Response
     {
         try {
+            $ip = $request->getClientIp();
+            $userAgent = $request->headers->get('User-Agent', 'unknown');
             $user = $this->checkAuthorization($request);
-            $userlogout->__invoke(
-                $user->getToken()
+            $logout->__invoke(
+                $user->findTokenByIpAndUserAgent($ip, $userAgent)->getValue(),
+                $ip,
+                $userAgent
             );
             return $this->successResponse( message: "Usuario desconectado correctamente");
         }catch (\Exception $exception){

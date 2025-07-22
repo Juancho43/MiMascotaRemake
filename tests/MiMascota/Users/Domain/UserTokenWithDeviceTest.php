@@ -25,7 +25,7 @@ class UserTokenWithDeviceTest extends TestCase
         parent::setUp();
 
         // Create a user with verified email
-        $email = UserEmail::createNew('test@example.com');
+        $email = UserEmail::create('test@example.com');
         $email->verifyCode($email->getCode()); // Verify the email
 
         $this->user = User::create(
@@ -223,26 +223,6 @@ class UserTokenWithDeviceTest extends TestCase
         $this->assertEquals($token3, $tokensForUA2[0]->getValue());
     }
 
-    /**
-     * Test backward compatibility with original login method
-     */
-    public function testBackwardCompatibilityWithOriginalLogin(): void
-    {
-        // Test original login method still works
-        $token = $this->user->login($this->validPassword);
-
-        $this->assertNotEmpty($token);
-        $this->assertIsString($token);
-
-        // Verify token is in collection
-        $tokens = $this->user->getTokens();
-        $this->assertCount(1, $tokens);
-
-        // Original tokens don't have IP/UA information
-        $createdToken = $tokens->first();
-        $this->assertNull($createdToken->getIpAddress());
-        $this->assertNull($createdToken->getUserAgent());
-    }
 
     /**
      * Test logout from specific device

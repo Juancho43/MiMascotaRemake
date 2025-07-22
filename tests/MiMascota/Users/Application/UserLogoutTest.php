@@ -6,6 +6,7 @@ use App\MiMascota\Users\Application\UserLogin;
 use App\MiMascota\Users\Application\UserLogout;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
+use App\MiMascota\Users\Domain\UserTokenRepository;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
@@ -34,11 +35,11 @@ class UserLogoutTest extends KernelTestCase
             Uuid::uuid4()->toString(),
             UserName::create($name),
             UserTelephone::create('12345678'),
-            UserEmail::createNew($email),
+            UserEmail::create($email),
             UserPassword::create($password),
         );
         $this->userRepository= $this->createMock(UserRepository::class);
-        $this->userLogout = new UserLogout($this->userRepository);
+        $this->userLogout = new UserLogout($this->userRepository,$this->createMock(UserTokenRepository::class));
         $this->user->verifyCodeAndLoginWithDevice($this->user->getValidationCode(),$this->ip, $this->agent);
     }
 

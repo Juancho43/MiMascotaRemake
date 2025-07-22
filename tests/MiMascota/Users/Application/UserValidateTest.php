@@ -34,7 +34,7 @@ class UserValidateTest extends KernelTestCase
             Uuid::uuid4()->toString(),
             UserName::create('dsada'),
             UserTelephone::create('12345678'),
-            UserEmail::createNew('dsada@dasd.com'),
+            UserEmail::create('dsada@dasd.com'),
             UserPassword::create('12345678'),
         );
         $code = $user->getEmailObject()->getCode();

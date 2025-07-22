@@ -2,8 +2,8 @@
 
 namespace App\Controller\Entries;
 
+use App\MiMascota\Entries\Application\EntryCreator;
 use App\MiMascota\Entries\Application\DTO\EntryCreatedResponse;
-use App\MiMascota\Journals\Application\AddEntry;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +15,7 @@ class EntryNewController extends AbstractController
 {
     use ApiResponseTrait, AuthorizationCheckerTrait;
     #[Route('/entry', name: 'entry_create', methods: ['POST'])]
-    public function create(Request $request, AddEntry $creator) : Response
+    public function create(Request $request, EntryCreator $creator) : Response
     {
         $this->checkAuthorization($request);
 

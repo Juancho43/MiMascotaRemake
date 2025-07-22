@@ -11,6 +11,7 @@ use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
+use App\MiMascota\Users\Domain\ValueObject\UserPreference;
 use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -81,6 +82,10 @@ class User
         return $this->password;
     }
 
+    public function getName(): string
+    {
+        return $this->name->getValue();
+    }
     public function changePassword(string $password): bool
     {
         $this->password = UserPassword::create($password);
@@ -88,14 +93,9 @@ class User
         return true;
     }
 
-    public function getName(): string
+    public function rename(string $name): string
     {
-        return $this->name->getValue();
-    }
-
-    public function rename(string $name): void
-    {
-        $this->name = UserName::create($name);
+      return  $this->name->rename($name);
     }
 
     public function addJournal(Journal $journal): void
@@ -128,30 +128,76 @@ class User
         $this->posts->removeElement($post);
     }
 
+    public function getUserLocation(): UserLocation
+    {
+        return $this->location;
+    }
+    public function setLocation(UserLocation $location): void
+    {
+        $this->location = $location;
+    }
+
+
+    public function setImage(UserImage $image): void
+    {
+        $this->image = $image;
+    }
+    public function getImage(): ?UserImage
+    {
+        return $this->image;
+    }
+    public function getTimeStamp(): TimeStamp
+    {
+        return $this->timeStamp;
+    }
+    public function getSoftDelete(): SoftDelete
+    {
+        return $this->softDelete;
+    }
+
+    public function getPreferences(): Collection
+    {
+        return $this->preferences;
+    }
+
+    public function addPreference(string $id,string $key, string $value): UserPreference
+    {
+        $preference = UserPreference::create($id, $this, $key, $value);
+        $this->preferences->add($preference);
+        return $preference;
+    }
+    public function removePreference(UserPreference $preference): void
+    {
+        $this->preferences->removeElement($preference);
+    }
+
+    public function getPreference(string $key): ?UserPreference
+    {
+        foreach ($this->preferences as $preference) {
+            if ($preference->getPreference() === $key) {
+                return $preference;
+            }
+        }
+        return null;
+    }
+
+
+    //AUTHENTICATION METHODS
+
+    /**
+     * Verify code and login with device tracking
+     */
+    public function verifyCodeAndLoginWithDevice(string $code, string $ipAddress, string $userAgent): string
+    {
+        $this->email->verifyCode($code);
+        return $this->createTokenWithDevice($ipAddress, $userAgent);
+    }
+
     public function getTokens(): Collection
     {
         return $this->tokens;
     }
 
-
-    /**
-     * Original login method (backward compatibility)
-     */
-    public function login(string $password): string
-    {
-        try {
-            $this->getPassword()->verify($password);
-            if(!$this->getEmailObject()->isVerified()){
-                throw new \Exception("Email not verified");
-            }
-            if ($this->tokens->count() > 0 && !$this->tokens->first()->isExpired()) {
-                return $this->tokens->first()->getValue();
-            }
-            return $this->setToken();
-        } catch (\Exception $exception){
-            throw new \Exception("User login failed" . $exception->getMessage());
-        }
-    }
 
     /**
      * Login with IP and User Agent tracking - allows multiple tokens
@@ -174,15 +220,6 @@ class User
         }
     }
 
-    /**
-     * Original setToken method (backward compatibility)
-     */
-    public function setToken(): string
-    {
-        $newToken = UserToken::generate(Uuid::uuid4()->toString(), $this);
-        $this->tokens->add($newToken);
-        return $newToken->getValue();
-    }
 
     /**
      * Create a new token with IP and User Agent
@@ -284,60 +321,5 @@ class User
     {
         $this->tokens->clear();
         return true;
-    }
-
-    /**
-     * Legacy logout method - removes first token
-     */
-    public function logout(): bool
-    {
-        try {
-            if ($this->tokens->isEmpty()) {
-                throw new \Exception("No active tokens to logout");
-            }
-
-            $this->tokens->removeElement($this->tokens->first());
-            return true;
-        } catch (\Exception $exception) {
-            throw $exception;
-        }
-    }
-
-    public function getUserLocation(): UserLocation
-    {
-        return $this->location;
-    }
-
-    public function setLocation(UserLocation $location): void
-    {
-        $this->location = $location;
-    }
-
-    public function setImage(UserImage $image): void
-    {
-        $this->image = $image;
-    }
-
-    public function getImage(): ?UserImage
-    {
-        return $this->image;
-    }
-
-    /**
-     * Original verifyCodeAndLogin method (backward compatibility)
-     */
-    public function verifyCodeAndLogin(string $code): string
-    {
-        $this->email->verifyCode($code);
-        return $this->setToken();
-    }
-
-    /**
-     * Verify code and login with device tracking
-     */
-    public function verifyCodeAndLoginWithDevice(string $code, string $ipAddress, string $userAgent): string
-    {
-        $this->email->verifyCode($code);
-        return $this->createTokenWithDevice($ipAddress, $userAgent);
     }
 }

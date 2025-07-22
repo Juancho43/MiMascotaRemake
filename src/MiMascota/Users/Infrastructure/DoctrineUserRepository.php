@@ -36,17 +36,19 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
     }
     public function remove(User $user): void
     {
-        // TODO: Implement remove() method.
+        $this->getEntityManager()->remove($user);
+        $this->getEntityManager()->flush();
     }
 
      public function findByMail(string $email): ?User
      {
-         return $this->findOneBy(['email.email' => $email]);
+         return $this->findOneBy(['email.value' => $email]);
      }
     public function findByToken(string $token): ?User
     {
          return $this->createQueryBuilder('u')
-        ->where('u.token.value = :token')
+         ->leftJoin('u.tokens', 't')
+        ->where('t.value = :token')
         ->setParameter('token', $token)
         ->getQuery()
         ->getOneOrNullResult();

@@ -4,6 +4,7 @@ namespace App\MiMascota\Users\Domain\ValueObject;
 
 class UserTelephone
 {
+
     private const MAX_LENGTH = 25;
     private const MIN_LENGTH = 6;
     private const REGEX = '/^\+?[0-9\s]+$/';

@@ -67,4 +67,35 @@ class ForumTest extends TestCase
         $this->assertFalse($this->forum->getPosts()->contains($post));
     }
 
+
+    public function testCreateWithEmptyId()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Forum ID cannot be empty.');
+
+        $this->generateForum('', 'Test Forum', 'test-forum', 'This is a test forum');
+    }
+    public function testCreateWithEmptyName()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Forum name cannot be empty.');
+
+        $this->generateForum(Uuid::uuid4()->toString(), '', 'test-forum', 'This is a test forum');
+    }
+    public function testCreateWithEmptySlug()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Forum slug cannot be empty.');
+
+        $this->generateForum(Uuid::uuid4()->toString(), 'Test Forum', '', 'This is a test forum');
+    }
+    public function testCreateWithEmptyDescription()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Forum description cannot be empty.');
+
+        $this->generateForum(Uuid::uuid4()->toString(), 'Test Forum', 'test-forum', '');
+    }
+
+
 }

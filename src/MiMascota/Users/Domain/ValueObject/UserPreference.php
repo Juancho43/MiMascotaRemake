@@ -5,7 +5,7 @@ use App\MiMascota\Users\Domain\User;
 class UserPreference
 {
     private const MAX_LENGTH = 255;
-    private const MIN_LENGTH = 6;
+    private const MIN_LENGTH = 4;
 
    public function __construct(
         private string $id,
@@ -31,6 +31,32 @@ class UserPreference
     {
         return new self($id,$user,$preference,$value);
     }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getPreference(): string
+    {
+        return $this->preference;
+    }
+
+    public function getValue(): mixed
+    {
+        return $this->value;
+    }
+
+    public function setValue(mixed $value): void
+    {
+        $this->value = $value;
+    }
+
 
 
 }
