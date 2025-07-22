@@ -13,6 +13,8 @@ class AnimalGetData
     }
     public function __invoke(string $journal_id) : ?Animal
     {
-        return $this->animalRepository->getAnimal($journal_id);
+        $animal = $this->animalRepository->getAnimal($journal_id);
+
+        return $animal ;
     }
 }

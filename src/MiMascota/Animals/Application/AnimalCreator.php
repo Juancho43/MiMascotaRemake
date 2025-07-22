@@ -12,7 +12,6 @@ class AnimalCreator
       private AnimalRepository $repository,
     )
     {
-
     }
 
     public function __invoke(
