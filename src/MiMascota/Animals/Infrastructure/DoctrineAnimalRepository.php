@@ -68,9 +68,35 @@ class DoctrineAnimalRepository extends ServiceEntityRepository implements Animal
     {
         return $this->createQueryBuilder('animal')
             ->innerJoin('animal.journal', 'journal')
-            ->select('animal')
+            ->innerJoin('journal.user', 'user')
+            ->select('animal', 'journal', 'user')
             ->where('journal.id = :journalId')
             ->setParameter('journalId', $journalId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function getWithImages(string $id): ?Animal
+    {
+        return $this->createQueryBuilder('animal')
+            ->leftJoin('animal.images', 'images')
+            ->leftJoin('images.image', 'imageFile')
+            ->addSelect('images', 'imageFile')
+            ->where('animal.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function getWithImagesFromJournal(string $id): ?Animal
+    {
+        return $this->createQueryBuilder('animal')
+            ->leftJoin('animal.images', 'images')
+            ->leftJoin('images.image', 'imageFile')
+            ->addSelect('images', 'imageFile')
+            ->innerJoin('animal.journal', 'journal')
+            ->where('journal.id = :id')
+            ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
     }

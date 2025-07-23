@@ -2,6 +2,7 @@
 
 namespace App\Controller\Images;
 
+use App\MiMascota\Animals\Application\AnimalAddImage;
 use App\MiMascota\Images\Application\SaveAnimalImage;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
@@ -14,7 +15,7 @@ class AddAnimalImageController extends AbstractController
 {
     use ApiResponseTrait, AuthorizationCheckerTrait;
     #[Route('/animal/add/image', name: 'animal_add_image', methods: ['POST'])]
-    public function __invoke(Request $request, SaveAnimalImage $saveImage) : JsonResponse
+    public function __invoke(Request $request, AnimalAddImage $saveImage) : JsonResponse
     {
         $this->checkAuthorization($request);
         $response = [];

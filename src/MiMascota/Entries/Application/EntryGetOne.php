@@ -3,11 +3,12 @@
 namespace App\MiMascota\Entries\Application;
 
 use App\MiMascota\Entries\Domain\EntryRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 
-class EntryGetOne
+final readonly class EntryGetOne
 {
     public function __construct(
-        private readonly EntryRepository $entryRepository,
+        private EntryRepository $entryRepository,
     )
     {
 
@@ -15,10 +16,15 @@ class EntryGetOne
 
     public function __invoke(string $id): array
     {
+        $entry = $this->entryRepository->search($id);
+        if ($entry === null) {
+            throw new ModelNotFound('Entry', 'id', $id);
+        }
+        $photos = $this->entryRepository->getPhotos($id);
 
         return [
-            'entry' => $this->entryRepository->search($id),
-            'photos' => $this->entryRepository->getPhotos($id),
+            'entry' => $entry,
+            'photos' => $photos,
         ];
     }
 }

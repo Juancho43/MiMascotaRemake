@@ -24,7 +24,7 @@ class SaveImage
     ): ?Image
     {
         $name= (new \DateTime())->getTimestamp();
-        $path = 'images/' . $imageableType . '/' . $imageableId . '/' . $file->getClientOriginalName();
+        $path = 'images/' . $imageableType . '/' . $imageableId . '/' . $name;
         $image = Image::create(
             id: Uuid::uuid4()->toString(),
             name: $name,

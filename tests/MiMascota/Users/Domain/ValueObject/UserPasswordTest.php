@@ -2,6 +2,8 @@
 
 namespace App\Tests\MiMascota\Users\Domain\ValueObject;
 
+use App\MiMascota\Shared\Domain\CannotBeEmpty;
+use App\MiMascota\Users\Domain\Exceptions\UserPasswordIncorrect;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use PHPUnit\Framework\TestCase;
 
@@ -21,8 +23,7 @@ class UserPasswordTest extends TestCase
 
     public function testCreateFails()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Password cannot be empty');
+        $this->expectException(CannotBeEmpty::class);
         UserPassword::create('');
     }
 
@@ -45,8 +46,7 @@ class UserPasswordTest extends TestCase
     }
     public function testChangeFails()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Error changing password: Error generating password hash: Password cannot be empty');
+        $this->expectException(CannotBeEmpty::class);
         $userPassword = UserPassword::create($this->password);
         $userPassword->change('');
 
@@ -59,15 +59,14 @@ class UserPasswordTest extends TestCase
     }
     public function testVerifyFails()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Password is not valid');
+        $this->expectException(UserPasswordIncorrect::class);
         $userPassword = UserPassword::create($this->password);
         $this->assertFalse($userPassword->verify('wrongpassword'));
     }
     //Edge cases
     public function testCreateWithWhitespaceOnly()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(CannotBeEmpty::class);
         UserPassword::create('    ');
     }
 

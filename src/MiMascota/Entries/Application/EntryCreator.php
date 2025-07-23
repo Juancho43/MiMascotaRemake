@@ -6,14 +6,18 @@ use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
+use DateTime;
+use DateTimeZone;
 use Ramsey\Uuid\Nonstandard\Uuid;
 
-class EntryCreator
+
+final readonly class EntryCreator
 {
+
     public function __construct(
         private EntryRepository $repository,
         private JournalRepository $journalRepository,
-        private string $timezone,
     ){
 
     }
@@ -22,13 +26,13 @@ class EntryCreator
     {
         $journal = $this->journalRepository->search($journalId);
         if (!$journal instanceof Journal) {
-            throw new \InvalidArgumentException('Journal not found');
+            throw new ModelNotFound('Journal' ,'id',$journalId);
         }
         $entry = Entry::create(
             id: Uuid::uuid4()->toString(),
             title: $title,
             content: $content,
-            date: new \DateTime($date,new \DateTimeZone($this->timezone)),
+            date: new DateTime($date,new DateTimeZone(getenv('TIMEZONE'))),
             journal: $journal
         );
         $journal->addEntry($entry);

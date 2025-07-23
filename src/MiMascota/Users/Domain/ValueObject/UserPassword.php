@@ -3,16 +3,16 @@
 namespace App\MiMascota\Users\Domain\ValueObject;
 
 
+use App\MiMascota\Shared\Domain\CannotBeEmpty;
+use App\MiMascota\Shared\Domain\InvalidFormat;
+use App\MiMascota\Users\Domain\Exceptions\UserPasswordIncorrect;
+
 class UserPassword
 {
     private string $value;
     public function __construct(string $password)
     {
-        try {
-            $this->value = $this->generate($password);
-        } catch (\Exception $exception) {
-            throw new \Exception('Error creating password: ' . $exception->getMessage());
-        }
+        $this->value = $this->generate($password);
     }
 
     public static function create(string $password): self
@@ -22,11 +22,11 @@ class UserPassword
     public function verify($password): bool
     {
         if (!is_string($password) || trim($password) === '') {
-            throw new \TypeError('Password must be a string');
+            throw new InvalidFormat($password, 'string');
         }
 
         if (!password_verify($password, $this->value)) {
-            throw new \Exception('Password is not valid');
+            throw new UserPasswordIncorrect();
         }
         return true;
     }
@@ -37,23 +37,15 @@ class UserPassword
     }
     public function change($password): void
     {
-        try {
-            $this->value = $this->generate($password);
-        }catch (\Exception $exception){
-            throw new \Exception('Error changing password: ' . $exception->getMessage());
-        }
+        $this->value = $this->generate($password);
     }
-    private function generate(string $password, $algorithm = PASSWORD_BCRYPT): string
+    private function generate(string $password): string
     {
-        try {
-            if(trim($password) === '') {
-                throw new \Exception('Password cannot be empty');
-            }
-
-            return password_hash($password, $algorithm);
-        } catch (\Exception $exception) {
-            throw new \Exception('Error generating password hash: ' . $exception->getMessage());
+        if(trim($password) === '') {
+            throw new CannotBeEmpty('password');
         }
+
+        return password_hash($password, PASSWORD_BCRYPT);
     }
 
 }

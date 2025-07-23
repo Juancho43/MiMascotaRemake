@@ -13,17 +13,19 @@ use Symfony\Component\DependencyInjection\Container;
 
 class UserRegisterTest extends KernelTestCase
 {
-    private Container $container;
-
+    private UserRegister $userRegister;
+    private UserRepository $userRepository;
+    private LocationManager $locationManager;
     protected function setUp(): void
     {
         parent::setUp();
         self::bootKernel();
-        $this->container = static::getContainer();
-        $repository = $this->createMock(UserRepository::class);
-        $this->container->set(UserRepository::class, $repository);
-        $locationManager = $this->createMock(LocationManager::class);
-        $this->container->set(LocationManager::class, $locationManager);
+        $this->userRepository = $this->createMock(UserRepository::class);
+        $this->locationManager = $this->createMock(LocationManager::class);
+        $this->userRegister = new UserRegister(
+            $this->userRepository,
+            $this->locationManager
+        );
     }
 
     public function test__invoke()
@@ -35,9 +37,8 @@ class UserRegisterTest extends KernelTestCase
         $password = "Pepe";
         $latitude = "-34.61258";
         $longitude = '-58.38156';
-        $UserRegister = $this->container->get(UserRegister::class);
         //Act
-        $user = $UserRegister->__invoke($name, $telephone, $email, $password, $latitude, $longitude);
+        $user = $this->userRegister->__invoke($name, $telephone, $email, $password, $latitude, $longitude);
         //Assert
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals($name, $user->getName());
@@ -57,9 +58,8 @@ class UserRegisterTest extends KernelTestCase
         $password = "Pepe";
         $latitude = "-34.61258";
         $longitude = '-58.38156';
-        $UserRegister = $this->container->get(UserRegister::class);
         //Act
-        $UserRegister->__invoke($name, $telephone, $email, $password, $latitude, $longitude);
+        $this->userRegister->__invoke($name, $telephone, $email, $password, $latitude, $longitude);
 
     }
 }

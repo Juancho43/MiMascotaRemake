@@ -12,7 +12,7 @@ use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 use Ramsey\Uuid\Uuid;
 
-class UserRegister
+final readonly class UserRegister
 {
      public function __construct(
          private UserRepository $repository,
@@ -23,23 +23,19 @@ class UserRegister
 
      public function __invoke(string $name, string $telephone, string $email, string $password, string $latitude, string $longitude): User
      {
-         try {
-             $location = $this->locationManager->__invoke($latitude, $longitude);
-             $user = User::create(
-                 Uuid::uuid4()->toString(),
-                 UserName::create($name),
-                 UserTelephone::create($telephone),
-                 UserEmail::create($email),
-                 UserPassword::create($password),
-             );
 
-             $user->setLocation(new UserLocation(Uuid::uuid4()->toString(),$user,$location));
-             $this->repository->save($user);
+          $location = $this->locationManager->__invoke($latitude, $longitude);
+          $user = User::create(
+              Uuid::uuid4()->toString(),
+              UserName::create($name),
+              UserTelephone::create($telephone),
+              UserEmail::create($email),
+              UserPassword::create($password),
+          );
 
-             return $user;
-         }catch (\Exception $exception){
-             throw $exception;
-         }
+          $user->setLocation(new UserLocation(Uuid::uuid4()->toString(),$user,$location));
+          $this->repository->save($user);
 
+          return $user;
      }
 }

@@ -2,6 +2,10 @@
 
 namespace App\MiMascota\Users\Domain\ValueObject;
 
+use App\MiMascota\Shared\Domain\CannotBeEmpty;
+use App\MiMascota\Shared\Domain\InvalidFormat;
+use App\MiMascota\Users\Domain\Exceptions\UserEmailInvalidCode;
+
 class UserEmail
 {
     private string $value;
@@ -12,7 +16,7 @@ class UserEmail
     {
       try {
           if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-              throw new \Exception("Invalid email format");
+              throw new InvalidFormat($email,'email');
           }
           $this->code = bin2hex(random_bytes(3));
           $this->value = $email;
@@ -24,7 +28,7 @@ class UserEmail
     public static function create(string $email): self
     {
         if (empty($email)) {
-            throw new \Exception("Email cannot be empty");
+            throw new CannotBeEmpty('email');
         }
         return new self($email);
     }
@@ -36,19 +40,16 @@ class UserEmail
 
     public function verifyCode(string $code): bool
     {
-        try {
+
             if ($this->isVerified) {
                 return true;
             }
             if ($this->code !== $code) {
-                throw new \Exception("Invalid verification code");
+                throw new UserEmailInvalidCode($this->value);
             }
             $this->isVerified = true;
             return true;
 
-        } catch (\Exception $e) {
-            throw new \Exception("Verification failed: " . $e->getMessage());
-        }
     }
 
     public function getValue(): string

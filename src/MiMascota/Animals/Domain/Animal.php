@@ -3,11 +3,11 @@
 namespace App\MiMascota\Animals\Domain;
 
 use App\MiMascota\Images\Domain\AnimalImage;
+use App\MiMascota\Images\Domain\HaveImages;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -106,6 +106,11 @@ class Animal
         $this->journal = $journal;
     }
 
+    public function setWeight(float $weight): void
+    {
+        $this->weight = $weight;
+    }
+
     /**
      * @return Collection<int, AnimalImage>
      */
@@ -120,7 +125,7 @@ class Animal
     public function addImage(AnimalImage $image): void
     {
         if ($this->images->count() >= 3) {
-            throw new \Exception('Un animal no puede tener más de 3 imágenes.');
+            throw new HaveImages('animal', 3);
         }
         if (!$this->images->contains($image)) {
             $this->images->add($image);

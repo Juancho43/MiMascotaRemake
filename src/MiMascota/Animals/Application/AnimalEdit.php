@@ -4,15 +4,49 @@ namespace App\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
+use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
+use App\MiMascota\Users\Domain\Exceptions\UserPermissionDenied;
+use App\MiMascota\Users\Domain\User;
+use DateTimeImmutable;
 
-class AnimalEdit
+final readonly class AnimalEdit
 {
+
     public function __construct(private AnimalRepository $animalRepository)
     {
 
     }
-    public function __invoke(string $journal_id) : ?Animal
+    public function __invoke(
+        User $user,
+        string $journal_id,
+        string $name,
+        string $description,
+        string $color,
+        string $size,
+        string $breed,
+        string $gender,
+        DateTimeImmutable $birthDate,
+        float $weight
+    ) : ?Animal
     {
-        return $this->animalRepository->getAnimal($journal_id);
+
+        $animal = $this->animalRepository->getAnimal($journal_id);
+        if ($animal === null) {
+            throw new AnimalNotFoundByJournalId($journal_id);
+        }
+        if($animal->getJournal()->getUser() !== $user) {
+            throw new UserPermissionDenied('edit this animal.');
+        }
+        $animal->setName($name);
+        $animal->setDescription($description);
+        $animal->setColor($color);
+        $animal->setSize($size);
+        $animal->setBreed($breed);
+        $animal->setGender($gender);
+        $animal->setBirthDate($birthDate);
+        $animal->setWeight($weight);
+        $animal->getTimeStamp()->update();
+        $this->animalRepository->save($animal);
+        return $animal;
     }
 }

@@ -3,6 +3,7 @@ namespace App\MiMascota\Entries\Domain;
 
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\EntryImage;
+use App\MiMascota\Images\Domain\HaveImages;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
@@ -17,9 +18,9 @@ class Entry
 
     public function __construct(
         private readonly string $id,
-        private readonly string $title,
-        private readonly string $content,
-        private readonly \DateTime $date,
+        private string $title,
+        private string $content,
+        private \DateTime $date,
         private Journal $journal,
     ) {
         $this->images = new ArrayCollection();
@@ -36,6 +37,21 @@ class Entry
     public function getJournal(): Journal
     {
         return $this->journal;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+
+    public function setDate(\DateTime $date): void
+    {
+        $this->date = $date;
     }
 
 
@@ -75,7 +91,7 @@ class Entry
     public function addImage(EntryImage $image): void
     {
         if ($this->images->count() >= 3) {
-            throw new \Exception('An entry can have a maximum of 3 images.');
+            throw new HaveImages('Entry',3);
         }
         if (!$this->images->contains($image)) {
             $this->images->add($image);
@@ -88,6 +104,26 @@ class Entry
     public function removeImage(EntryImage $image): void
     {
         $this->images->removeElement($image);
+    }
+
+    public function setImages(Collection $images): void
+    {
+        $this->images = $images;
+    }
+
+    public function setSoftDelete(SoftDelete $softDelete): void
+    {
+        $this->softDelete = $softDelete;
+    }
+
+    public function setTimeStamp(TimeStamp $timeStamp): void
+    {
+        $this->timeStamp = $timeStamp;
+    }
+
+    public function setJournal(Journal $journal): void
+    {
+        $this->journal = $journal;
     }
 
 

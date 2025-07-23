@@ -25,4 +25,27 @@ class AnimalImage
         return new self($id, $animal, $image, $position);
     }
 
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function getImage(): Image
+    {
+        return $this->image;
+    }
+
+    public function getAnimal(): Animal
+    {
+        return $this->animal;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+
+
+
 }

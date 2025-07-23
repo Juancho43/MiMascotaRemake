@@ -3,6 +3,7 @@
 namespace App\Tests\MiMascota\Animals\Domain;
 
 use App\MiMascota\Animals\Domain\Animal;
+use App\MiMascota\Images\Domain\HaveImages;
 use App\MiMascota\Journals\Domain\Journal;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
@@ -66,7 +67,7 @@ class AnimalTest extends TestCase
         $this->animal->addImage($this->createMock(\App\MiMascota\Images\Domain\AnimalImage::class));
         $this->animal->addImage($this->createMock(\App\MiMascota\Images\Domain\AnimalImage::class));
         $this->animal->addImage($this->createMock(\App\MiMascota\Images\Domain\AnimalImage::class));
-        $this->expectException(\Exception::class);
+        $this->expectExceptionObject(new HaveImages('animal', 3));
         $this->animal->addImage($this->createMock(\App\MiMascota\Images\Domain\AnimalImage::class));
     }
     public function testSetPost()

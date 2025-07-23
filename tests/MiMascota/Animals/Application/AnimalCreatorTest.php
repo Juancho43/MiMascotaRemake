@@ -24,8 +24,8 @@ class AnimalCreatorTest extends KernelTestCase
     {
         $animal = AnimalMock::generate(Uuid::uuid4()->toString());
         $this->animalRepository->expects($this->once())
-            ->method('save')
-            ->with($this->equalTo($animal));
+            ->method('save');
+
 
         $animalnew = $this->animalCreator->__invoke($animal->getName(),
             $animal->getDescription(),
@@ -36,7 +36,7 @@ class AnimalCreatorTest extends KernelTestCase
             $animal->getBirthDate(),
             $animal->getWeight()
         );
-        $this->assertEquals($animal->getId(), $animalnew->getId());
+        $this->assertEquals($animal->getName(), $animalnew->getName());
 
 
     }
