@@ -3,7 +3,7 @@
 namespace App\Controller\Entries;
 
 use App\MiMascota\Entries\Application\EntryCreator;
-use App\MiMascota\Entries\Application\DTO\EntryCreatedResponse;
+use App\MiMascota\Entries\Application\DTO\EntryResponse;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +27,7 @@ class EntryNewController extends AbstractController
             $data['date']
         );
 
-        return $this->successResponse(EntryCreatedResponse::fromEntity($entry), 'Entry created successfully', Response::HTTP_CREATED);
+        return $this->successResponse(EntryResponse::generate($entry), 'Entry created successfully', Response::HTTP_CREATED);
 
     }
 }

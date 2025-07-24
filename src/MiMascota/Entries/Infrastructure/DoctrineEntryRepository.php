@@ -26,7 +26,13 @@ class DoctrineEntryRepository extends ServiceEntityRepository implements EntryRe
      */
     public function search(string $id): ?Entry
     {
-        return $this->getEntityManager()->find(Entry::class, $id);
+        return $this->createQueryBuilder('entry')
+            ->leftJoin('entry.images', 'images')
+            ->addSelect('images')
+            ->where('entry.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function save(Entry $entry): void
@@ -36,14 +42,12 @@ class DoctrineEntryRepository extends ServiceEntityRepository implements EntryRe
     }
     public function remove(Entry $entry): void
     {
-        // TODO: Implement remove() method.
+        $this->getEntityManager()->remove($entry);
+        $this->getEntityManager()->flush();
     }
 
 
-    public function update(Entry $journal): void
-    {
-        // TODO: Implement update() method.
-    }
+
 
    public function getPhotos(string $id): array
    {

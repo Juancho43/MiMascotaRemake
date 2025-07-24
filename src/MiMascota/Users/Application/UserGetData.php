@@ -4,7 +4,7 @@ namespace App\MiMascota\Users\Application;
 
 use App\MiMascota\Users\Domain\UserRepository;
 
-class UserGetData
+final readonly class UserGetData
 {
     public function __construct(
         private UserRepository $repository,

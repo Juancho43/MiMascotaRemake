@@ -6,7 +6,7 @@ use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use Ramsey\Uuid\Uuid;
 
-class AnimalCreator
+final readonly class AnimalCreator
 {
     public function  __construct(
       private AnimalRepository $repository,

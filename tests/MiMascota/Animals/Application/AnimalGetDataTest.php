@@ -5,6 +5,7 @@ namespace App\Tests\MiMascota\Animals\Application;
 use App\MiMascota\Animals\Application\AnimalGetData;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\SlugGenerator;
 use App\MiMascota\Users\Domain\User;
 use App\Tests\MiMascota\Shared\AnimalMock;
@@ -45,7 +46,7 @@ class AnimalGetDataTest extends KernelTestCase
 
     public function test__invokeAnimalNotFound()
     {
-        $this->expectException('App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId');
+        $this->expectException(ModelNotFound::class);
         $this->animalRepository->expects($this->once())
             ->method('getAnimal')
             ->with($this->journal->getId())

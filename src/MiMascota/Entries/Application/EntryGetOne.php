@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Entries\Application;
 
+use App\MiMascota\Entries\Application\DTO\EntryResponse;
 use App\MiMascota\Entries\Domain\EntryRepository;
 use App\MiMascota\Shared\Domain\ModelNotFound;
 
@@ -20,11 +21,8 @@ final readonly class EntryGetOne
         if ($entry === null) {
             throw new ModelNotFound('Entry', 'id', $id);
         }
-        $photos = $this->entryRepository->getPhotos($id);
 
-        return [
-            'entry' => $entry,
-            'photos' => $photos,
-        ];
+        return EntryResponse::generate($entry);
+
     }
 }

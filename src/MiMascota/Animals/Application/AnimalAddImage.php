@@ -6,6 +6,7 @@ use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFound;
 use App\MiMascota\Images\Application\SaveImage;
 use App\MiMascota\Images\Domain\AnimalImage;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -26,7 +27,7 @@ final readonly class AnimalAddImage
     ): ?string {
         $animal = $this->animalRepository->search($animalId);
         if ($animal === null){
-            throw new AnimalNotFound($animalId);
+            throw new ModelNotFound('animal','id',$animalId);
         }
         $image = $this->saveImage->__invoke(
             $imageFile,

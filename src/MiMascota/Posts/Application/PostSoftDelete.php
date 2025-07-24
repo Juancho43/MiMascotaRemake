@@ -4,12 +4,10 @@ namespace App\MiMascota\Posts\Application;
 
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 
-class PostSoftDelete
+final readonly class PostSoftDelete
 {
-
-
-
     public function __construct(private PostRepository $postRepository)
     {
     }
@@ -18,7 +16,7 @@ class PostSoftDelete
     {
         $post = $this->postRepository->search($postId);
         if ($post === null) {
-            throw new \Exception("Post not found");
+            throw new ModelNotFound("post");
         }
 
         $post->getSoftDelete()->markAsDeleted();

@@ -7,7 +7,12 @@ use App\MiMascota\Journals\Domain\Journal;
 
 class EntryMock
 {
-    public static function EntryMock($id,$title,$content,$date, Journal $journal) : Entry
+    public static function generate($id,
+                                    $date,
+                                    Journal $journal,
+                                    $title = 'Test Entry',
+                                    $content = 'mock content',
+    ) : Entry
     {
         return Entry::create(
             $id,

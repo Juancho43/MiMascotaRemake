@@ -6,7 +6,7 @@ use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Locations\Domain\LocationRepository;
 
 
-class SaveLocation
+final readonly class SaveLocation
 {
 
     public function __construct(private LocationRepository $repository, private SearchLocation $checkLocation)

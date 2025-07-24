@@ -3,7 +3,7 @@
 namespace App\MiMascota\Forums\Application;
 
 use App\MiMascota\Posts\Domain\PostRepository;
-class ForumGetPosts
+final readonly class ForumGetPosts
 {
 
     public function __construct(private PostRepository $repository)

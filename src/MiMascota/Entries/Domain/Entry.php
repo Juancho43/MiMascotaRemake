@@ -126,6 +126,16 @@ class Entry
         $this->journal = $journal;
     }
 
+    public function getTimeStamp(): TimeStamp
+    {
+        return $this->timeStamp;
+    }
+
+    public function getSoftDelete(): SoftDelete
+    {
+        return $this->softDelete;
+    }
+
 
 
 

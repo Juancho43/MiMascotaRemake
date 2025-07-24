@@ -7,7 +7,7 @@ use App\MiMascota\Forums\Domain\ForumRepository;
 use App\MiMascota\Shared\SlugGenerator;
 use Ramsey\Uuid\Uuid;
 
-class ForumCreator
+final readonly class ForumCreator
 {
 
     public function __construct(private readonly ForumRepository $forumRepository)

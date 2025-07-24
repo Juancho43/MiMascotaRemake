@@ -8,7 +8,7 @@ use App\MiMascota\Users\Domain\UserRepository;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class UserChangeImage
+final readonly class UserChangeImage
 {
 
     public function __construct(
@@ -34,7 +34,7 @@ class UserChangeImage
             'user',
             $userId,
         );
-        $user_image = new UserImage(Uuid::uuid4()->toString(),$user,$image,1);
+        $user_image = UserImage::create(Uuid::uuid4()->toString(), $user, $image, 1);
         $user->setImage($user_image);
         $this->userRepository->save($user);
         return $user->getImage();

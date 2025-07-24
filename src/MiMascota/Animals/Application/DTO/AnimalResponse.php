@@ -17,10 +17,7 @@ class AnimalResponse
             'color' => $animal->getColor(),
             'size' => $animal->getSize(),
             'weight' => $animal->getWeight(),
-            'journal' =>[
-                'id' => $animal->getJournal()->getId(),
-                'slug' => $animal->getJournal()->getSlug(),
-            ]
+
         ];
     }
 }

@@ -8,11 +8,12 @@ use App\MiMascota\Locations\Domain\LocationRepository;
 use App\MiMascota\Posts\Application\DTO\PostResponse;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\SlugGenerator;
 use App\MiMascota\Users\Domain\UserRepository;
 use Ramsey\Uuid\Uuid;
 
-class PostCreator
+final readonly class PostCreator
 {
 
     public function __construct(
@@ -35,22 +36,22 @@ class PostCreator
         string $locationId
     ) : array
     {
-        try {
+
             $user = $this->userRepository->search($userId);
             if ($user === null) {
-                throw new \Exception("User not found");
+                throw new ModelNotFound("user");
             }
             $location = $this->locationRepository->search($locationId);
             if ($location === null) {
-                throw new \Exception("Location not found");
+                throw new ModelNotFound("location");
             }
             $animal = $this->animalRepository->search($animalId);
             if ($animal === null) {
-                throw new \Exception("Animal not found");
+                throw new ModelNotFound("animal");
             }
             $forum = $this->forumRepository->search($forumId);
             if ($forum === null) {
-                throw new \Exception("Forum not found");
+                throw new ModelNotFound("forum");
             }
 
             $post = Post::create(
@@ -65,8 +66,6 @@ class PostCreator
             );
             $this->repository->save($post);
             return PostResponse::generate($post);
-        } catch (\Exception $exception) {
-            throw new \Exception("Error creating post: " . $exception->getMessage());
-        }
+
     }
 }

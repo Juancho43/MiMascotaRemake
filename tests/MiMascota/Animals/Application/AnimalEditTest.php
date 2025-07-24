@@ -7,6 +7,7 @@ use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Users\Domain\User;
 use App\Tests\MiMascota\Shared\AnimalMock;
 use App\Tests\MiMascota\Shared\JournalMock;
@@ -50,7 +51,7 @@ class AnimalEditTest extends KernelTestCase
 
     public function test__invokeAnimalNotFound()
     {
-        $this->expectException(AnimalNotFoundByJournalId::class);
+        $this->expectException(ModelNotFound::class);
         $this->animalRepository->expects($this->once())
             ->method('getAnimal')
             ->with($this->journal->getId())

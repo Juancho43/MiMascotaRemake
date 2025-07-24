@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Entries\Application;
 
+use App\MiMascota\Entries\Application\DTO\EntryResponse;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
 use App\MiMascota\Journals\Domain\Journal;
@@ -18,11 +19,9 @@ final readonly class EntryCreator
     public function __construct(
         private EntryRepository $repository,
         private JournalRepository $journalRepository,
-    ){
+    ){}
 
-    }
-
-    public function __invoke(string $journalId, string $title, string $content, string $date): Entry
+    public function __invoke(string $journalId, string $title, string $content, string $date): array
     {
         $journal = $this->journalRepository->search($journalId);
         if (!$journal instanceof Journal) {
@@ -32,12 +31,11 @@ final readonly class EntryCreator
             id: Uuid::uuid4()->toString(),
             title: $title,
             content: $content,
-            date: new DateTime($date,new DateTimeZone(getenv('TIMEZONE'))),
+            date: new DateTime($date),
             journal: $journal
         );
         $journal->addEntry($entry);
         $this->repository->save($entry);
-        return $entry;
+        return EntryResponse::generate($entry);
     }
-
 }

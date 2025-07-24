@@ -5,7 +5,7 @@ namespace App\MiMascota\Users\Application;
 use App\MiMascota\Users\Domain\UserRepository;
 use App\MiMascota\Users\Domain\UserTokenRepository;
 
-class UserLogout
+final readonly class UserLogout
 {
     public function __construct(
         private UserRepository $repository,

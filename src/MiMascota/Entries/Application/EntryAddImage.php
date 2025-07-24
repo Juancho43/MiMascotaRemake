@@ -9,7 +9,7 @@ use App\MiMascota\Shared\Domain\ModelNotFound;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class EntryAddImage
+final readonly class EntryAddImage
 {
 
     public function __construct(

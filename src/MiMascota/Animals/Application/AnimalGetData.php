@@ -4,9 +4,9 @@ namespace App\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
-use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 
-class AnimalGetData
+final readonly class AnimalGetData
 {
 
     public function __construct(private AnimalRepository $animalRepository)
@@ -17,7 +17,7 @@ class AnimalGetData
     {
         $animal = $this->animalRepository->getAnimal($journal_id);
         if ($animal === null) {
-            throw new AnimalNotFoundByJournalId($journal_id);
+            throw new ModelNotFound('animal', 'journal id ', $journal_id);
         }
         return $animal ;
     }

@@ -2,7 +2,7 @@
 
 namespace App\MiMascota\Users\Application;
 
-class UserSoftDelete
+final readonly class UserSoftDelete
 {
 
 }

@@ -7,7 +7,7 @@ use App\MiMascota\Images\Domain\ImageRepository;
 use Ramsey\Uuid\Nonstandard\Uuid;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class SaveImage
+final readonly class SaveImage
 {
 
     public function __construct(

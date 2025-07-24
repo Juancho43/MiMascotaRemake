@@ -5,7 +5,7 @@ namespace App\MiMascota\Locations\Application;
 use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Locations\Domain\LocationRepository;
 
-class SearchLocation
+final readonly class SearchLocation
 {
 
     public function __construct(private LocationRepository $repository)

@@ -4,8 +4,9 @@ namespace App\MiMascota\Posts\Application;
 
 use App\MiMascota\Posts\Application\DTO\PostResponse;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 
-class PostGetData
+final readonly class PostGetData
 {
 
     public function __construct(private PostRepository $postRepository)
@@ -15,8 +16,8 @@ class PostGetData
     {
         $post = $this->postRepository->search($id);
 
-        if (!$post) {
-            throw new \Exception("Post not found");
+        if ($post === null) {
+            throw new ModelNotFound("post");
         }
 
         return PostResponse::generate($post);

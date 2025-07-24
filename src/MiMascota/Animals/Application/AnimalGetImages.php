@@ -2,11 +2,12 @@
 
 namespace App\MiMascota\Animals\Application;
 
+use App\MiMascota\Animals\Application\DTO\AnimalImagesResponse;
 use App\MiMascota\Animals\Domain\AnimalRepository;
-use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFound;
 use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 
-class AnimalGetImages
+final readonly class AnimalGetImages
 {
 
     public function __construct(
@@ -18,9 +19,8 @@ class AnimalGetImages
     {
         $animal = $this->animalRepository->getWithImagesFromJournal($journalId);
         if ($animal === null) {
-            throw new AnimalNotFoundByJournalId($journalId);
+            throw new ModelNotFound("animal",'journal id', $journalId);
         }
-
-        return ['id'=>$animal->getId(), 'images' => $animal->getImages()->toArray()];
+        return AnimalImagesResponse::generate($animal);
     }
 }

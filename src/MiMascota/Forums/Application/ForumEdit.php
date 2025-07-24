@@ -6,9 +6,9 @@ use App\MiMascota\Forums\Domain\Forum;
 use App\MiMascota\Forums\Domain\ForumRepository;
 use App\MiMascota\Shared\SlugGenerator;
 
-class ForumEdit
+final readonly class ForumEdit
 {
-    public function __construct(private readonly ForumRepository $forumRepository)
+    public function __construct(private ForumRepository $forumRepository)
     {
     }
 

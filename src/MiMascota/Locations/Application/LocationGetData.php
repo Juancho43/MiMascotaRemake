@@ -2,7 +2,7 @@
 
 namespace App\MiMascota\Locations\Application;
 
-class LocationGetData
+final readonly class LocationGetData
 {
 
 }

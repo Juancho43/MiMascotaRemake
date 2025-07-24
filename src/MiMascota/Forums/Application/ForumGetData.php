@@ -4,8 +4,9 @@ namespace App\MiMascota\Forums\Application;
 
 use App\MiMascota\Forums\Domain\Forum;
 use App\MiMascota\Forums\Domain\ForumRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 
-class ForumGetData
+final readonly class ForumGetData
 {
 
     public function __construct(private ForumRepository $repository)
@@ -16,7 +17,7 @@ class ForumGetData
     {
         $forum = $this->repository->getBySlug($slug);
         if (!$forum) {
-         throw new \Exception('Forum not found');
+         throw new ModelNotFound('forum', 'slug', $slug);
         }
         return $forum;
     }

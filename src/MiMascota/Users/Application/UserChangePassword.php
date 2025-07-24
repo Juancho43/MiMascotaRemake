@@ -2,9 +2,10 @@
 
 namespace App\MiMascota\Users\Application;
 
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Users\Domain\UserRepository;
 
-class UserChangePassword
+final readonly class UserChangePassword
 {
 
     public function __construct(private UserRepository $repository)
@@ -13,18 +14,16 @@ class UserChangePassword
 
     public function __invoke(string $email, string $newPassword): bool
     {
-        try {
+
             $user = $this->repository->findByMail($email);
             if ($user === null) {
-                throw new \Exception('User not found');
+                throw new ModelNotFound('user','email', $email);
             }
 
             $response = $user->changePassword($newPassword);
             $this->repository->save($user);
             return $response;
-        }catch (\Exception $exception){
-            throw $exception;
-        }
+
 
     }
 }
