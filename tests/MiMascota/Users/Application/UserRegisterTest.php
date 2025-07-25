@@ -4,7 +4,11 @@ namespace App\Tests\MiMascota\Users\Application;
 
 
 use App\MiMascota\Locations\Application\LocationManager;
+use App\MiMascota\Locations\Application\SaveLocation;
+use App\MiMascota\Locations\Application\SearchLocation;
+use App\MiMascota\Locations\Domain\LocationRepository;
 use App\MiMascota\Locations\Domain\UserLocation;
+use App\MiMascota\Locations\Infrastructure\ReverseGeocodeClient;
 use App\MiMascota\Users\Application\UserRegister;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
@@ -21,7 +25,9 @@ class UserRegisterTest extends KernelTestCase
         parent::setUp();
         self::bootKernel();
         $this->userRepository = $this->createMock(UserRepository::class);
-        $this->locationManager = $this->createMock(LocationManager::class);
+        $searchLocation = new SearchLocation($this->createMock(LocationRepository::class));
+        $saveLocation = new SaveLocation($this->createMock(LocationRepository::class),$searchLocation);
+        $this->locationManager = new LocationManager($this->createMock(ReverseGeocodeClient::class),$saveLocation);
         $this->userRegister = new UserRegister(
             $this->userRepository,
             $this->locationManager

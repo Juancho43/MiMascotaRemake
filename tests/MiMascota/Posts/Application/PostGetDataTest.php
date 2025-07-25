@@ -8,6 +8,7 @@ use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Posts\Application\PostGetData;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\SlugGenerator;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
@@ -69,7 +70,7 @@ class PostGetDataTest extends KernelTestCase
 
     public function test__invoke__fails()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(ModelNotFound::class);
         $this->postRepository->expects($this->once())->method('search')
             ->with('some-non-existing-id')
             ->willReturn(null);

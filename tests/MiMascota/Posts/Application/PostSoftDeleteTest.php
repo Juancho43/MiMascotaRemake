@@ -10,6 +10,7 @@ use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Posts\Application\PostSoftDelete;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\SlugGenerator;
 use App\MiMascota\Users\Domain\User;
 use PHPUnit\Framework\TestCase;
@@ -56,8 +57,7 @@ class PostSoftDeleteTest extends KernelTestCase
 
     public function test_invokeFails()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Post not found');
+        $this->expectException(ModelNotFound::class);
 
         $postId = Uuid::uuid4()->toString();
         $this->postRepository->expects($this->once())->method('search')->with($postId)->willReturn(null);

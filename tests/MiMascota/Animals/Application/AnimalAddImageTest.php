@@ -7,6 +7,7 @@ use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Images\Application\SaveImage;
 use App\MiMascota\Images\Domain\Image;
+use App\MiMascota\Images\Domain\ImageRepository;
 use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\Tests\MiMascota\Shared\AnimalMock;
 use PHPUnit\Framework\TestCase;
@@ -26,7 +27,7 @@ class AnimalAddImageTest extends KernelTestCase
     {
         self::bootKernel();
         $this->animalRepository = $this->createMock(AnimalRepository::class);
-        $this->saveImage = $this->createMock(SaveImage::class);
+        $this->saveImage = new SaveImage($this->createMock(ImageRepository::class));
         $this->animalAddImage = new AnimalAddImage($this->saveImage,$this->animalRepository);
         $this->animal = AnimalMock::generate(Uuid::uuid4()->toString());
     }
@@ -39,14 +40,6 @@ class AnimalAddImageTest extends KernelTestCase
         $imageFile = $this->createMock(UploadedFile::class);
 
 
-        $this->saveImage->expects($this->once())
-            ->method('__invoke')
-            ->with(
-                $imageFile,
-                'animal',
-                $this->animal->getId()
-            )
-            ->willReturn($this->createMock(Image::class));
         $this->animalRepository
             ->expects($this->once())
             ->method('save')

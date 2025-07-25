@@ -11,6 +11,7 @@ use App\MiMascota\Locations\Domain\LocationRepository;
 use App\MiMascota\Posts\Application\PostCreator;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use PHPUnit\Framework\TestCase;
@@ -106,8 +107,7 @@ class PostCreatorTest extends KernelTestCase
             ->with($this->location->getId())
             ->willReturn($this->location);
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Animal not found");
+        $this->expectException(ModelNotFound::class);
 
         $postTitle = "Test Post Title";
         $postContent = "This is a test post content.";
@@ -142,8 +142,7 @@ class PostCreatorTest extends KernelTestCase
             ->with($this->animal->getId())
             ->willReturn($this->animal);
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Forum not found");
+        $this->expectException(ModelNotFound::class);
 
         $postTitle = "Test Post Title";
         $postContent = "This is a test post content.";
@@ -169,8 +168,8 @@ class PostCreatorTest extends KernelTestCase
     public function test__invokeWithNonExistentUser(): void
     {
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("User not found");
+        $this->expectException(ModelNotFound::class);
+
 
         $postTitle = "Test Post Title";
         $postContent = "This is a test post content.";
@@ -196,8 +195,7 @@ class PostCreatorTest extends KernelTestCase
             ->method('search')
             ->with($this->user->getId())
             ->willReturn($this->user);
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Location not found");
+        $this->expectException(ModelNotFound::class);
 
         $postTitle = "Test Post Title";
         $postContent = "This is a test post content.";

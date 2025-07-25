@@ -6,6 +6,7 @@ use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Journals\Application\JournalSoftDelete;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\Tests\MiMascota\Shared\AnimalMock;
 use App\Tests\MiMascota\Shared\JournalMock;
@@ -41,8 +42,7 @@ class JournalSoftDeleteTest extends KernelTestCase
 
     public function test_invokeFails()
     {
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage("Journal with ID {$this->journal->getId()} not found.");
+        $this->expectException(ModelNotFound::class);
 
         $this->journalRepository->expects($this->once())
             ->method('search')

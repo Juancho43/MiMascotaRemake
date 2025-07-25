@@ -11,6 +11,7 @@ use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Locations\Domain\LocationRepository;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\SlugGenerator;
 use App\MiMascota\Users\Domain\User;
 use PHPUnit\Framework\TestCase;
@@ -86,7 +87,7 @@ class ForumGetPostByLocationTest extends KernelTestCase
     }
     public function test__invokeFailsWithInvalidSlug() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(ModelNotFound::class);
         $this->forumRepository->expects($this->once())
             ->method('getBySlug')
             ->with('dsada')
@@ -99,7 +100,7 @@ class ForumGetPostByLocationTest extends KernelTestCase
             ->method('getBySlug')
             ->with($this->forum->getSlug())
             ->willReturn($this->forum);
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(ModelNotFound::class);
         $this->locationRepository->expects($this->once())
             ->method('search')
             ->with('11111')

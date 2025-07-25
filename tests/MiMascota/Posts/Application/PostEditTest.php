@@ -10,7 +10,9 @@ use App\MiMascota\Locations\Domain\LocationRepository;
 use App\MiMascota\Posts\Application\PostEdit;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
+use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Shared\SlugGenerator;
+use App\MiMascota\Users\Domain\Exceptions\UserPermissionDenied;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
@@ -101,8 +103,7 @@ class PostEditTest extends KernelTestCase
     }
 
     public function test__invokeFailsWithInvalidUser()
-    {   $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('User does not have permission to edit this post');
+    {   $this->expectException(UserPermissionDenied::class);
         $user = User::create(
             '11122',
             UserName::create('Hola User'),
@@ -131,8 +132,7 @@ class PostEditTest extends KernelTestCase
     }
     public function test__invokeFailsWithPostNotFound()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Post not found');
+        $this->expectException(ModelNotFound::class);
 
         $this->postRepository->expects($this->once())
             ->method('search')
@@ -155,8 +155,7 @@ class PostEditTest extends KernelTestCase
         $this->postRepository->expects($this->once())
             ->method('search')
             ->willReturn($this->post);
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Location not found');
+        $this->expectException(ModelNotFound::class);
 
         $this->locationRepository->expects($this->once())
             ->method('search')
@@ -182,8 +181,7 @@ class PostEditTest extends KernelTestCase
         $this->locationRepository->expects($this->once())
             ->method('search')
             ->willReturn($this->location);
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Animal not found');
+        $this->expectException(ModelNotFound::class);
 
         $this->animalRepository->expects($this->once())
             ->method('search')
@@ -200,8 +198,7 @@ class PostEditTest extends KernelTestCase
     }
     public function test__invokeFailsWithUserNotFound()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('User not found');
+        $this->expectException(ModelNotFound::class);
         $this->userRepository->expects($this->once())
             ->method('search')
             ->willReturn(null);
