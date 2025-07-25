@@ -3,6 +3,7 @@
 namespace App\Tests\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Application\AnimalEdit;
+use App\MiMascota\Animals\Application\DTO\AnimalResponse;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
@@ -45,7 +46,7 @@ class AnimalEditTest extends KernelTestCase
         $response = $this->animalEdit->__invoke($this->user,$this->journal->getId(),$newAnimal->getName(), $newAnimal->getDescription(), $newAnimal->getColor(), $newAnimal->getSize(), $newAnimal->getBreed(), $newAnimal->getGender(), $newAnimal->getBirthDate(), $newAnimal->getWeight());
         $this->assertEquals($newAnimal->getName(), $this->animal->getName());
         $this->assertEquals($newAnimal->getDescription(), $this->animal->getDescription());
-        $this->assertEquals($this->animal,$response);
+        $this->assertEquals(AnimalResponse::generate($this->animal),$response);
 
     }
 

@@ -36,7 +36,7 @@ class AnimalCreatorTest extends KernelTestCase
             $animal->getBirthDate(),
             $animal->getWeight()
         );
-        $this->assertEquals($animal->getName(), $animalnew->getName());
+        $this->assertEquals($animal->getName(), $animalnew['name']);
 
 
     }

@@ -15,7 +15,9 @@ class EntryResponse
             'content' => $entry->getContent(),
             'date' => $entry->getDate()->format('Y-m-d H:i:s'),
             'images' => $entry->getImages()->toArray(),
-            'journal_id' => $entry->getJournal()->getId()
+            'journal_id' => $entry->getJournal()->getId(),
+            'created_at' => $entry->getTimeStamp()->getCreatedAt()->format('Y-m-d H:i:s'),
+            'updated_at' => $entry->getTimeStamp()->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 

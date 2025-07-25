@@ -27,7 +27,7 @@ class EntryNewController extends AbstractController
             $data['date']
         );
 
-        return $this->successResponse(EntryResponse::generate($entry), 'Entry created successfully', Response::HTTP_CREATED);
+        return $this->successResponse($entry, 'Entry created successfully', Response::HTTP_CREATED);
 
     }
 }

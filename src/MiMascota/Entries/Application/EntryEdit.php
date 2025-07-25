@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Entries\Application;
 
+use App\MiMascota\Entries\Application\DTO\EntryResponse;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
 use App\MiMascota\Shared\Domain\ModelNotFound;
@@ -23,7 +24,7 @@ final readonly class EntryEdit
         string             $title,
         string             $content,
         DateTime $date
-    ) : Entry
+    ) : array
     {
         $entry = $this->repository->search($entry_id);
         if ($entry === null) {
@@ -37,6 +38,6 @@ final readonly class EntryEdit
         $entry->setDate($date);
 
         $this->repository->save($entry);
-        return $entry;
+        return EntryResponse::generate($entry);
     }
 }

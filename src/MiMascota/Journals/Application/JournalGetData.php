@@ -15,7 +15,7 @@ final readonly class JournalGetData
 
     public function __invoke(string $journal_id) : array
     {
-        return AnimalResponse::generate($this->animalGetData->__invoke($journal_id));
+        return $this->animalGetData->__invoke($journal_id);
 
     }
 

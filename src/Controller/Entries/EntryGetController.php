@@ -19,24 +19,14 @@ class EntryGetController extends AbstractController
     #[Route('/entry/{id}', name: 'entry_get', methods: ['GET'])]
     public function __invoke(
         Request             $request,
-        CheckToken          $login,
         string              $id,
         EntryGetOne         $getOne,
-        NormalizerInterface $normalizer
     ): JsonResponse
     {
-        $this->checkAuthorization($request, $login);
-
-        $entryData = $getOne->__invoke($id);
-           $normalizedData = $normalizer->normalize($entryData, null, [
-               'circular_reference_handler' => function ($object) {
-                   return $object->getId();
-               },
-               'ignored_attributes' => ['journal']
-           ]);
+        $this->checkAuthorization($request );
 
         return $this->successResponse(
-            $normalizedData,
+            $getOne->__invoke($id),
             'Entry retrieved successfully'
         );
 

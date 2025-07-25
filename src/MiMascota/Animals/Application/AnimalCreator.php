@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Animals\Application;
 
+use App\MiMascota\Animals\Application\DTO\AnimalResponse;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use Ramsey\Uuid\Uuid;
@@ -15,7 +16,6 @@ final readonly class AnimalCreator
     }
 
     public function __invoke(
-
         string $name,
         string $description,
         string $color,
@@ -24,10 +24,10 @@ final readonly class AnimalCreator
         string $gender,
         \DateTimeImmutable $birthDate,
         float $weight
-    ): Animal
+    ): array
     {
         $animal = Animal::create(Uuid::uuid4()->toString(),  $name, $description, $color, $size, $breed, $gender, $birthDate, $weight);
         $this->repository->save($animal);
-        return $animal;
+        return AnimalResponse::generate($animal);
     }
 }

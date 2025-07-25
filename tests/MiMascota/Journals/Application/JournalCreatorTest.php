@@ -61,6 +61,6 @@ class JournalCreatorTest extends KernelTestCase
             $animal->getDescription()
         );
 
-        $this->assertEquals($journal->getAnimal()->getName(), $animal->getName());
+        $this->assertEquals($journal['animal']['name'], $animal->getName());
     }
 }

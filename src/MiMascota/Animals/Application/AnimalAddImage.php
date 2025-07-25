@@ -3,7 +3,7 @@
 namespace App\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Domain\AnimalRepository;
-use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFound;
+use App\MiMascota\Images\Application\ImageResponse;
 use App\MiMascota\Images\Application\SaveImage;
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Shared\Domain\ModelNotFound;
@@ -24,7 +24,8 @@ final readonly class AnimalAddImage
         UploadedFile $imageFile,
         string $animalId,
         int $position
-    ): ?string {
+    ): array
+    {
         $animal = $this->animalRepository->search($animalId);
         if ($animal === null){
             throw new ModelNotFound('animal','id',$animalId);
@@ -37,6 +38,6 @@ final readonly class AnimalAddImage
         $animalImage = AnimalImage::create(Uuid::uuid4()->toString(),$animal,$image,$position);
         $animal->addImage($animalImage);
         $this->animalRepository->save($animal);
-        return $image->getPath();
+        return ImageResponse::generate($image);
     }
 }

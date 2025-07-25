@@ -2,9 +2,8 @@
 
 namespace App\MiMascota\Animals\Application;
 
-use App\MiMascota\Animals\Domain\Animal;
+use App\MiMascota\Animals\Application\DTO\AnimalResponse;
 use App\MiMascota\Animals\Domain\AnimalRepository;
-use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
 use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Users\Domain\Exceptions\UserPermissionDenied;
 use App\MiMascota\Users\Domain\User;
@@ -28,7 +27,7 @@ final readonly class AnimalEdit
         string $gender,
         DateTimeImmutable $birthDate,
         float $weight
-    ) : ?Animal
+    ) : array
     {
 
         $animal = $this->animalRepository->getAnimal($journal_id);
@@ -48,6 +47,6 @@ final readonly class AnimalEdit
         $animal->setWeight($weight);
         $animal->getTimeStamp()->update();
         $this->animalRepository->save($animal);
-        return $animal;
+        return AnimalResponse::generate($animal);
     }
 }

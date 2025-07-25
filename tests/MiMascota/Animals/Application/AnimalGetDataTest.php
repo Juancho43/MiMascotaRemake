@@ -3,6 +3,7 @@
 namespace App\Tests\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Application\AnimalGetData;
+use App\MiMascota\Animals\Application\DTO\AnimalResponse;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Shared\Domain\ModelNotFound;
@@ -40,7 +41,7 @@ class AnimalGetDataTest extends KernelTestCase
             ->with($this->journal->getId())
             ->willReturn($this->animal);
         $response = $this->animalGetData->__invoke($this->journal->getId());
-        $this->assertEquals($this->animal, $response);
+        $this->assertEquals(AnimalResponse::generate($this->animal), $response);
 
     }
 

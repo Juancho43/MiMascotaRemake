@@ -21,7 +21,12 @@ final readonly class EntryCreator
         private JournalRepository $journalRepository,
     ){}
 
-    public function __invoke(string $journalId, string $title, string $content, string $date): array
+    public function __invoke(
+        string $journalId,
+        string $title,
+        string $content,
+        string $date
+    ): array
     {
         $journal = $this->journalRepository->search($journalId);
         if (!$journal instanceof Journal) {

@@ -81,9 +81,5 @@ class Journal
     {
         return $this->softDelete;
     }
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
 
 }
