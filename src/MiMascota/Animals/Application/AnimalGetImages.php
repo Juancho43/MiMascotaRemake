@@ -4,7 +4,7 @@ namespace App\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Application\DTO\AnimalImagesResponse;
 use App\MiMascota\Animals\Domain\AnimalRepository;
-use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
+
 use App\MiMascota\Shared\Domain\ModelNotFound;
 
 final readonly class AnimalGetImages

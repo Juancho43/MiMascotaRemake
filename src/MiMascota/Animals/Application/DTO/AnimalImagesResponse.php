@@ -3,6 +3,7 @@
 namespace App\MiMascota\Animals\Application\DTO;
 
 use App\MiMascota\Animals\Domain\Animal;
+use App\MiMascota\Images\Application\AnimalImageResponse;
 
 class AnimalImagesResponse
 {
@@ -10,7 +11,10 @@ class AnimalImagesResponse
     {
         return [
             'id' => $animal->getId(),
-            'images' => $animal->getImages()->toArray()
+            'images' => array_map(
+                fn($image) => AnimalImageResponse::generate($image),
+                $animal->getImages()->toArray()
+            ),
         ];
     }
 }
