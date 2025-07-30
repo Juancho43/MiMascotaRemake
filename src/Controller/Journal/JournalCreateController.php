@@ -36,7 +36,7 @@ class JournalCreateController extends AbstractController
             $data['description'],
         );
 
-       return $this->successResponse(JournalCreatedResponse::fromJournal($journal),'Journal created successfully', Response::HTTP_CREATED);
+       return $this->successResponse($journal,'Journal created successfully', Response::HTTP_CREATED);
     }
 
 }
