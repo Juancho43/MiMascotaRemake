@@ -54,7 +54,7 @@ class DoctrineAnimalRepository extends ServiceEntityRepository implements Animal
     public function getAnimals(string $userId): array
     {
        return $this->createQueryBuilder('animal')
-           ->select('animal.name', 'journal.id AS journalId', 'MIN(imageFile.path) AS path')
+           ->select('animal.name', 'journal.id AS journal_id', 'MIN(imageFile.path) AS path')
            ->join('animal.journal', 'journal')
            ->leftJoin('animal.images', 'images')
            ->leftJoin('images.image', 'imageFile')

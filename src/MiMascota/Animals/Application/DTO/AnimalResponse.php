@@ -13,10 +13,11 @@ class AnimalResponse
             'name' => $animal->getName(),
             'description' => $animal->getDescription(),
             'breed' => $animal->getBreed(),
-            'birthDate' => $animal->getBirthDate() ? $animal->getBirthDate()->format('Y-m-d') : null,
+            'birthdate' => $animal->getBirthDate() ? $animal->getBirthDate()->format('Y-m-d') : null,
             'color' => $animal->getColor(),
             'size' => $animal->getSize(),
             'weight' => $animal->getWeight(),
+            'gender' => $animal->getGender(),
 
         ];
     }

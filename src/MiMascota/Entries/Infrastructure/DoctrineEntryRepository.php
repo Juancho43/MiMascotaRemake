@@ -5,6 +5,7 @@ namespace App\MiMascota\Entries\Infrastructure;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -60,4 +61,32 @@ class DoctrineEntryRepository extends ServiceEntityRepository implements EntryRe
            ->getQuery()
            ->getResult();
    }
+
+   public function getMany(string $journalId, int $page = 1, int $limit = 10):array
+   {
+       $offset = ($page - 1) * $limit;
+
+       return $this->createQueryBuilder('e')
+           ->select('e', 'i', 'j')
+              ->leftJoin('e.images', 'i')
+           ->join('e.journal', 'j')
+           ->where('j.id = :journalId')
+           ->setParameter('journalId', $journalId)
+           ->setFirstResult($offset)
+
+           ->setMaxResults($limit)
+           ->getQuery()
+           ->getArrayResult();
+   }
+
+    public function getCount(string $journalId): int
+    {
+       return (int) $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->join('e.journal', 'j')
+            ->where('j.id = :journalId')
+            ->setParameter('journalId', $journalId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

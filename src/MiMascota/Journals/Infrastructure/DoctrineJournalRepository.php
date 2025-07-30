@@ -27,7 +27,13 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
     public function getOneById(string $id): ?array
     {
         return $this->createQueryBuilder('journal')
-            ->select('journal.id AS id', 'animal.name AS animalName', 'image.id AS imageId', 'imageFile.path AS imagePath')
+            ->select(
+                'journal.id AS id',
+                'animal.name AS animalName',
+                'image.id AS imageId',
+                'imageFile.path AS imagePath',
+                'COUNT(journal.entries) AS entryCount'
+            )
             ->innerJoin('journal.animal', 'animal')
             ->leftJoin('animal.images', 'image')
             ->leftJoin('image.image', 'imageFile')
@@ -51,19 +57,19 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
 
 
 
-    public function getEntries(string $journalId, int $page = 1, int $limit = 3): array
+    public function getEntries(string $journalId, int $page = 1, int $limit = 3): iterable
     {
         $offset = ($page - 1) * $limit;
         return $this->createQueryBuilder('journal')
             ->innerJoin('journal.entries', 'entry')
-            ->select('entry.content', 'entry.date', 'entry.title', 'entry.id')
+            ->select( 'entry','journal')
             ->where('journal.id = :journalId')
             ->setParameter('journalId', $journalId)
             ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->orderBy('entry.date', 'DESC')
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 
 
@@ -71,7 +77,7 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
     {
         return $this->createQueryBuilder('journal')
             ->innerJoin('journal.animal', 'animal')
-            ->select('journal.id AS journalId', 'animal')
+            ->select('journal.id AS journal_id', 'animal')
             ->where('journal.id = :journalId')
             ->setParameter('journalId', $journalId)
             ->getQuery()

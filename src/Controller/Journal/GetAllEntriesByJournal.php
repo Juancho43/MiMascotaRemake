@@ -2,6 +2,7 @@
 
 namespace App\Controller\Journal;
 
+use App\MiMascota\Entries\Application\EntryGetMany;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
@@ -20,11 +21,12 @@ class GetAllEntriesByJournal extends AbstractController
         Request $request,
         string $journal_id,
         string $page,
-        JournalRepository $repository
+
+        EntryGetMany $entryGetMany
     ): Response
     {
         $this->checkAuthorization($request);
-        $entries = $repository->getEntries($journal_id, $page);
+        $entries = $entryGetMany->__invoke($journal_id, $page);
         return $this->successResponse($entries, 'Entries retrieved successfully');
     }
 }

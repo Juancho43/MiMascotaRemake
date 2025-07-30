@@ -18,9 +18,10 @@ class AnimalEditController extends AbstractController
     public function __invoke(Request $request, AnimalEdit $animalEdit ) : Response
     {
         try {
-            $this->checkAuthorization($request);
+            $user = $this->checkAuthorization($request);
             $data = $request->toArray();
             $animal = $animalEdit->__invoke(
+                $user,
                 $data['journal_id'],
                 $data['name'],
                 $data['description'],
@@ -31,7 +32,7 @@ class AnimalEditController extends AbstractController
                 new \DateTimeImmutable($data['birthdate']),
                 $data['weight']
             );
-            return $this->successResponse(AnimalResponse::generate($animal), 'Animal updated successfully');
+            return $this->successResponse($animal, 'Animal updated successfully');
         }catch (\Exception $e) {
             return $this->errorResponse($e->getMessage() );
         }
