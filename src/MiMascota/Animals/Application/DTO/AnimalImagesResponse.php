@@ -3,7 +3,7 @@
 namespace App\MiMascota\Animals\Application\DTO;
 
 use App\MiMascota\Animals\Domain\Animal;
-use App\MiMascota\Images\Application\AnimalImageResponse;
+use App\MiMascota\Images\Application\DTO\AnimalImageResponse;
 
 class AnimalImagesResponse
 {

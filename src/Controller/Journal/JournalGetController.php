@@ -2,7 +2,10 @@
 
 namespace App\Controller\Journal;
 
+use App\MiMascota\Journals\Application\DTO\JournalResponse;
+use App\MiMascota\Journals\Application\JournalGetById;
 use App\MiMascota\Journals\Application\JournalGetData;
+use App\MiMascota\Journals\Application\Query\GetJournalByIdQuery;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
@@ -17,21 +20,23 @@ class JournalGetController extends AbstractController
 {
     use ApiResponseTrait, AuthorizationCheckerTrait;
 
-    #[Route('/journal/{id}', name: 'journal_get', methods: ['GET'])]
+    #[Route('/journal/{slug}', name: 'journal_get', methods: ['GET'])]
     public function __invoke(
         Request             $request,
         CheckToken          $login,
-        string              $id,
+        string              $slug,
         JournalGetData      $journalGetData,
+        JournalGetById $journalGetById,
     ): JsonResponse
     {
-        $this->checkAuthorization($request);
-
-
-        return $this->successResponse(
-            $journalGetData->__invoke($id),
-            'Journal retrieved successfully'
-        );
-
+        try{
+            $this->checkAuthorization($request);
+            return $this->successResponse(
+                JournalResponse::generate($journalGetData->__invoke(new GetJournalByIdQuery($slug))),
+                'Journal retrieved successfully'
+            );
+        }catch (\Exception $exception){
+            return $this->errorResponse($exception->getMessage());
+        }
     }
 }

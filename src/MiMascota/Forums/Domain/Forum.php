@@ -2,6 +2,10 @@
 
 namespace App\MiMascota\Forums\Domain;
 
+use App\MiMascota\Forums\Domain\ValueObject\ForumDescription;
+use App\MiMascota\Forums\Domain\ValueObject\ForumImage;
+use App\MiMascota\Forums\Domain\ValueObject\ForumName;
+use App\MiMascota\Forums\Domain\ValueObject\ForumSlug;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
@@ -11,27 +15,38 @@ use Doctrine\Common\Collections\Collection;
 class Forum
 {
     private Collection $posts;
+    private ForumImage | null $image;
     private TimeStamp $timeStamp;
     private SoftDelete $softDelete;
     private function __construct(
         private string $id,
-        private string $name,
-        private string $slug,
-        private string $description,
+        private ForumName $name,
+        private ForumSlug $slug,
+        private ForumDescription $description,
+
 
     )
     {
-        $this->setId($id);
-        $this->setName($name);
-        $this->setSlug($slug);
-        $this->setDescription($description);
         $this->posts = new ArrayCollection();
         $this->timeStamp = new TimeStamp();
         $this->softDelete = new SoftDelete();
     }
-    public static function create(string $id, string $name, string $slug, string $description): self
+    public static function create(string $id, ForumName $name, ForumSlug $slug, ForumDescription $description): self
     {
         return new self($id, $name, $slug, $description);
+    }
+
+    public function addImage(ForumImage $image): void
+    {
+        $this->image = $image;
+    }
+    public function deleteImage() : void
+    {
+        $this->image = null;
+    }
+    public function getImage() : ?ForumImage
+    {
+        return $this->image;
     }
 
     public function getId(): string
@@ -49,42 +64,33 @@ class Forum
 
     public function getName(): string
     {
+        return $this->name->getValue();
+     }
 
-        return $this->name;
-    }
-
-    public function setName(string $name): void
+    public function setName(ForumName $name): void
     {
-        if (empty($name)) {
-            throw new \InvalidArgumentException('Forum name cannot be empty.');
-        }
         $this->name = $name;
     }
 
     public function getSlug(): string
     {
-        return $this->slug;
+        return $this->slug->getValue();
     }
 
-    public function setSlug(string $slug): void
+    public function setSlug(ForumSlug $slug): void
     {
-        if (empty($slug)) {
-            throw new \InvalidArgumentException('Forum slug cannot be empty.');
-        }
+
         $this->slug = $slug;
     }
 
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description->getValue();
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(ForumDescription $description): void
     {
-        if (empty($description)) {
-            throw new \InvalidArgumentException('Forum description cannot be empty.');
-        }
-        $this->description = $description;
+            $this->description = $description;
     }
 
     public function getPosts(): Collection
@@ -121,6 +127,10 @@ class Forum
         }
     }
 
+    public function getPostsCount(): int
+    {
+        return $this->posts->count();
+    }
 
 
 }

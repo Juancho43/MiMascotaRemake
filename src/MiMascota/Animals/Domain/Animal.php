@@ -2,6 +2,14 @@
 
 namespace App\MiMascota\Animals\Domain;
 
+use App\MiMascota\Animals\Domain\ValueObject\AnimalBirthDate;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalBreed;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalColor;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalDescription;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalGender;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalName;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalSize;
+use App\MiMascota\Animals\Domain\ValueObject\AnimalWeight;
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\HaveImages;
 use App\MiMascota\Journals\Domain\Journal;
@@ -27,14 +35,14 @@ class Animal
 
     private function __construct(
         private readonly string $id,
-        private string $name,
-        private string $description,
-        private string $color,
-        private string $size,
-        private string $breed,
-        private string $gender,
-        private DateTimeImmutable $birthDate,
-        private float $weight,
+        private AnimalName $name,
+        private AnimalDescription $description,
+        private AnimalColor $color,
+        private AnimalSize $size,
+        private AnimalBreed $breed,
+        private AnimalGender $gender,
+        private AnimalBirthDate $birthDate,
+        private AnimalWeight $weight,
     ) {
         $this->posts = new ArrayCollection();
         $this->images = new ArrayCollection();
@@ -44,15 +52,15 @@ class Animal
 
     public static function create(
         string $id,
-        string $name,
-        string $description,
-        string $color,
-        string $size,
-        string $breed,
-        string $gender,
-        DateTimeImmutable $birthDate,
-        float $weight
-    ) {
+        AnimalName $name,
+        AnimalDescription $description,
+        AnimalColor $color,
+        AnimalSize $size,
+        AnimalBreed $breed,
+        AnimalGender $gender,
+        AnimalBirthDate $birthDate,
+        AnimalWeight $weight
+    ) : self {
         return new self($id, $name, $description, $color, $size, $breed, $gender, $birthDate, $weight);
     }
 
@@ -68,35 +76,35 @@ class Animal
 
     public function getWeight(): float
     {
-        return $this->weight;
+        return $this->weight->getValue();
     }
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->name->getValue();
     }
 
-    public function setName(string $name): void
+    public function setName(AnimalName $name): void
     {
         $this->name = $name;
     }
 
     public function getBreed(): string
     {
-        return $this->breed;
+        return $this->breed->getValue();
     }
 
-    public function setBreed(string $breed): void
+    public function setBreed(AnimalBreed $breed): void
     {
         $this->breed = $breed;
     }
 
     public function getGender(): string
     {
-        return $this->gender;
+        return $this->gender->getValue();
     }
 
-    public function setGender(string $gender): void
+    public function setGender(AnimalGender $gender): void
     {
         $this->gender = $gender;
     }
@@ -106,7 +114,7 @@ class Animal
         $this->journal = $journal;
     }
 
-    public function setWeight(float $weight): void
+    public function setWeight(AnimalWeight $weight): void
     {
         $this->weight = $weight;
     }
@@ -140,13 +148,7 @@ class Animal
         $this->images->removeElement($image);
     }
 
-    /**
-     * Obtener imágenes como array (si lo necesitas)
-     */
-    public function getImagesArray(): array
-    {
-        return $this->images->toArray();
-    }
+
 
     public function getTimeStamp(): TimeStamp
     {
@@ -160,37 +162,37 @@ class Animal
 
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description->getValue();
     }
 
     public function getColor(): string
     {
-        return $this->color;
+        return $this->color->getValue();
     }
 
     public function getSize(): string
     {
-        return $this->size;
+        return $this->size->getValue();
     }
 
-    public function getBirthDate(): DateTimeImmutable
+    public function getBirthDate():string
     {
-        return $this->birthDate;
+        return $this->birthDate->getValue()->format('Y-m-d');
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(AnimalDescription $description): void
     {
         $this->description = $description;
     }
-    public function setColor(string $color): void
+    public function setColor(AnimalColor $color): void
     {
         $this->color = $color;
     }
-    public function setSize(string $size): void
+    public function setSize(AnimalSize $size): void
     {
         $this->size = $size;
     }
-    public function setBirthDate(DateTimeImmutable $birthDate): void
+    public function setBirthDate(AnimalBirthDate $birthDate): void
     {
         $this->birthDate = $birthDate;
     }
@@ -222,3 +224,4 @@ class Animal
 
 
 }
+

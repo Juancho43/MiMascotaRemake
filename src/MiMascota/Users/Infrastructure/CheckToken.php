@@ -13,16 +13,21 @@ final readonly class CheckToken
 
     public function __invoke(string $token) : ?User
     {
-        return $this->repository->findByToken($this->format($token));
-
+        $formatToken = self::format($token);
+        $user = $this->repository->findByToken($formatToken);
+        $userToken = $user->getTokenByTokenValue($formatToken);
+        $userToken->checkExpired();
+        return $user;
     }
-    private function format(string $header) : string
+    public static function format(string | null $header) : string
     {
-        $token = null;
         if ($header && str_starts_with($header, 'Bearer ')) {
-            $token = substr($header, 7); // Remove "Bearer " prefix (7 characters)
+            // Remover "Bearer " y hacer trim para espacios al inicio/final
+            $token = trim(substr($header, 7));
+            // Opcional: remover espacios internos si no deberían existir
+            return str_replace(' ', '', $token);
         }
-        return $token;
+        return '';
     }
 
 }

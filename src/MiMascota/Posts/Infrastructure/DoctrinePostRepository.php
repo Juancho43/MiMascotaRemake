@@ -43,31 +43,36 @@ class DoctrinePostRepository extends ServiceEntityRepository implements PostRepo
         return $this->createQueryBuilder('p')
             ->select('p', 'f')
             ->join('p.forum', 'f')
-            ->where('f.slug = :slug')
-             ->andWhere('p.softDelete.deletedAt IS NULL')
+            ->where('f.slug.value = :slug')
+            ->andWhere('p.softDelete.deletedAt IS NULL')
+            ->andWhere('f.softDelete.deletedAt IS NULL')
+            ->andWhere('p.reported.reportedAt IS NULL')
+
             ->setParameter('slug', $slug)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->orderBy('p.timeStamp.createdAt', 'DESC')
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 
-  public function getByForumFilterLocation(string $forumSlug, string $locationId, int $page, int $limit): array
+  public function getByForumFilterLocation(string $forumSlug, string $locationSlug, int $page, int $limit): array
   {
       return $this->createQueryBuilder('p')
           ->select('p', 'f')
           ->join('p.forum', 'f')
-          ->where('f.slug = :forumSlug')
-          ->andWhere('p.locationId = :locationId')
+          ->join('p.location', 'l')
+          ->where('f.slug.value = :forumSlug')
+          ->andWhere('l.slug.value = :locationSlug')
+          ->andWhere('p.reported.reportedAt IS NULL')
           ->andWhere('p.softDelete.deletedAt IS NULL')
           ->setParameter('forumSlug', $forumSlug)
-          ->setParameter('locationId', $locationId)
+          ->setParameter('locationSlug', $locationSlug)
           ->setFirstResult(($page - 1) * $limit)
           ->setMaxResults($limit)
           ->orderBy('p.timeStamp.createdAt', 'DESC')
           ->getQuery()
-          ->getArrayResult();
+          ->getResult();
   }
 
     public function getSoftDeletedPosts(int $page, int $limit): array
@@ -97,5 +102,20 @@ class DoctrinePostRepository extends ServiceEntityRepository implements PostRepo
             ->orderBy('p.softDelete.deletedAt', 'DESC')
             ->getQuery()
             ->getArrayResult();
+    }
+
+    public function getByUserId(string $userId, int $page, int $limit): array
+    {
+        return $this->createQueryBuilder('posts')
+            ->join('posts.user', 'user')
+            ->where('user.id = :userId')
+            ->andWhere('posts.softDelete.deletedAt IS NULL')
+            ->setParameter(':userId',$userId)
+           ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->orderBy('posts.timeStamp.createdAt', 'DESC')
+
+            ->getQuery()
+            ->getResult();
     }
 }

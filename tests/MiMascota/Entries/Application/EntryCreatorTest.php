@@ -3,10 +3,12 @@
 namespace App\Tests\MiMascota\Entries\Application;
 
 use App\MiMascota\Animals\Domain\Animal;
+use App\MiMascota\Entries\Application\Command\CreateEntryCommand;
 use App\MiMascota\Entries\Application\DTO\EntryResponse;
 use App\MiMascota\Entries\Application\EntryCreator;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
+use App\MiMascota\Journals\Application\JournalGetById;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Shared\Domain\ModelNotFound;
@@ -17,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class EntryCreatorTest extends KernelTestCase
+class EntryCreatorTest extends TestCase
 {
 
     private EntryCreator $entryCreator;
@@ -27,12 +29,12 @@ class EntryCreatorTest extends KernelTestCase
     private Journal $journal;
     public function setUp() : void
     {
-        self::bootKernel();
+
         $this->entryRepository = $this->createMock(EntryRepository::class);
         $this->journalRepository = $this->createMock(JournalRepository::class);
-        $this->entryCreator = new EntryCreator($this->entryRepository, $this->journalRepository);
-        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(), 'test-journal', $this->createMock(User::class), $this->createMock(Animal::class));
-        $this->entry = EntryMock::generate(Uuid::uuid4()->toString(),date: new \DateTime(), journal: $this->journal);
+        $this->entryCreator = new EntryCreator($this->entryRepository, new JournalGetById($this->journalRepository));
+        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(),  $this->createMock(User::class), $this->createMock(Animal::class));
+        $this->entry = EntryMock::generate(Uuid::uuid4()->toString(), journal: $this->journal,date: '2024-02-02');
     }
     public function test__invoke()
     {
@@ -43,17 +45,18 @@ class EntryCreatorTest extends KernelTestCase
         $this->journal->addEntry($this->entry);
         $this->entryRepository->expects($this->once())
             ->method('save');
+        $command = new CreateEntryCommand(
 
-        $response = $this->entryCreator->__invoke(
             $this->journal->getId(),
             $this->entry->getTitle(),
             $this->entry->getContent(),
-            $this->entry->getDate()->format('Y-m-d')
+            $this->entry->getDate()
         );
-        $this->assertIsArray($response);
-        $this->assertEquals($this->journal->getId(), $response['journal_id']);
-        $this->assertEquals($this->entry->getTitle(), $response['title']);
-        $this->assertEquals($this->entry->getContent(), $response['content']);
+        $response = $this->entryCreator->__invoke($command);
+        $this->assertInstanceOf(Entry::class, $response);
+        $this->assertEquals($this->journal, $response->getJournal());
+        $this->assertEquals($this->entry->getTitle(), $response->getTitle());
+        $this->assertEquals($this->entry->getContent(), $response->getContent());
     }
     public function test__invokeFails()
     {
@@ -63,11 +66,12 @@ class EntryCreatorTest extends KernelTestCase
             ->method('search')
             ->with($id)
             ->willReturn(null);
-        $response = $this->entryCreator->__invoke(
+        $command = new CreateEntryCommand(
             $id,
             $this->entry->getTitle(),
             $this->entry->getContent(),
-            $this->entry->getDate()->format('Y-m-d')
+            $this->entry->getDate()
         );
+        $response = $this->entryCreator->__invoke($command);
     }
 }

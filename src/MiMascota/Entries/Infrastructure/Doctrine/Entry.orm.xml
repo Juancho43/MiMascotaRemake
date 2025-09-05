@@ -6,9 +6,9 @@
 
     <entity name="App\MiMascota\Entries\Domain\Entry" table="entries">
         <id name="id" type="string" column="id" length="36" />
-        <field name="title" column="title" length="60" />
-        <field name="content" column="content" type="text" />
-        <field name="date" type="date" column="date" />
+        <embedded name="title" class="App\MiMascota\Entries\Domain\ValueObject\EntryTitle" use-column-prefix="false"/>
+        <embedded name="content" class="App\MiMascota\Entries\Domain\ValueObject\EntryContent" use-column-prefix="false"/>
+        <embedded name="date" class="App\MiMascota\Entries\Domain\ValueObject\EntryDate" use-column-prefix="false"/>
         <many-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="entries">
             <join-column name="journal_id" nullable="false" />
         </many-to-one>

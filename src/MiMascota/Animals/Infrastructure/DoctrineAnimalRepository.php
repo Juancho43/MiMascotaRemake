@@ -54,15 +54,17 @@ class DoctrineAnimalRepository extends ServiceEntityRepository implements Animal
     public function getAnimals(string $userId): array
     {
        return $this->createQueryBuilder('animal')
-           ->select('animal.name', 'journal.id AS journal_id', 'MIN(imageFile.path) AS path')
+
+           ->select('animal.name.value AS name' ,'journal.id AS id', 'journal.slug.value AS journal_slug','MIN(imageFile.path) AS path')
+
            ->join('animal.journal', 'journal')
            ->leftJoin('animal.images', 'images')
            ->leftJoin('images.image', 'imageFile')
            ->where('journal.user = :userId')
+           ->andWhere('journal.softDelete.deletedAt IS NULL')
            ->setParameter('userId', $userId)
            ->groupBy('animal.id', 'journal.id')
-
-           ->orderBy('animal.birthDate', 'DESC')
+           ->orderBy('animal.birthDate.value', 'DESC')
            ->getQuery()
            ->getResult();
     }
@@ -91,15 +93,15 @@ class DoctrineAnimalRepository extends ServiceEntityRepository implements Animal
             ->getOneOrNullResult();
     }
 
-    public function getWithImagesFromJournal(string $id): ?Animal
+    public function getWithImagesFromJournal(string $slug): ?Animal
     {
         return $this->createQueryBuilder('animal')
             ->leftJoin('animal.images', 'images')
             ->leftJoin('images.image', 'imageFile')
             ->addSelect('images', 'imageFile')
             ->innerJoin('animal.journal', 'journal')
-            ->where('journal.id = :id')
-            ->setParameter('id', $id)
+            ->where('journal.slug.value = :slug')
+            ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult();
     }

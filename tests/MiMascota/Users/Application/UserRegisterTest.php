@@ -3,36 +3,46 @@
 namespace App\Tests\MiMascota\Users\Application;
 
 
-use App\MiMascota\Locations\Application\LocationManager;
+use App\MiMascota\Locations\Application\LocationCreator;
 use App\MiMascota\Locations\Application\SaveLocation;
-use App\MiMascota\Locations\Application\SearchLocation;
+use App\MiMascota\Locations\Application\LocationGetByCords;
+use App\MiMascota\Locations\Domain\Location;
 use App\MiMascota\Locations\Domain\LocationRepository;
+use App\MiMascota\Locations\Domain\LocationResolver;
 use App\MiMascota\Locations\Domain\UserLocation;
+use App\MiMascota\Locations\Domain\ValueObject\LocationCity;
+use App\MiMascota\Locations\Domain\ValueObject\LocationCountry;
+use App\MiMascota\Locations\Domain\ValueObject\LocationLatitude;
+use App\MiMascota\Locations\Domain\ValueObject\LocationLongitude;
 use App\MiMascota\Locations\Infrastructure\ReverseGeocodeClient;
+use App\MiMascota\Users\Application\Command\CreateUserCommand;
 use App\MiMascota\Users\Application\UserRegister;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
-class UserRegisterTest extends KernelTestCase
+class UserRegisterTest extends TestCase
 {
     private UserRegister $userRegister;
     private UserRepository $userRepository;
-    private LocationManager $locationManager;
+    private LocationResolver $locationManager;
+
     protected function setUp(): void
     {
         parent::setUp();
-        self::bootKernel();
+        // 1. Mockea las dependencias directas
         $this->userRepository = $this->createMock(UserRepository::class);
-        $searchLocation = new SearchLocation($this->createMock(LocationRepository::class));
-        $saveLocation = new SaveLocation($this->createMock(LocationRepository::class),$searchLocation);
-        $this->locationManager = new LocationManager($this->createMock(ReverseGeocodeClient::class),$saveLocation);
+        $this->locationManager = $this->createMock(LocationResolver::class);
+
+        // 2. Inyecta los mocks en la clase a testear
         $this->userRegister = new UserRegister(
             $this->userRepository,
             $this->locationManager
         );
     }
+
 
     public function test__invoke()
     {
@@ -41,10 +51,33 @@ class UserRegisterTest extends KernelTestCase
         $email= "Juan@mail.com";
         $telephone = "123456789";
         $password = "Pepe";
-        $latitude = "-34.61258";
-        $longitude = '-58.38156';
+        $role = "user";
+        $latitude = "-34.612";
+        $longitude = '-58.381';
+        $command = new CreateUserCommand(
+            $name,
+            $telephone,
+            $email,
+            $password,
+            $role,
+            $latitude,
+            $longitude
+        );
+        $location = Location::create(
+            'location-id',
+            LocationCity::create('Buenos Aires'),
+            LocationCountry::create('Argentina'),
+            LocationLatitude::create($latitude),
+            LocationLongitude::create($longitude)
+        );
+        $this->locationManager->expects($this->once())
+            ->method('getLocation')
+            ->with($latitude, $longitude)
+            ->willReturn($location);
+
         //Act
-        $user = $this->userRegister->__invoke($name, $telephone, $email, $password, $latitude, $longitude);
+
+        $user = $this->userRegister->__invoke($command);
         //Assert
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals($name, $user->getName());
@@ -64,8 +97,17 @@ class UserRegisterTest extends KernelTestCase
         $password = "Pepe";
         $latitude = "-34.61258";
         $longitude = '-58.38156';
+        $command = new CreateUserCommand(
+            $name,
+            $telephone,
+            $email,
+            $password,
+            'user',
+            $latitude,
+            $longitude
+        );
         //Act
-        $this->userRegister->__invoke($name, $telephone, $email, $password, $latitude, $longitude);
+        $this->userRegister->__invoke($command);
 
     }
 }

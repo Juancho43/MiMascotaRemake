@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Shared;
 
+use App\MiMascota\Users\Domain\Exceptions\UserPermissionDenied;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Infrastructure\CheckToken;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,16 +13,16 @@ trait AuthorizationCheckerTrait
 {
     use ApiResponseTrait;
 
-    public function __construct(private readonly CheckToken $userLogin)
+    public function __construct(private readonly CheckToken $checkToken)
     {
 
     }
-    protected function checkAuthorization(Request $request,): User|JsonResponse
+    protected function checkAuthorization(Request $request,):User
     {
 
-        $user = $this->userLogin->__invoke($request->headers->get('Authorization'));
+        $user = $this->checkToken->__invoke($request->headers->get('Authorization'));
         if(!$user) {
-            return $this->errorResponse("Unauthorized", Response::HTTP_UNAUTHORIZED);
+            throw new \Exception('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
         return $user;
     }

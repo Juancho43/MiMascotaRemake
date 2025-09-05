@@ -2,6 +2,8 @@
 
 namespace App\MiMascota\Posts\Application\DTO;
 
+use App\MiMascota\Animals\Application\DTO\AnimalResponse;
+use App\MiMascota\Animals\Application\DTO\AnimalShortResponse;
 use App\MiMascota\Posts\Domain\Post;
 
 class PostResponse
@@ -14,18 +16,18 @@ class PostResponse
             'title' => $post->getTitle(),
             'slug' => $post->getSlug(),
             'content' => $post->getContent(),
-            'user' => $post->getUser()->getName(),
-            'forum' => $post->getForum()->getName(),
-            'animal' => [
-                'id' => $post->getAnimal()->getId(),
-                'name' => $post->getAnimal()->getName(),
+            'user' =>[
+               'id' => $post->getUser()->getId(),
             ],
+
+            'forum' => $post->getForum()->getName(),
+            'animal' => AnimalShortResponse::generate($post->getAnimal()),
             'location'=> [
                 'id' => $post->getLocation()->getId(),
                 'city' => $post->getLocation()->getCity(),
             ],
             'createdAt' => $post->getTimeStamp()->getCreatedAt()->format('Y-m-d H:i:s'),
-            'updatedAt' => $post->getTimeStamp()->getUpdatedAt() ? $post->getTimeStamp()->getUpdatedAt()->format('Y-m-d H:i:s') : null,
+            'updatedAt' => $post->getTimeStamp()->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 }

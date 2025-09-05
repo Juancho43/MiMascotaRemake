@@ -3,6 +3,8 @@
 namespace App\Tests\MiMascota\Entries\Application;
 
 use App\MiMascota\Animals\Domain\Animal;
+use App\MiMascota\Entries\Application\Command\SoftDeleteEntryCommand;
+use App\MiMascota\Entries\Application\EntryGetById;
 use App\MiMascota\Entries\Application\EntrySoftDelete;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Entries\Domain\EntryRepository;
@@ -12,10 +14,11 @@ use App\MiMascota\Shared\Domain\ModelNotFound;
 use App\MiMascota\Users\Domain\User;
 use App\Tests\MiMascota\Shared\EntryMock;
 use App\Tests\MiMascota\Shared\JournalMock;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class EntrySoftDeleteTest extends KernelTestCase
+class EntrySoftDeleteTest extends TestCase
 {
     private EntrySoftDelete $entrySoftDelete;
     private EntryRepository $entryRepository;
@@ -26,9 +29,9 @@ class EntrySoftDeleteTest extends KernelTestCase
     {
         $this->entryRepository  = $this->createMock(EntryRepository::class);
         $this->journalRepository = $this->createMock(JournalRepository::class);
-        $this->entrySoftDelete = new EntrySoftDelete($this->entryRepository);
-        $this->journal= JournalMock::generate(Uuid::uuid4()->toString(), 'test-journal', $this->createMock(User::class), $this->createMock(Animal::class));
-        $this->entry = EntryMock::generate(Uuid::uuid4()->toString(),new \DateTime(), $this->journal, 'Test Entry', 'This is a test entry content.');
+        $this->entrySoftDelete = new EntrySoftDelete($this->entryRepository, new EntryGetById($this->entryRepository));
+        $this->journal= JournalMock::generate(Uuid::uuid4()->toString(),  $this->createMock(User::class), $this->createMock(Animal::class));
+        $this->entry = EntryMock::generate(Uuid::uuid4()->toString(), $this->journal, '2024-02-02','Test Entry', 'This is a test entry content.');
     }
 
     public function test__invoke():void
@@ -37,7 +40,7 @@ class EntrySoftDeleteTest extends KernelTestCase
             ->method('search')
             ->with($this->entry->getId())
             ->willReturn($this->entry);
-        $this->entrySoftDelete->__invoke($this->entry->getId());
+        $this->entrySoftDelete->__invoke(new SoftDeleteEntryCommand($this->entry->getId()));
         $this->assertTrue($this->entry->getSoftDelete()->isDeleted());
     }
     public function test__invokeFails(): void
@@ -48,6 +51,6 @@ class EntrySoftDeleteTest extends KernelTestCase
             ->method('search')
             ->with($wrongId)
             ->willReturn(null);
-        $this->entrySoftDelete->__invoke($wrongId);
+        $this->entrySoftDelete->__invoke(new SoftDeleteEntryCommand($wrongId));
     }
 }

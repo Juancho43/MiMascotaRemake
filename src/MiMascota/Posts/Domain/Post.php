@@ -5,6 +5,10 @@ namespace App\MiMascota\Posts\Domain;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Forums\Domain\Forum;
 use App\MiMascota\Locations\Domain\Location;
+use App\MiMascota\Posts\Domain\ValueObject\PostContent;
+use App\MiMascota\Posts\Domain\ValueObject\PostReported;
+use App\MiMascota\Posts\Domain\ValueObject\PostSlug;
+use App\MiMascota\Posts\Domain\ValueObject\PostTitle;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\User;
@@ -15,9 +19,10 @@ class Post
     private SoftDelete $softDelete;
     private function __construct(
         private string $id,
-        private string $title,
-        private string $slug,
-        private string $content,
+        private PostTitle $title,
+        private PostSlug $slug,
+        private PostContent $content,
+        private PostReported $reported,
         private Forum $forum,
         private User $user,
         private Animal $animal,
@@ -31,9 +36,10 @@ class Post
 
     public static function create(
         string $id,
-        string $title,
-        string $slug,
-        string $content,
+        PostTitle $title,
+        PostSlug $slug,
+        PostContent $content,
+        PostReported $reported,
         Forum $forum,
         User $user,
         Animal $animal,
@@ -44,18 +50,14 @@ class Post
             $title,
             $slug,
             $content,
+            $reported,
             $forum,
             $user,
             $animal,
             $location
         );
     }
-    public function edit(string $title, string $content): void
-    {
-        $this->title = $title;
-        $this->content = $content;
-        $this->timeStamp->update();
-    }
+
 
     public function delete(): void
     {
@@ -75,30 +77,30 @@ class Post
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title->getValue();
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(PostTitle $title): void
     {
         $this->title = $title;
     }
 
     public function getSlug(): string
     {
-        return $this->slug;
+        return $this->slug->getValue();
     }
 
-    public function setSlug(string $slug): void
+    public function setSlug(PostSlug $slug): void
     {
         $this->slug = $slug;
     }
 
     public function getContent(): string
     {
-        return $this->content;
+        return $this->content->getValue();
     }
 
-    public function setContent(string $content): void
+    public function setContent(PostContent $content): void
     {
         $this->content = $content;
     }
@@ -153,5 +155,30 @@ class Post
         return $this->timeStamp;
     }
 
+    public function getReported(): PostReported
+    {
+        return $this->reported;
+    }
 
+    public function setReported(PostReported $reported): void
+    {
+        $this->reported = $reported;
+    }
+
+
+    public function report(): void
+    {
+        $this->reported = PostReported::create((new \DateTime())->format('Y-m-d'));
+        $this->timeStamp->update();
+    }
+
+    public function isReported(): bool
+    {
+        return $this->reported->getValue() !== null;
+    }
+
+    public function clearReport()
+    {
+        $this->reported = PostReported::create(null);
+    }
 }

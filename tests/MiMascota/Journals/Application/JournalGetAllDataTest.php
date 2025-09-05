@@ -4,6 +4,7 @@ namespace App\Tests\MiMascota\Journals\Application;
 
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Journals\Application\JournalGetAllData;
+use App\MiMascota\Journals\Application\Query\GetAllJournalsByUserIdQuery;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Journals\Domain\JournalRepository;
 use App\MiMascota\Users\Domain\User;
@@ -14,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class JournalGetAllDataTest extends KernelTestCase
+class JournalGetAllDataTest extends TestCase
 {
 
     private JournalGetAllData $journalGetAllData;
@@ -23,22 +24,21 @@ class JournalGetAllDataTest extends KernelTestCase
 
     public function setUp(): void
     {
-        self::bootKernel();
+
         $this->repository = $this->createMock(AnimalRepository::class);
         $this->journalGetAllData = new JournalGetAllData($this->repository);
-        $this->user = UserMock::generateUser(Uuid::uuid4()->toString());
+        $this->user = UserMock::generate(Uuid::uuid4()->toString());
         for ($i = 0; $i < 5; $i++) {
             $this->user->addJournal(JournalMock::generate(
                 Uuid::uuid4()->toString(),
-                'slug',
                 $this->user,
                 AnimalMock::generate(
                     Uuid::uuid4()->toString(),
-                    'Animal ' . $i,
-                    'Description of animal ' . $i,
-                    'Color ' . $i,
-                    'small ',
-                    'Breed ' . $i,
+                    'Animal ',
+                    'Description of animal ',
+                    'Color ' ,
+                    'small',
+                    'Breed ' ,
                     'male',
                     '2020-01-01',
                     10.0
@@ -56,8 +56,9 @@ class JournalGetAllDataTest extends KernelTestCase
             ->with($this->user->getId())->
             willReturn($this->user->getJournals()->toArray())
         ;
-       $result = $this->journalGetAllData->__invoke($this->user->getId());
+       $result = $this->journalGetAllData->__invoke(new GetAllJournalsByUserIdQuery($this->user->getId()));
        $this->assertCount(5,$result);
 
+        $this->assertInstanceOf(Journal::class, $result[0]);
     }
 }

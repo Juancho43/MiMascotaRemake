@@ -5,38 +5,36 @@ namespace App\Tests\MiMascota\Entries\Domain;
 use App\MiMascota\Entries\Domain\Entry;
 use App\MiMascota\Images\Domain\EntryImage;
 use App\MiMascota\Journals\Domain\Journal;
+use App\MiMascota\Users\Domain\User;
+use App\Tests\MiMascota\Shared\AnimalMock;
+use App\Tests\MiMascota\Shared\EntryMock;
+use App\Tests\MiMascota\Shared\JournalMock;
+use App\Tests\MiMascota\Shared\UserMock;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
 class EntryTest extends TestCase
 {
     private Entry $entry;
+    private Journal $journal;
+    private User $user;
 
     public function setUp(): void
     {
-        $this->entry = $this->generateEnty(
+        $this->user = UserMock::generate(Uuid::uuid4()->toString());
+        $this->journal = JournalMock::generate(
             Uuid::uuid4()->toString(),
-            'Test Entry Title',
-            'This is a test entry content.',
-            '2023-10-01 12:00:00',
-            $this->createMock(Journal::class)
+            $this->user,
+            AnimalMock::generate(Uuid::uuid4()->toString())
         );
+        $this->entry =EntryMock::generate(Uuid::uuid4()->toString(),$this->journal,'2024-09-02' ) ;
     }
 
-    private function generateEnty($id,$title,$content,$date,$journal): Entry
-    {
-        return Entry::create(
-            $id,
-            $title,
-            $content,
-            new \DateTime($date),
-            $journal
-        );
-    }
+
 
     public function testGetDate()
     {
-        $this->assertInstanceOf(\DateTime::class, $this->entry->getDate());
+        $this->assertEquals('2024-09-02', $this->entry->getDate());
     }
 
     public function testAddImage()
@@ -64,7 +62,7 @@ class EntryTest extends TestCase
 
     public function testGetContent()
     {
-        $this->assertEquals('This is a test entry content.', $this->entry->getContent());
+        $this->assertEquals('mock content', $this->entry->getContent());
     }
 
     public function testGetJournal()

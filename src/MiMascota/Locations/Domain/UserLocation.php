@@ -9,13 +9,17 @@ class UserLocation
     private Location $location;
 
 
-    public function __construct(string $id, User $user, Location $location)
+    private function __construct(string $id, User $user, Location $location)
     {
         $this->id = $id;
         $this->user = $user;
         $this->location = $location;
     }
 
+    public static function create(string $id, User $user, Location $location): self
+    {
+        return new self($id, $user, $location);
+    }
     public function getId(): string
     {
         return $this->id;

@@ -6,25 +6,27 @@ use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
+use App\MiMascota\Users\Domain\ValueObject\UserRole;
 use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 
 class UserMock
 {
 
-    public static function generateUser(
+    public static function generate(
         string $id = '',
         string $name = 'Test User',
         string $telephone = '1234567890',
         string $email = 'test@mail.com',
         string $password = 'password123',
-
+        string $role = UserRole::USER
     ) : User{
         return User::create(
             $id,
             UserName::create($name),
             UserTelephone::create($telephone),
             UserEmail::create($email),
-            UserPassword::create($password)
+            UserPassword::create($password),
+            UserRole::generate($role),
         );
     }
 }

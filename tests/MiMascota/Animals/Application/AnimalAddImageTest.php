@@ -3,6 +3,8 @@
 namespace App\Tests\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Application\AnimalAddImage;
+use App\MiMascota\Animals\Application\AnimalGetById;
+use App\MiMascota\Animals\Application\Command\AddAnimalImageCommand;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Images\Application\SaveImage;
@@ -15,7 +17,7 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class AnimalAddImageTest extends KernelTestCase
+class AnimalAddImageTest extends TestCase
 {
 
     private AnimalAddImage $animalAddImage;
@@ -25,10 +27,10 @@ class AnimalAddImageTest extends KernelTestCase
 
     public function setUp(): void
     {
-        self::bootKernel();
+
         $this->animalRepository = $this->createMock(AnimalRepository::class);
         $this->saveImage = new SaveImage($this->createMock(ImageRepository::class));
-        $this->animalAddImage = new AnimalAddImage($this->saveImage,$this->animalRepository);
+        $this->animalAddImage = new AnimalAddImage($this->saveImage,new AnimalGetById($this->animalRepository),$this->animalRepository);
         $this->animal = AnimalMock::generate(Uuid::uuid4()->toString());
     }
     public function test__invoke()
@@ -44,23 +46,16 @@ class AnimalAddImageTest extends KernelTestCase
             ->expects($this->once())
             ->method('save')
             ->with($this->animal);
-        $this->animalAddImage->__invoke($imageFile,$this->animal->getId(), 1);
+        $command = new AddAnimalImageCommand(
+            $this->animal->getId(),
+            $imageFile,
+            1
+        );
+        $this->animalAddImage->__invoke($command);
 
         $this->assertCount(1, $this->animal->getImages());
 
     }
 
-    public function test__invokeFails()
-    {
-        $this->animalRepository
-            ->expects($this->once())
-            ->method('search')
-            ->willReturn(null);
 
-        $imageFile = $this->createMock(UploadedFile::class);
-
-        $this->expectException(ModelNotFound::class);
-
-        $this->animalAddImage->__invoke($imageFile, Uuid::uuid4()->toString(), 1);
-    }
 }

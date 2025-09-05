@@ -8,6 +8,9 @@ use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\User;
+use App\Tests\MiMascota\Shared\AnimalMock;
+use App\Tests\MiMascota\Shared\JournalMock;
+use App\Tests\MiMascota\Shared\UserMock;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -17,19 +20,10 @@ class JournalTest extends TestCase
 
     public function setUp() : void
     {
-        $this->journal = $this->generateJournal();
+        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(), UserMock::generate(Uuid::uuid4()->toString()),AnimalMock::generate(Uuid::uuid4()->toString()));
     }
 
-    private function generateJournal(): Journal
-    {
-        $animal = $this->createMock(Animal::class);
-        return Journal::create(
-            id: Uuid::uuid4()->toString(),
-            slug: $animal->getName(),
-            user: $this->createMock(User::class),
-            animal: $animal
-        );
-    }
+
     public function testGetTimeStamp()
     {
 

@@ -7,6 +7,7 @@
     <entity name="App\MiMascota\Users\Domain\User" table="users">
         <id name="id" type="string" column="id" length="36" />
         <embedded name="name" class="App\MiMascota\Users\Domain\ValueObject\UserName" use-column-prefix="false" />
+        <embedded name="role" class="App\MiMascota\Users\Domain\ValueObject\UserRole" use-column-prefix="false" />
         <embedded name="telephone" class="App\MiMascota\Users\Domain\ValueObject\UserTelephone" use-column-prefix="false" />
         <embedded name="email" class="App\MiMascota\Users\Domain\ValueObject\UserEmail" use-column-prefix="false" />
         <one-to-many field="tokens" target-entity="App\MiMascota\Users\Domain\ValueObject\UserToken" mapped-by="user">

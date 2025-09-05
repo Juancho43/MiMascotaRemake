@@ -4,6 +4,8 @@ namespace App\MiMascota\Images\Infrastructure;
 
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Entries\Domain\Entry;
+use App\MiMascota\Forums\Domain\Forum;
+use App\MiMascota\Forums\Domain\ValueObject\ForumImage;
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\EntryImage;
 use App\MiMascota\Images\Domain\Image;
@@ -37,18 +39,14 @@ class DoctrineImageRepository extends ServiceEntityRepository implements ImageRe
         $this->getEntityManager()->flush();
     }
 
-    public function getFromAnimalImage(string $id, string $animalId): ?AnimalImage
-    {
-        return $this->createQueryBuilder('i')
-            ->where('i.id = :id')
-            ->andWhere('i.imageableId = :imageable_id')
-            ->andWhere('i.imageableType = :type')
-            ->setParameter('id', $id)
-            ->setParameter('imageable_id', $animalId)
-            ->setParameter('type', Animal::class)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
+  public function getFromAnimalImage(string $id, string $animalId): ?AnimalImage
+                {
+                    return $this->getEntityManager()->getRepository(AnimalImage::class)
+                        ->findOneBy([
+                            'image' => $id,
+                            'animal' => $animalId
+                        ]);
+                }
 
     public function getFromEntryImage(string $id, string $entryId): ?EntryImage
     {
@@ -72,6 +70,15 @@ class DoctrineImageRepository extends ServiceEntityRepository implements ImageRe
             ->setParameter('id', $id)
             ->setParameter('imageable_id', $userId)
             ->setParameter('type', User::class)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    public function getFromForumImage(string $forumId): ?ForumImage
+    {
+        return $this->getEntityManager()->getRepository(ForumImage::class)
+            ->createQueryBuilder('fi')
+            ->where('fi.forum = :forumId')
+            ->setParameter('forumId', $forumId)
             ->getQuery()
             ->getOneOrNullResult();
     }

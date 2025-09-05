@@ -1,6 +1,9 @@
 <?php
 namespace App\MiMascota\Entries\Domain;
 
+use App\MiMascota\Entries\Domain\ValueObject\EntryContent;
+use App\MiMascota\Entries\Domain\ValueObject\EntryDate;
+use App\MiMascota\Entries\Domain\ValueObject\EntryTitle;
 use App\MiMascota\Images\Domain\AnimalImage;
 use App\MiMascota\Images\Domain\EntryImage;
 use App\MiMascota\Images\Domain\HaveImages;
@@ -18,9 +21,9 @@ class Entry
 
     public function __construct(
         private readonly string $id,
-        private string $title,
-        private string $content,
-        private \DateTime $date,
+        private EntryTitle $title,
+        private EntryContent $content,
+        private EntryDate $date,
         private Journal $journal,
     ) {
         $this->images = new ArrayCollection();
@@ -29,7 +32,7 @@ class Entry
     }
 
 
-    public static function create($id, string $title, string $content, \DateTime $date, Journal $journal): self
+    public static function create($id, EntryTitle $title, EntryContent $content, EntryDate $date, Journal $journal): self
     {
         return new self($id, $title, $content, $date, $journal);
     }
@@ -39,17 +42,17 @@ class Entry
         return $this->journal;
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(EntryTitle $title): void
     {
         $this->title = $title;
     }
 
-    public function setContent(string $content): void
+    public function setContent(EntryContent $content): void
     {
         $this->content = $content;
     }
 
-    public function setDate(\DateTime $date): void
+    public function setDate(EntryDate $date): void
     {
         $this->date = $date;
     }
@@ -65,17 +68,17 @@ class Entry
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title->getValue();
     }
 
     public function getContent(): string
     {
-        return $this->content;
+        return $this->content->getValue();
     }
 
-    public function getDate(): \DateTime
+    public function getDate(): string
     {
-        return $this->date;
+        return $this->date->__toString();
     }
     /**
      * @return Collection<int, AnimalImage>
@@ -137,6 +140,4 @@ class Entry
     }
 
 
-
-
-}
+   }

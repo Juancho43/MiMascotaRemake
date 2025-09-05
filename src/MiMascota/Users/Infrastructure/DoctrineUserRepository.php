@@ -70,4 +70,15 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
                ->getResult();
 
     }
+
+
+    public function findByJournal(string $journalId): ?User
+    {
+      return $this->createQueryBuilder('user')
+          ->leftJoin('user.journals', 'journals')
+          ->where('journals.id = :journalId')
+          ->setParameter('journalId', $journalId)
+          ->getQuery()
+          ->getOneOrNullResult();
+    }
 }

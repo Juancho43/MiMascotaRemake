@@ -6,7 +6,8 @@
 
     <entity name="App\MiMascota\Journals\Domain\Journal" table="journals">
         <id name="id" type="string" column="id" length="36" />
-        <field name="slug"  column="slug" length="150" />
+
+        <embedded name="slug" class="App\MiMascota\Journals\Domain\ValueObject\JournalSlug" use-column-prefix="false"/>
 
      <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="journals">
          <join-column name="user_id" />

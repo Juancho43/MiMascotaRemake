@@ -8,8 +8,8 @@ interface JournalRepository
 
 
     public function save(Journal $journal): void;
-    public function getOneById(string $id): ?array;
+    public function getOneBySlug(string $slug): ?Journal;
 
-    public function getEntries(string $journalId, int $page, int $limit): iterable;
-    public function getAnimal(string $journalId): ?array;
+    public function getEntries(string $journalSlug, int $page, int $limit): array;
+    public function getAnimal(string $journalSlug): ?array;
 }

@@ -3,7 +3,7 @@
 namespace App\Controller\Images;
 
 use App\MiMascota\Animals\Application\AnimalAddImage;
-use App\MiMascota\Images\Application\SaveAnimalImage;
+use App\MiMascota\Animals\Application\Command\AddAnimalImageCommand;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,21 +17,23 @@ class AddAnimalImageController extends AbstractController
     #[Route('/animal/add/image', name: 'animal_add_image', methods: ['POST'])]
     public function __invoke(Request $request, AnimalAddImage $saveImage) : JsonResponse
     {
-        $this->checkAuthorization($request);
-        $response = [];
-        $uploadedFiles = $request->files->all();
-        if(count($uploadedFiles) > 0) {
-            $position = 0;
-            foreach ($uploadedFiles as $uploadedFile ) {
-                $response[] = $saveImage->__invoke(
-                    $uploadedFile,
-                    $request->get('imageable_id',$request->get('animal_id')),
-                    $position
-                );
-                $position++;
-            }
-        }
+        try {
 
-       return $this->successResponse($response,'Pictures uploaded successfully');
+            $this->checkAuthorization($request);
+            $data = ImageHelper::extractFormData($request);
+            $uploadedFile = ImageHelper::extractUploadedFile($request);
+            $command = new AddAnimalImageCommand(
+                $data['animal_id'],
+                $uploadedFile->getPathname(),
+                $uploadedFile->getClientMimeType(),
+                (string)$uploadedFile->getSize(),
+                0
+            );
+             $saveImage->__invoke($command);
+            return $this->successResponse(message:  'Picture uploaded successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage());
+        }
     }
+
 }

@@ -2,6 +2,11 @@
 
 namespace App\MiMascota\Locations\Domain;
 
+use App\MiMascota\Locations\Domain\ValueObject\LocationCity;
+use App\MiMascota\Locations\Domain\ValueObject\LocationCountry;
+use App\MiMascota\Locations\Domain\ValueObject\LocationLatitude;
+use App\MiMascota\Locations\Domain\ValueObject\LocationLongitude;
+use App\MiMascota\Locations\Domain\ValueObject\LocationSlug;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 
@@ -11,10 +16,11 @@ class Location
     private function __construct
     (
         private readonly string $id,
-        private string $city,
-        private string $country,
-        private string $latitude,
-        private string $longitude,
+        private LocationCity $city,
+        private LocationSlug $slug,
+        private LocationCountry $country,
+        private LocationLatitude $latitude,
+        private LocationLongitude $longitude,
         private TimeStamp $timeStamp,
         private SoftDelete $softDelete
     ){
@@ -25,14 +31,16 @@ class Location
 
     public static function create(
         string $id,
-        string $city,
-        string $country,
-        string $latitude,
-        string $longitude
+        LocationCity $city,
+        LocationSlug $slug,
+        LocationCountry $country,
+        LocationLatitude $latitude,
+        LocationLongitude $longitude
     ): self {
         return new self(
             $id,
             $city,
+            $slug,
             $country,
             $latitude,
             $longitude,
@@ -46,45 +54,49 @@ class Location
     }
     public function getCity(): string
     {
-        return $this->city;
+        return $this->city->getValue();
     }
 
-    public function setCity(string $city): void
+
+
+    public function getCountry(): string
+    {
+        return $this->country->getValue();
+    }
+
+
+
+    public function getLatitude(): string
+    {
+        return $this->latitude->getValue();
+    }
+
+       public function getLongitude(): string
+    {
+        return $this->longitude->getValue();
+    }
+
+    public function setCity(LocationCity $city): void
     {
         $this->city = $city;
     }
 
-    public function getCountry(): string
-    {
-        return $this->country;
-    }
-
-    public function setCountry(string $country): void
+    public function setCountry(LocationCountry $country): void
     {
         $this->country = $country;
     }
 
-    public function getLatitude(): string
-    {
-        return $this->latitude;
-    }
-
-    public function setLatitude(string $latitude): void
+    public function setLatitude(LocationLatitude $latitude): void
     {
         $this->latitude = $latitude;
     }
 
-    public function getLongitude(): string
-    {
-        return $this->longitude;
-    }
-
-    public function setLongitude(string $longitude): void
+    public function setLongitude(LocationLongitude $longitude): void
     {
         $this->longitude = $longitude;
     }
 
-    public function getTimeStamp(): TimeStamp
+       public function getTimeStamp(): TimeStamp
     {
         return $this->timeStamp;
     }
@@ -102,6 +114,16 @@ class Location
     public function setSoftDelete(SoftDelete $softDelete): void
     {
         $this->softDelete = $softDelete;
+    }
+
+    public function getSlug(): LocationSlug
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(LocationSlug $slug): void
+    {
+        $this->slug = $slug;
     }
 
 

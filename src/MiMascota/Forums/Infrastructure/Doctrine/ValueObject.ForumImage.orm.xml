@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\MiMascota\Forums\Domain\ValueObject\ForumImage" table="forum_images">
+        <id name="id" type="string" column="id" length="36" />
+       <one-to-one field="forum" target-entity="App\MiMascota\Forums\Domain\Forum" inversed-by="image">
+          <join-column name="forum_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+       </one-to-one>
+        <one-to-one field="image" target-entity="App\MiMascota\Images\Domain\Image"  >
+            <join-column name="image_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+            <cascade>
+                <cascade-remove />
+            </cascade>
+        </one-to-one>
+    </entity>
+
+</doctrine-mapping>
+

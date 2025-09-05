@@ -2,31 +2,27 @@
 
 namespace App\Tests\MiMascota\Forums\Application;
 
-use App\MiMascota\Forums\Application\ForumGetData;
+use App\MiMascota\Forums\Application\ForumGetBySlug;
+use App\MiMascota\Forums\Application\Query\GetForumBySlugQuery;
 use App\MiMascota\Forums\Domain\Forum;
 use App\MiMascota\Forums\Domain\ForumRepository;
 use App\MiMascota\Shared\SlugGenerator;
+use App\Tests\MiMascota\Shared\ForumMock;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class ForumGetDataTest extends KernelTestCase
+class ForumGetDataTest extends TestCase
 {
-    private ForumGetData $forumCreator;
+    private ForumGetBySlug $forumCreator;
     private ForumRepository $forumRepository;
     private Forum $forum;
     public function setUp(): void
     {
-        self::bootKernel();
-        parent::setUp();
+
         $this->forumRepository = $this->createMock(ForumRepository::class);
-        $this->forumCreator = new ForumGetData($this->forumRepository);
-        $this->forum = Forum::create(
-            Uuid::uuid4()->toString(),
-            "Test Forum",
-            SlugGenerator::generate('Test Forum'),
-            'This is a test forum description.'
-        );
+        $this->forumCreator = new ForumGetBySlug($this->forumRepository);
+        $this->forum = ForumMock::generate(Uuid::uuid4()->toString());
     }
 
     public function test__invoke(): void
@@ -38,7 +34,7 @@ class ForumGetDataTest extends KernelTestCase
             ->with($slug)
             ->willReturn($this->forum);
 
-        $forum = $this->forumCreator->__invoke($slug);
+        $forum = $this->forumCreator->__invoke(new GetForumBySlugQuery($slug));
 
         $this->assertInstanceOf(Forum::class, $forum);
         $this->assertEquals($this->forum->getId(), $forum->getId());
@@ -55,7 +51,7 @@ class ForumGetDataTest extends KernelTestCase
             ->with($slug)
             ->willReturn(null);
 
-        $forum = $this->forumCreator->__invoke($slug);
+        $forum = $this->forumCreator->__invoke(new GetForumBySlugQuery($slug));
         $this->assertNull($forum);
     }
 
@@ -68,7 +64,7 @@ class ForumGetDataTest extends KernelTestCase
             ->with($slug)
             ->willReturn(null);
 
-        $forum = $this->forumCreator->__invoke($slug);
+        $forum = $this->forumCreator->__invoke(new GetForumBySlugQuery($slug));
         $this->assertNull($forum);
     }
 }

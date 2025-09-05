@@ -3,6 +3,7 @@
 namespace App\Controller\User;
 
 use App\MiMascota\Shared\ApiResponseTrait;
+use App\MiMascota\Users\Application\Command\ValidateUserCommand;
 use App\MiMascota\Users\Application\UserValidate;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,17 +18,16 @@ class UserValidationController extends AbstractController
     {
         try{
             $data = $request->toArray();
-            $response = $userValidate->__invoke(
+            $command = new ValidateUserCommand(
                 $data['email'],
                 $data['code'],
                 $request->getClientIp(),
                 $request->headers->get('User-Agent', 'unknown')
             );
+            $response = $userValidate->__invoke($command);
             return $this->successResponse(['token' => $response,], "Usuario validado correctamente");
         }catch (\Exception $exception){
             return $this->errorResponse("Error al validar el usuario: " . $exception->getMessage());
         }
-
-
     }
 }

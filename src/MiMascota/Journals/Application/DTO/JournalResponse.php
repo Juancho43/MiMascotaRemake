@@ -11,7 +11,12 @@ final readonly class JournalResponse
     {
         return [
             'id' => $journal->getId(),
+            'journal_slug' => $journal->getSlug()->getValue(),
+            'user_id' => $journal->getUser()->getId(),
             'animal' => AnimalResponse::generate($journal->getAnimal()),
+            'entryCount' => $journal->getEntryCount(),
+            'created_at' => $journal->getTimeStamp()->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $journal->getTimeStamp()->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 }

@@ -3,7 +3,12 @@
 namespace App\Tests\MiMascota\Forums\Domain;
 
 use App\MiMascota\Forums\Domain\Forum;
+use App\MiMascota\Forums\Domain\ValueObject\ForumDescription;
+use App\MiMascota\Forums\Domain\ValueObject\ForumName;
+use App\MiMascota\Forums\Domain\ValueObject\ForumSlug;
 use App\MiMascota\Posts\Domain\Post;
+use App\MiMascota\Shared\Domain\InvalidLength;
+use App\Tests\MiMascota\Shared\ForumMock;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -14,15 +19,10 @@ class ForumTest extends TestCase
 
     public function setUp(): void
     {
-        $this->forum = $this->generateForum(Uuid::uuid4()->toString(), 'Test Forum', 'test-forum', 'This is a test forum');
+        $this->forum =ForumMock::generate(Uuid::uuid4()->toString(), 'Test Forum',  'This is a test forum');
     }
 
-    private function generateForum($id, $name,$slug, $description): Forum
-    {
-        return Forum::create(
-            $id,$name, $slug, $description
-        );
-    }
+
 
     public function testCreate()
     {
@@ -37,9 +37,9 @@ class ForumTest extends TestCase
     }
 
     public function testUpdate(){
-        $this->forum->setName('Updated Forum');
-        $this->forum->setSlug('updated-forum');
-        $this->forum->setDescription('This is an updated forum');
+        $this->forum->setName(ForumName::create('Updated Forum'));
+        $this->forum->setSlug(ForumSlug::create('updated-forum'));
+        $this->forum->setDescription(ForumDescription::create('This is an updated forum'));
 
         $this->assertEquals('Updated Forum', $this->forum->getName());
         $this->assertEquals('updated-forum', $this->forum->getSlug());
@@ -67,34 +67,12 @@ class ForumTest extends TestCase
         $this->assertFalse($this->forum->getPosts()->contains($post));
     }
 
-
-    public function testCreateWithEmptyId()
+public function testCreateWithEmptyId()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Forum ID cannot be empty.');
 
-        $this->generateForum('', 'Test Forum', 'test-forum', 'This is a test forum');
-    }
-    public function testCreateWithEmptyName()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Forum name cannot be empty.');
-
-        $this->generateForum(Uuid::uuid4()->toString(), '', 'test-forum', 'This is a test forum');
-    }
-    public function testCreateWithEmptySlug()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Forum slug cannot be empty.');
-
-        $this->generateForum(Uuid::uuid4()->toString(), 'Test Forum', '', 'This is a test forum');
-    }
-    public function testCreateWithEmptyDescription()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Forum description cannot be empty.');
-
-        $this->generateForum(Uuid::uuid4()->toString(), 'Test Forum', 'test-forum', '');
+        ForumMock::generate('', 'Test Forum', 'This is a test forum');
     }
 
 

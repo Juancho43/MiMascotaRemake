@@ -4,6 +4,7 @@ namespace App\MiMascota\Journals\Domain;
 
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Entries\Domain\Entry;
+use App\MiMascota\Journals\Domain\ValueObject\JournalSlug;
 use App\MiMascota\Shared\Domain\ValueObject\SoftDelete;
 use App\MiMascota\Shared\Domain\ValueObject\TimeStamp;
 use App\MiMascota\Users\Domain\User;
@@ -21,7 +22,8 @@ class Journal
 
     private function __construct(
         private readonly string $id,
-        private string $slug,
+
+        private JournalSlug $slug,
         private readonly User $user,
         private readonly Animal $animal,
     ) {
@@ -33,9 +35,9 @@ class Journal
 
 
 
-    public static function create(string $id,string $slug, User $user,Animal $animal): self
+    public static function create(string $id,JournalSlug $slug, User $user,Animal $animal): self
     {
-        return new self($id, $slug,$user, $animal);
+        return new self($id,$slug,$user, $animal);
     }
 
     public function getId(): string
@@ -51,7 +53,12 @@ class Journal
     {
         return $this->entries;
     }
-
+    public function getEntryCount(): int
+    {
+        return $this->entries->filter(
+            fn(Entry $entry) => !$entry->getSoftDelete()->isDeleted()
+        )->count();
+    }
     public function getEntryById($id): ?Entry
     {
         foreach ($this->entries as $entry) {
@@ -80,6 +87,16 @@ class Journal
     public function getSoftDelete(): SoftDelete
     {
         return $this->softDelete;
+    }
+
+    public function getSlug(): JournalSlug
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(JournalSlug $slug): void
+    {
+        $this->slug = $slug;
     }
 
 }

@@ -72,6 +72,19 @@ doctrine:
                 dir: '%kernel.project_dir%/src/MiMascota/Posts/Infrastructure/Doctrine'
                 prefix: 'App\MiMascota\Posts\Domain'
                 alias: Post
+            Report:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/MiMascota/Reports/Infrastructure/Doctrine'
+                prefix: 'App\MiMascota\Reports\Domain'
+                alias: Report
+            ContactRequest:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/MiMascota/ContactRequests/Infrastructure/Doctrine'
+                prefix: 'App\MiMascota\ContactRequests\Domain'
+                alias: Report
+
 
         controller_resolver:
             auto_mapping: false

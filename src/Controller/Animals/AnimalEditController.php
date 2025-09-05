@@ -3,9 +3,12 @@
 namespace App\Controller\Animals;
 
 use App\MiMascota\Animals\Application\AnimalEdit;
+use App\MiMascota\Animals\Application\Command\EditAnimalCommand;
 use App\MiMascota\Animals\Application\DTO\AnimalResponse;
+use App\MiMascota\Journals\Application\DTO\JournalResponse;
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
+use App\MiMascota\Users\Domain\Exceptions\UserPermissionDenied;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,9 +22,13 @@ class AnimalEditController extends AbstractController
     {
         try {
             $user = $this->checkAuthorization($request);
+
             $data = $request->toArray();
-            $animal = $animalEdit->__invoke(
-                $user,
+            if ($user->getId() !== $data['user_id']){
+                throw new UserPermissionDenied('to edit this animal');
+            }
+            $command = new EditAnimalCommand(
+                $data['user_id'],
                 $data['journal_id'],
                 $data['name'],
                 $data['description'],
@@ -29,12 +36,14 @@ class AnimalEditController extends AbstractController
                 $data['size'],
                 $data['breed'],
                 $data['gender'],
-                new \DateTimeImmutable($data['birthdate']),
+                $data['birthdate'],
                 $data['weight']
             );
-            return $this->successResponse($animal, 'Animal updated successfully');
+            $animal = $animalEdit->__invoke($command);
+            $journal = $animal->getJournal();
+            return $this->successResponse(JournalResponse::generate($journal), 'Animal updated successfully');
         }catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage() );
+            return $this->errorResponse($e->getMessage());
         }
     }
 }

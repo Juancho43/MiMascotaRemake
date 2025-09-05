@@ -4,7 +4,7 @@ namespace App\MiMascota\Animals\Domain;
 
 interface AnimalRepository
 {
-    public function getWithImagesFromJournal(string $id): ?Animal;
+    public function getWithImagesFromJournal(string $slug): ?Animal;
     public function search(string $id): ?Animal;
     public function searchByName(string $name): ?Animal;
     public function getAnimal(string $journalId): ?Animal;

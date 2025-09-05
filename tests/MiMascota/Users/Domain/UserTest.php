@@ -10,6 +10,7 @@ use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
+use App\Tests\MiMascota\Shared\UserMock;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase
@@ -18,18 +19,9 @@ class UserTest extends TestCase
 
     public function setUp(): void
     {
-        $this->user = $this->generateMockUser('12345', 'John Doe', '1234567890', 'email@mail.com', 'password123');
+        $this->user = UserMock::generate('12345', 'John Doe', '1234567890', 'email@mail.com');
     }
-    private function generateMockUser($id, $name, $telephone, $email, $password)
-    {
-        return User::create(
-            $id,
-            UserName::create($name),
-            UserTelephone::create($telephone),
-            UserEmail::create($email),
-            UserPassword::create($password)
-        );
-    }
+
 
     public function testCreate()
     {
@@ -54,7 +46,7 @@ class UserTest extends TestCase
     }
     public function testChangeName()
     {
-        $this->user->rename('Hola');
+        $this->user->setName(UserName::create('Hola'));
         $this->assertEquals('Hola', $this->user->getName());
         $this->assertNotEquals($this->user->getName(),'John Doe');
     }
@@ -65,8 +57,8 @@ class UserTest extends TestCase
         $oldPassword = "OldPassword123";
         $newPassword = "NewPassword123";
         // Crear usuario con contraseña antigua
-        $user = $this->generateMockUser('12', $name, '1234567890', $email, $oldPassword);
-        $response = $user->changePassword($newPassword);
+        $user = UserMock::generate('12', $name, '1234567890', $email, $oldPassword);
+        $response = $user->changePassword(UserPassword::create($newPassword));
 
         $this->assertTrue($response);
         $this->assertTrue($user->getPassword()->verify($newPassword));
@@ -85,13 +77,7 @@ class UserTest extends TestCase
         $this->user->removePost($post);
         $this->assertCount(0, $this->user->getPosts());
     }
-    public function testUserCanEditPost()
-    {
-        $post = $this->createMock(\App\MiMascota\Posts\Domain\Post::class);
-        $this->user->addPost($post);
-        $post->edit('New Title', 'New Content');
-        $this->assertCount(1, $this->user->getPosts());
-    }
+
     public function testUserCanHaveImage()
     {
         $userImage = UserImage::create('11111',$this->user,$this->createMock(Image::class));

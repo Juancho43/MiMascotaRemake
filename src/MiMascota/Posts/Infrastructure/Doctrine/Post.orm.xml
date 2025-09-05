@@ -6,9 +6,10 @@
 
     <entity name="App\MiMascota\Posts\Domain\Post" table="posts">
         <id name="id" type="string" column="id" length="36" />
-        <field name="title" column="title" length="100" />
-        <field name="slug" column="slug" length="100" />
-        <field name="content" column="content" length="200" />
+        <embedded name="title" class="App\MiMascota\Posts\Domain\ValueObject\PostTitle" use-column-prefix="false"/>
+        <embedded name="slug" class="App\MiMascota\Posts\Domain\ValueObject\PostSlug" use-column-prefix="false"/>
+        <embedded name="content" class="App\MiMascota\Posts\Domain\ValueObject\PostContent" use-column-prefix="false"/>
+        <embedded name="reported" class="App\MiMascota\Posts\Domain\ValueObject\PostReported" use-column-prefix="false"/>
         <many-to-one field="forum" target-entity="App\MiMascota\Forums\Domain\Forum" inversed-by="posts"/>
         <many-to-one field="user" target-entity="App\MiMascota\Users\Domain\User" inversed-by="posts"/>
         <many-to-one field="animal" target-entity="App\MiMascota\Animals\Domain\Animal" inversed-by="posts"/>

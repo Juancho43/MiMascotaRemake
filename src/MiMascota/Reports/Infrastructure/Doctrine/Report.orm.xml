@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\MiMascota\Reports\Domain\Report" table="reports">
+        <id name="id" type="string" column="id" length="36" />
+        <embedded name="status" class="App\MiMascota\Reports\Domain\ValueObject\ReportStatus" use-column-prefix="false" />
+        <embedded name="reason" class="App\MiMascota\Reports\Domain\ValueObject\ReportReason" use-column-prefix="false" />
+       <many-to-one field="reportedPost" target-entity="App\MiMascota\Posts\Domain\Post">
+           <join-column name="reported_post_id" referenced-column-name="id" nullable="false"/>
+       </many-to-one>
+        <many-to-one field="reporterUser" target-entity="App\MiMascota\Users\Domain\User">
+            <join-column name="reporter_user_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+
+
+        <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
+
+
+    </entity>
+
+</doctrine-mapping>

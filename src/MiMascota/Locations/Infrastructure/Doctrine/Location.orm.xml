@@ -6,10 +6,13 @@
 
     <entity name="App\MiMascota\Locations\Domain\Location" table="locations">
         <id name="id" type="string" column="id" length="36" />
-        <field name="city" length="255" />
-        <field name="country" length="255" />
-        <field name="latitude" length="8"/>
-        <field name="longitude" length="8"/>
+
+        <embedded name="city" class="App\MiMascota\Locations\Domain\ValueObject\LocationCity" use-column-prefix="false"/>
+        <embedded name="country" class="App\MiMascota\Locations\Domain\ValueObject\LocationCountry" use-column-prefix="false"/>
+        <embedded name="latitude" class="App\MiMascota\Locations\Domain\ValueObject\LocationLatitude" use-column-prefix="false"/>
+        <embedded name="longitude" class="App\MiMascota\Locations\Domain\ValueObject\LocationLongitude" use-column-prefix="false"/>
+
+        <embedded name="slug" class="App\MiMascota\Locations\Domain\ValueObject\LocationSlug" use-column-prefix="false"/>
         <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
         <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>
     </entity>

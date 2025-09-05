@@ -24,21 +24,21 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
         return $this->findOneBy(['id' => $id]);
     }
 
-    public function getOneById(string $id): ?array
+    public function getOneBySlug(string $slug): ?Journal
     {
         return $this->createQueryBuilder('journal')
             ->select(
-                'journal.id AS id',
-                'animal.name AS animalName',
-                'image.id AS imageId',
-                'imageFile.path AS imagePath',
-                'COUNT(journal.entries) AS entryCount'
+                'journal',
+                'animal',
+                'user',
+
             )
             ->innerJoin('journal.animal', 'animal')
+            ->leftJoin('journal.user', 'user')
             ->leftJoin('animal.images', 'image')
-            ->leftJoin('image.image', 'imageFile')
-            ->where('journal.id = :id')
-            ->setParameter('id', $id)
+            ->leftJoin('journal.entries', 'entry')
+            ->where('journal.slug.value = :slug')
+            ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -57,29 +57,30 @@ class DoctrineJournalRepository extends ServiceEntityRepository implements Journ
 
 
 
-    public function getEntries(string $journalId, int $page = 1, int $limit = 3): iterable
+    public function getEntries(string $journalSlug, int $page = 1, int $limit = 3): array
     {
         $offset = ($page - 1) * $limit;
         return $this->createQueryBuilder('journal')
             ->innerJoin('journal.entries', 'entry')
             ->select( 'entry','journal')
-            ->where('journal.id = :journalId')
-            ->setParameter('journalId', $journalId)
+            ->where('journal.slug.value = :journalSlug')
+            ->andWhere('entry.softDelete.deletedAt IS NULL')
+            ->setParameter('journalSlug', $journalSlug)
             ->setFirstResult($offset)
             ->setMaxResults($limit)
-            ->orderBy('entry.date', 'DESC')
+            ->orderBy('entry.date.value', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
 
-   public function getAnimal(string $journalId): ?array
+   public function getAnimal(string $journalSlug): ?array
     {
         return $this->createQueryBuilder('journal')
             ->innerJoin('journal.animal', 'animal')
             ->select('journal.id AS journal_id', 'animal')
             ->where('journal.id = :journalId')
-            ->setParameter('journalId', $journalId)
+            ->setParameter('journalId', $journalSlug)
             ->getQuery()
             ->getOneOrNullResult();
     }

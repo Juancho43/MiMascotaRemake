@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Forums\Application;
 
+use App\MiMascota\Forums\Application\Query\GetForumPostBySlugPaginationQuery;
 use App\MiMascota\Posts\Domain\PostRepository;
 final readonly class ForumGetPosts
 {
@@ -10,9 +11,9 @@ final readonly class ForumGetPosts
     {
     }
 
-    public function __invoke(string $slug, int $page = 1, int $limit = 10): array
+    public function __invoke(GetForumPostBySlugPaginationQuery $query): array
     {
-        return $this->repository->getByForumSlug($slug, $page, $limit);
+        return $this->repository->getByForumSlug($query->slug, $query->page, $query->limit);
     }
 
 }

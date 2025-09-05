@@ -6,9 +6,14 @@
 
     <entity name="App\MiMascota\Forums\Domain\Forum" table="forums">
         <id name="id" type="string" column="id" length="36" />
-        <field name="name" column="name" length="100" />
-        <field name="slug" column="slug" length="100" />
-        <field name="description" column="description" length="200" />
+        <embedded name="name" class="App\MiMascota\Forums\Domain\ValueObject\ForumName" use-column-prefix="false"/>
+        <embedded name="slug" class="App\MiMascota\Forums\Domain\ValueObject\ForumSlug" use-column-prefix="false"/>
+        <embedded name="description" class="App\MiMascota\Forums\Domain\ValueObject\ForumDescription" use-column-prefix="false"/>
+        <one-to-one field="image" mapped-by="forum" target-entity="App\MiMascota\Forums\Domain\ValueObject\ForumImage" >
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-one>
         <one-to-many field="posts" target-entity="App\MiMascota\Posts\Domain\Post" mapped-by="forum" />
         <embedded name="timeStamp" class="App\MiMascota\Shared\Domain\ValueObject\TimeStamp" use-column-prefix="false"/>
         <embedded name="softDelete" class="App\MiMascota\Shared\Domain\ValueObject\SoftDelete" use-column-prefix="false"/>

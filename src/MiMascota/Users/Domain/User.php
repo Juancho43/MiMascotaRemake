@@ -12,6 +12,7 @@ use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserPreference;
+use App\MiMascota\Users\Domain\ValueObject\UserRole;
 use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
 use App\MiMascota\Users\Domain\ValueObject\UserToken;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -38,7 +39,12 @@ class User
         private UserTelephone $telephone,
         private UserEmail $email,
         private UserPassword $password,
+        private UserRole $role
     ) {
+        if (empty($id)) {
+            throw new \InvalidArgumentException("User ID cannot be empty");
+        }
+
         $this->posts = new ArrayCollection();
         $this->preferences = new ArrayCollection();
         $this->tokens = new ArrayCollection();
@@ -47,9 +53,9 @@ class User
         $this->softDelete = new SoftDelete();
     }
 
-    public static function create(string $id, UserName $name, UserTelephone $telephone, UserEmail $email, UserPassword $password): self
+    public static function create(string $id, UserName $name, UserTelephone $telephone, UserEmail $email, UserPassword $password, UserRole $role): self
     {
-        return new self($id, $name, $telephone, $email, $password);
+        return new self($id, $name, $telephone, $email, $password, $role);
     }
 
     public function getId(): string
@@ -86,16 +92,19 @@ class User
     {
         return $this->name->getValue();
     }
-    public function changePassword(string $password): bool
+    public function changePassword(UserPassword $password): bool
     {
-        $this->password = UserPassword::create($password);
+        $this->password = $password;
         $this->tokens->clear();
         return true;
     }
-
-    public function rename(string $name): string
+    public function setTelephone(UserTelephone $telephone): void
     {
-      return  $this->name->rename($name);
+        $this->telephone = $telephone;
+    }
+    public function setName(UserName $name): void
+    {
+       $this->name = $name;
     }
 
     public function addJournal(Journal $journal): void
@@ -181,6 +190,29 @@ class User
         return null;
     }
 
+    public function getRole(): UserRole
+    {
+        return $this->role;
+    }
+    public function setRole(UserRole $role) : void
+    {
+       $this->role = $role;
+    }
+
+   public function banUser(): void
+   {
+       $reportedPosts = 0;
+       foreach ($this->getPosts() as $post) {
+           if (method_exists($post, 'isReported') && $post->isReported()) {
+               $reportedPosts++;
+           }
+       }
+       if ($reportedPosts >= 3) {
+           $this->softDelete->markAsDeleted();
+       }
+       $this->tokens->clear();
+
+   }
 
     //AUTHENTICATION METHODS
 
@@ -206,6 +238,9 @@ class User
     {
         try {
             $this->getPassword()->verify($password);
+            if($this->getSoftDelete()->isDeleted()) {
+                throw new \Exception("User account is deleted");
+            }
 
             if (!$this->getEmailObject()->isVerified()) {
                 throw new \Exception("Email not verified");
@@ -299,6 +334,16 @@ class User
             }
         }
         return $activeTokens;
+    }
+
+    public function getTokenByTokenValue(string $tokenValue): ?UserToken
+    {
+        foreach ($this->tokens as $token) {
+            if ($token->getValue() === $tokenValue && $token->checkExpired() !== null) {
+                return $token;
+            }
+        }
+        return null;
     }
 
     /**

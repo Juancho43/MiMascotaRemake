@@ -2,6 +2,8 @@
 
 namespace App\MiMascota\Entries\Application;
 
+use App\MiMascota\Entries\Application\Command\CreateEntryImageCommand;
+use App\MiMascota\Entries\Application\Query\EntryGetByIdQuery;
 use App\MiMascota\Entries\Domain\EntryRepository;
 use App\MiMascota\Images\Application\SaveImage;
 use App\MiMascota\Images\Domain\EntryImage;
@@ -15,29 +17,25 @@ final readonly class EntryAddImage
     public function __construct(
         private SaveImage       $saveImage,
         private EntryRepository $entryRepository,
+        private EntryGetById     $entryGetById,
     )
     {
 
     }
 
     public function __invoke(
-        UploadedFile $imageFile,
-        string $entryid,
-        int $position
-    ): ?string
+        CreateEntryImageCommand $command
+    ): EntryImage
 {
-        $entry = $this->entryRepository->search($entryid);
-        if ($entry === null){
-            throw new ModelNotFound($entry,'id',$entryid);
-        }
+        $entry = $this->entryGetById->__invoke(new EntryGetByIdQuery($command->entryId));
         $image = $this->saveImage->__invoke(
-            $imageFile,
+            $command->file,
             'entry',
-            $entryid,
+            $command->entryId,
         );
-        $entryImage = EntryImage::create(Uuid::uuid4()->toString(),$entry,$image,$position);
+        $entryImage = EntryImage::create(Uuid::uuid4()->toString(),$entry,$image,$command->position);
         $entry->addImage($entryImage);
         $this->entryRepository->save($entry);
-        return $image->getPath();
+        return $entryImage;
     }
 }

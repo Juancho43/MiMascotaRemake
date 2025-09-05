@@ -2,6 +2,7 @@
 
 namespace App\MiMascota\Images\Application;
 
+use App\MiMascota\Images\Application\Command\SaveImageCommand;
 use App\MiMascota\Images\Domain\Image;
 use App\MiMascota\Images\Domain\ImageRepository;
 use Ramsey\Uuid\Nonstandard\Uuid;
@@ -9,42 +10,28 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final readonly class SaveImage
 {
-
     public function __construct(
         private ImageRepository $imageRepository,
-    )
+        private StoreImage $storeImage,
+    ){}
+    public function __invoke(SaveImageCommand $command): ?Image
     {
-        // Constructor logic if needed
-    }
-
-     public function __invoke(
-        UploadedFile $file,
-         string $imageableType,
-         string $imageableId,
-    ): ?Image
-    {
-        $name= (new \DateTime())->getTimestamp();
-        $path = 'images/' . $imageableType . '/' . $imageableId . '/' . $name;
+        $name = (new \DateTime())->getTimestamp();
+        $path = 'images/' . $command->imageableType . '/' . $command->imageableId . '/' . $name;
         $image = Image::create(
             id: Uuid::uuid4()->toString(),
             name: $name,
             path: $path,
-            type: $file->getClientMimeType(),
-            size: $file->getSize(),
-            imageableType: $imageableType,
-            imageableId: $imageableId,
-     );
-     // Create directory structure
-     $dirPath = dirname($path);
-     if (!file_exists($dirPath)) {
-         mkdir($dirPath, 0755, true);
-     }
-     // Move the uploaded file
-
-     if ($file->move($dirPath, $name)) {
-         $this->imageRepository->save($image);
-         return $image;
-     }
+            type: $command->mimeType,
+            size: $command->size,
+            imageableType: $command->imageableType,
+            imageableId: $command->imageableId,
+        );
+        if($this->storeImage->store($command->temporalPath,$path))
+        {
+            $this->imageRepository->save($image);
+            return $image;
+        }
         return null;
     }
 }

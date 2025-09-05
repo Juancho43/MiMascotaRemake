@@ -2,6 +2,9 @@
 
 namespace App\MiMascota\Users\Domain\ValueObject;
 
+use App\MiMascota\Shared\Domain\InvalidFormat;
+use App\MiMascota\Shared\Domain\InvalidLength;
+
 class UserName
 {
 
@@ -21,10 +24,10 @@ class UserName
     private function setValue(string $value): void
     {
         if (strlen($value) < self::MIN_LENGTH || strlen($value) > self::MAX_LENGTH) {
-            throw new \InvalidArgumentException("User name must be between " . self::MIN_LENGTH . " and " . self::MAX_LENGTH . " characters.");
+            throw new InvalidLength("User name", self::MIN_LENGTH, self::MAX_LENGTH);
         }
         if (!preg_match(self::REGEX, $value)) {
-            throw new \InvalidArgumentException("User name can only contain letters and spaces.");
+            throw new InvalidFormat("User name", ' can only contain letters and spaces.');
         }
         $this->value = $value;
     }
@@ -32,10 +35,6 @@ class UserName
     {
         return $this->value;
     }
-    public function rename(string $newName): string
-    {
-        $this->setValue($newName);
-        return $this->value;
-    }
+
 }
 

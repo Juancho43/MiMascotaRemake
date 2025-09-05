@@ -8,6 +8,7 @@ use App\MiMascota\Users\Domain\ValueObject\UserEmail;
 use App\MiMascota\Users\Domain\ValueObject\UserName;
 use App\MiMascota\Users\Domain\ValueObject\UserPassword;
 use App\MiMascota\Users\Domain\ValueObject\UserTelephone;
+use App\Tests\MiMascota\Shared\UserMock;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -25,16 +26,8 @@ class UserTokenWithDeviceTest extends TestCase
         parent::setUp();
 
         // Create a user with verified email
-        $email = UserEmail::create('test@example.com');
-        $email->verifyCode($email->getCode()); // Verify the email
-
-        $this->user = User::create(
-            Uuid::uuid4()->toString(),
-            UserName::create('Test User'),
-            UserTelephone::create('+1234567890'),
-            $email,
-            UserPassword::create($this->validPassword)
-        );
+        $this->user = UserMock::generate(Uuid::uuid4()->toString(), 'Test User', '+1234567890', 'test@example.com', $this->validPassword);
+        $this->user->getEmailObject()->verifyCode($this->user->getValidationCode());
     }
 
     /**

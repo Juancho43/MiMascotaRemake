@@ -3,6 +3,7 @@
 namespace App\Tests\MiMascota\Animals\Application;
 
 use App\MiMascota\Animals\Application\AnimalGetImages;
+use App\MiMascota\Animals\Application\Query\GetAnimalByJournalSlugQuery;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Animals\Domain\AnimalRepository;
 use App\MiMascota\Animals\Domain\Exceptions\AnimalNotFoundByJournalId;
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class AnimalGetImagesTest extends KernelTestCase
+class AnimalGetImagesTest extends TestCase
 {
     private AnimalGetImages $animalGetImages;
     private AnimalRepository $animalRepository;
@@ -24,15 +25,14 @@ class AnimalGetImagesTest extends KernelTestCase
     private Journal $journal;
     public function setUp(): void
     {
-        self::bootKernel();
+
         $this->animalRepository = $this->createMock(AnimalRepository::class);
         $this->animalGetImages = new AnimalGetImages($this->animalRepository);
         $this->animal = AnimalMock::generate(Uuid::uuid4()->toString());
         for ($i = 0; $i < 3; $i++) {
             $this->animal->addImage($this->createMock(AnimalImage::class));
         }
-        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(),'sdsd',$this->createMock(User::class),
-            $this->animal);
+        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(),$this->createMock(User::class), $this->animal);
         $this->animal->setJournal($this->journal);
 
     }
@@ -42,8 +42,8 @@ class AnimalGetImagesTest extends KernelTestCase
             ->method('getWithImagesFromJournal')
             ->with($this->journal->getId())
             ->willReturn($this->animal);
-        $images = $this->animalGetImages->__invoke($this->journal->getId());
-        $this->assertCount(3, $images['images']);
+        $images = $this->animalGetImages->__invoke(new GetAnimalByJournalSlugQuery($this->journal->getId()));
+        $this->assertCount(3, $images->getImages());
     }
     public function test__invokeWithWrongId()
     {
@@ -53,7 +53,7 @@ class AnimalGetImagesTest extends KernelTestCase
             ->method('getWithImagesFromJournal')
             ->with($id)
             ->willReturn(null);
-        $images = $this->animalGetImages->__invoke($id);
+        $images = $this->animalGetImages->__invoke(new GetAnimalByJournalSlugQuery($id));
 
     }
 }

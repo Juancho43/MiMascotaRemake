@@ -44,6 +44,32 @@ class DoctrineForumRepository extends ServiceEntityRepository implements ForumRe
 
     public function getBySlug(string $slug): ?Forum
     {
-        return $this->findOneBy(['slug' => $slug]);
+        return $this->createQueryBuilder('forum')
+            ->where('forum.slug.value = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
+    public function getAll(): array
+    {
+       return $this->createQueryBuilder('forum')
+           ->where('forum.softDelete.deletedAt IS NULL')
+           ->orderBy('forum.timeStamp.createdAt', 'ASC')
+           ->getQuery()
+           ->getResult();
+    }
+
+    public function getPostCountBySlug($slug): int
+    {
+       return $this->createQueryBuilder('forum')
+            ->select('COUNT(post.id)')
+            ->leftJoin('forum.posts', 'post')
+            ->where('forum.slug.value = :slug')
+            ->andWhere('post.softDelete.deletedAt IS NULL')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

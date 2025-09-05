@@ -3,6 +3,8 @@
 namespace App\Tests\MiMascota\Users\Application;
 
 use App\MiMascota\Shared\Domain\ModelNotFound;
+use App\MiMascota\Users\Application\Query\GetUserByIdQuery;
+use App\MiMascota\Users\Application\UserGetById;
 use App\MiMascota\Users\Application\UserSoftDelete;
 use App\MiMascota\Users\Domain\User;
 use App\MiMascota\Users\Domain\UserRepository;
@@ -11,17 +13,19 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class UserSoftDeleteTest extends KernelTestCase
+class UserSoftDeleteTest extends TestCase
 {
     private UserSoftDelete $userSoftDelete;
     private UserRepository $userRepository;
+
     private User $user;
     public function setUp(): void
     {
-        self::bootKernel();
+
         $this->userRepository = $this->createMock(UserRepository::class);
-        $this->userSoftDelete = new UserSoftDelete($this->userRepository);
-        $this->user = UserMock::generateUser(Uuid::uuid4()->toString());
+
+        $this->userSoftDelete = new UserSoftDelete($this->userRepository, new UserGetById($this->userRepository));
+        $this->user = UserMock::generate(Uuid::uuid4()->toString());
     }
 
     public function test__invoke() : void
@@ -30,7 +34,7 @@ class UserSoftDeleteTest extends KernelTestCase
             ->method('search')
             ->with($this->user->getId())
             ->willReturn($this->user);
-        $this->userSoftDelete->__invoke($this->user->getId());
+        $this->userSoftDelete->__invoke(new GetUserByIdQuery($this->user->getId()));
         $this->assertTrue($this->user->getSoftDelete()->isDeleted());
     }
     public function test__invokeWithInvalidUser() : void
@@ -41,6 +45,6 @@ class UserSoftDeleteTest extends KernelTestCase
             ->method('search')
             ->with($id)
             ->willReturn(null);
-        $this->userSoftDelete->__invoke($id);
+        $this->userSoftDelete->__invoke(new GetUserByIdQuery($id));
     }
 }

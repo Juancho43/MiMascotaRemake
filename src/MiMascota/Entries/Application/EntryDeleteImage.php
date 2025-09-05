@@ -13,7 +13,7 @@ final readonly class EntryDeleteImage
         private ImageRepository $imageRepository,
     ){}
 
-    public function __invoke(string $entryId, string $imageId): bool
+    public function __invoke(string $entryId, string $imageId): void
     {
         $entry = $this->repository->search($entryId);
         if ($entry === null) {
@@ -25,10 +25,8 @@ final readonly class EntryDeleteImage
             throw new ModelNotFound("image");
         }
 
-        $response = unlink($image->getImage()->getPath());
         $entry->removeImage($image);
         $this->repository->save($entry);
         $this->imageRepository->remove($image->getImage());
-        return $response;
     }
 }

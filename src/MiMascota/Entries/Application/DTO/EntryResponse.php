@@ -13,7 +13,7 @@ class EntryResponse
             'id'  =>$entry->getId(),
             'title' => $entry->getTitle(),
             'content' => $entry->getContent(),
-            'date' => $entry->getDate()->format('Y-m-d H:i:s'),
+            'date' => $entry->getDate(),
             'images' => $entry->getImages()->toArray(),
             'journal_id' => $entry->getJournal()->getId(),
             'created_at' => $entry->getTimeStamp()->getCreatedAt()->format('Y-m-d H:i:s'),

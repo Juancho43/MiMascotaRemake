@@ -2,8 +2,9 @@
 
 namespace App\Tests\MiMascota\Animals\Application;
 
-use App\MiMascota\Animals\Application\AnimalGetData;
+use App\MiMascota\Animals\Application\AnimalGetByJournalId;
 use App\MiMascota\Animals\Application\DTO\AnimalResponse;
+use App\MiMascota\Animals\Application\Query\GetAnimalByJournalSlugQuery;
 use App\MiMascota\Animals\Domain\Animal;
 use App\MiMascota\Journals\Domain\Journal;
 use App\MiMascota\Shared\Domain\ModelNotFound;
@@ -16,10 +17,10 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class AnimalGetDataTest extends KernelTestCase
+class AnimalGetDataTest extends TestCase
 {
 
-    private AnimalGetData $animalGetData;
+    private AnimalGetByJournalId $animalGetData;
     private $animalRepository;
 
     private Animal $animal;
@@ -27,12 +28,12 @@ class AnimalGetDataTest extends KernelTestCase
 
     private User $user;
     public function setUp() : void{
-        self::bootKernel();
+
         $this->animalRepository = $this->createMock('App\MiMascota\Animals\Domain\AnimalRepository');
-        $this->animalGetData = new AnimalGetData($this->animalRepository);
+        $this->animalGetData = new AnimalGetByJournalId($this->animalRepository);
         $this->animal = AnimalMock::generate(Uuid::uuid4()->toString());
-        $this->user = UserMock::generateUser(Uuid::uuid4()->toString());
-        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(),SlugGenerator::generate($this->animal->getName()),$this->user,$this->animal);
+        $this->user = UserMock::generate(Uuid::uuid4()->toString());
+        $this->journal = JournalMock::generate(Uuid::uuid4()->toString(),$this->user,$this->animal);
     }
     public function test__invoke()
     {
@@ -40,8 +41,8 @@ class AnimalGetDataTest extends KernelTestCase
             ->method('getAnimal')
             ->with($this->journal->getId())
             ->willReturn($this->animal);
-        $response = $this->animalGetData->__invoke($this->journal->getId());
-        $this->assertEquals(AnimalResponse::generate($this->animal), $response);
+        $response = $this->animalGetData->__invoke(new GetAnimalByJournalSlugQuery($this->journal->getId()));
+        $this->assertEquals($this->animal, $response);
 
     }
 
@@ -52,6 +53,6 @@ class AnimalGetDataTest extends KernelTestCase
             ->method('getAnimal')
             ->with($this->journal->getId())
             ->willReturn(null);
-        $this->animalGetData->__invoke($this->journal->getId());
+             $response = $this->animalGetData->__invoke(new GetAnimalByJournalSlugQuery($this->journal->getId()));
     }
 }

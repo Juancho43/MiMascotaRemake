@@ -13,8 +13,10 @@ class ForumResponse
             'name' => $forum->getName(),
             'slug' => $forum->getSlug(),
             'description' => $forum->getDescription(),
-            'createdAt' => $forum->getTimeStamp()->getCreatedAt()->format('Y-m-d H:i:s'),
-            'updatedAt' => $forum->getTimeStamp()->getUpdatedAt()->format('Y-m-d H:i:s'),
+            'image' => $forum->getImage()?->getImage()->getPath(),
+            'postsCount' => $forum->getPostsCount(),
+            'createdAt' => $forum->getTimeStamp()->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updatedAt' => $forum->getTimeStamp()->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 }

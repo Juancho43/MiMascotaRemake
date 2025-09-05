@@ -6,16 +6,16 @@
 
     <entity name="App\MiMascota\Animals\Domain\Animal" table="animals">
         <id name="id" type="string" column="id" length="36" />
-        <field name="name" column="name" length="255" />
-        <field name="description" column="description" type="text" />
-        <field name="color" column="color" length="10" />
-        <field name="size" column="size" length="20" />
-        <field name="breed" column="breed" length="255" />
-        <field name="gender" column="gender" length="6" />
-        <field name="birthDate" column="birthdate" type="date_immutable" />
-        <field name="weight" column="weight" type="float" />
+        <embedded name="name" class="App\MiMascota\Animals\Domain\ValueObject\AnimalName" use-column-prefix="false"/>
+        <embedded name="description" class="App\MiMascota\Animals\Domain\ValueObject\AnimalDescription" use-column-prefix="false"/>
+        <embedded name="color" class="App\MiMascota\Animals\Domain\ValueObject\AnimalColor" use-column-prefix="false"/>
+        <embedded name="size" class="App\MiMascota\Animals\Domain\ValueObject\AnimalSize" use-column-prefix="false"/>
+        <embedded name="breed" class="App\MiMascota\Animals\Domain\ValueObject\AnimalBreed" use-column-prefix="false"/>
+        <embedded name="gender" class="App\MiMascota\Animals\Domain\ValueObject\AnimalGender" use-column-prefix="false"/>
+        <embedded name="birthDate" class="App\MiMascota\Animals\Domain\ValueObject\AnimalBirthDate" use-column-prefix="false"/>
+        <embedded name="weight" class="App\MiMascota\Animals\Domain\ValueObject\AnimalWeight" use-column-prefix="false"/>
 
-        <one-to-many field="posts" target-entity="App\MiMascota\Posts\Domain\Post" mapped-by="animal"/>
+         <one-to-many field="posts" target-entity="App\MiMascota\Posts\Domain\Post" mapped-by="animal"/>
         <one-to-one field="journal" target-entity="App\MiMascota\Journals\Domain\Journal" inversed-by="animal" />
         <one-to-many field="images" target-entity="App\MiMascota\Images\Domain\AnimalImage" mapped-by="animal">
             <cascade>

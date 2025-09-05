@@ -3,6 +3,7 @@ namespace App\Controller\User;
 
 use App\MiMascota\Shared\ApiResponseTrait;
 use App\MiMascota\Shared\AuthorizationCheckerTrait;
+use App\MiMascota\Users\Application\Command\LogoutUserCommand;
 use App\MiMascota\Users\Application\UserLogout;
 use App\MiMascota\Users\Infrastructure\CheckToken;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,18 +25,10 @@ class UserLogoutController extends AbstractController
             $ip = $request->getClientIp();
             $userAgent = $request->headers->get('User-Agent', 'unknown');
             $user = $this->checkAuthorization($request);
-            $logout->__invoke(
-                $user->findTokenByIpAndUserAgent($ip, $userAgent)->getValue(),
-                $ip,
-                $userAgent
-            );
+            $logout->__invoke(new LogoutUserCommand( $user->findTokenByIpAndUserAgent($ip, $userAgent)->getValue(), $ip, $userAgent));
             return $this->successResponse( message: "Usuario desconectado correctamente");
         }catch (\Exception $exception){
-            return $this->errorResponse($exception);
+            return $this->errorResponse($exception->getMessage());
         }
-
-
-
-
     }
 }
