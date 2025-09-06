@@ -24,16 +24,14 @@ class DoctrineContactRequestRepository extends ServiceEntityRepository implement
         $this->getEntityManager()->flush();
     }
 
-    public function findById(string $id): ?ContactRequest
-    {
-        return $this->createQueryBuilder('cr')
-            ->where('report.id : id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-
+   public function findById(string $id): ?ContactRequest
+   {
+       return $this->createQueryBuilder('cr')
+           ->where('cr.id = :id')
+           ->setParameter('id', $id)
+           ->getQuery()
+           ->getOneOrNullResult();
+   }
     public function findByRequesterId(string $id): array
     {
         return $this->createQueryBuilder('cr')
@@ -50,5 +48,16 @@ class DoctrineContactRequestRepository extends ServiceEntityRepository implement
             ->setParameter('id', $id)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByPostIdAndRequestedId(string $postId, string $requesterId): ?ContactRequest
+    {
+        return $this->createQueryBuilder('cr')
+            ->where('cr.post  = :postId')
+            ->andWhere('cr.requester = :requesterId')
+            ->setParameter('postId', $postId)
+            ->setParameter('requesterId', $requesterId)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

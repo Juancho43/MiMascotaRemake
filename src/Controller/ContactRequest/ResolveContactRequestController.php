@@ -29,7 +29,7 @@ class ResolveContactRequestController extends AbstractController
             $user = $this->checkAuthorization($request);
             $data = $request->toArray();
             $command = new ResolveContactRequestCommand(
-                $data['contactRequestId'],
+                $data['id'],
                 $data['status'],
             );
             $response = $resolveContactRequest->__invoke($command);

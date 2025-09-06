@@ -3,6 +3,7 @@
 namespace App\MiMascota\ContactRequests\Application;
 
 use App\MiMascota\ContactRequests\Application\Command\CreateContactRequestCommand;
+use App\MiMascota\ContactRequests\Application\Query\GetContactRequestByPostIdAndRequesterIdQuery;
 use App\MiMascota\ContactRequests\Domain\ContactRequest;
 use App\MiMascota\ContactRequests\Domain\ContactRequestRepository;
 use App\MiMascota\ContactRequests\Domain\ContactRequestStatus;
@@ -16,13 +17,18 @@ final readonly class CreateContactRequest
     public function __construct(
         private ContactRequestRepository $repository,
         private UserGetById $userRepository,
-        private PostGetById $postRepository
+        private PostGetById $postRepository,
+        private GetContactRequestByPostAndRequester $checkExistingContactRequest
+
     ) {}
 
 
     public function __invoke(CreateContactRequestCommand $command): ContactRequest
     {
         {
+            if ($this->checkExistingContactRequest->__invoke(new GetContactRequestByPostIdAndRequesterIdQuery($command->postId, $command->requesterId)) !== null) {
+                throw new \DomainException('Contact request already exists for this post and requester');
+            }
             $contactRequest = ContactRequest::create(
                 $command->id,
                 $this->userRepository->__invoke(new GetUserByIdQuery($command->requesterId)),

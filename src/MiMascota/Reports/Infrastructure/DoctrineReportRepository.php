@@ -43,4 +43,20 @@ class DoctrineReportRepository extends ServiceEntityRepository implements Report
         $this->getEntityManager()->remove($report);
         $this->getEntityManager()->flush();
     }
+
+    public function findByForumAndLocation(string $forumSlug, string $locationSlug, int $page, int $limit): array
+    {
+       return $this->createQueryBuilder('report')
+           ->join('report.reportedPost', 'post')
+           ->join('post.forum', 'forum')
+           ->join('post.location', 'location')
+           ->where('forum.slug.value = :forumSlug')
+           ->andWhere('location.slug.value = :locationSlug')
+           ->setParameter('forumSlug', $forumSlug)
+           ->setParameter('locationSlug', $locationSlug)
+           ->setFirstResult(($page - 1) * $limit)
+           ->setMaxResults($limit)
+           ->getQuery()
+           ->getResult();
+    }
 }

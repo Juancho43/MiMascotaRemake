@@ -13,6 +13,7 @@ use App\MiMascota\Posts\Application\Command\CreatePostCommand;
 use App\MiMascota\Posts\Domain\Post;
 use App\MiMascota\Posts\Domain\PostRepository;
 use App\MiMascota\Posts\Domain\ValueObject\PostContent;
+use App\MiMascota\Posts\Domain\ValueObject\PostReported;
 use App\MiMascota\Posts\Domain\ValueObject\PostSlug;
 use App\MiMascota\Posts\Domain\ValueObject\PostTitle;
 use App\MiMascota\Shared\SlugGenerator;
@@ -41,6 +42,7 @@ final readonly class PostCreator
                 PostTitle::create($command->postTitle),
                 PostSlug::create(SlugGenerator::generate($command->postTitle)),
                 PostContent::create($command->postContent),
+                PostReported::create(null),
                 $this->forumGetBySlug->__invoke(new GetForumBySlugQuery($command->forumSlug)),
                 $this->userGetById->__invoke(new GetUserByIdQuery($command->userId)),
                 $this->animalGetById->__invoke(new GetAnimalByIdQuery($command->animalId)),

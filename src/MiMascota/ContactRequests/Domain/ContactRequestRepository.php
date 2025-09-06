@@ -9,5 +9,6 @@ interface ContactRequestRepository
 
     public function findByRequesterId(string $id) : array;
     public function findByOwnerId(string $id) : array;
+    public function findByPostIdAndRequestedId(string $postId, string $requesterId): ?ContactRequest;
 
 }

@@ -14,7 +14,7 @@ final readonly class GetContactRequestById
     public function __invoke(GetContactRequestByIdQuery $query): ContactRequest
     {
         $contactRequest = $this->repository->findById($query->id);
-        if ($contactRequest){
+        if ($contactRequest === null){
             throw new ModelNotFound('ContactRequest');
         }
         return $contactRequest;
