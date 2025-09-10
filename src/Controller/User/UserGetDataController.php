@@ -26,7 +26,7 @@ class UserGetDataController extends AbstractController
             $data = $userGetData->__invoke($command);
             return $this->successResponse(UserResponse::generate($data), 'User data retrieved successfully');
         }catch (\Exception $exception){
-            return $this->errorResponse($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->errorResponse($exception->getMessage(), code:Response::HTTP_OK);
         }
     }
 }

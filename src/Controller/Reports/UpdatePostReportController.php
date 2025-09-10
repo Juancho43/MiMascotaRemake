@@ -18,14 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class UpdatePostReportController extends AbstractController
 {
     use ApiResponseTrait, AuthorizationCheckerTrait;
-    #[Route('/reports/put', name: 'update_report', methods: ['PUT'])]
+    #[Route('/reports/update', name: 'update_report', methods: ['PUT'])]
     public function __invoke(Request $request, UpdateReportStatus $report) : Response
     {
         try {
             $this->checkAuthorization($request);
             $data = $request->toArray();
             $command = new UpdateReportStatusCommand(
-                $data['postId'],
+                $data['reportId'],
                 $data['status'],
             );
 

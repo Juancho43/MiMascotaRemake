@@ -11,8 +11,11 @@ final readonly class CheckToken
 
     }
 
-    public function __invoke(string $token) : ?User
+    public function __invoke(string | null $token) : ?User
     {
+        if ($token === null){
+            return null;
+        }
         $formatToken = self::format($token);
         $user = $this->repository->findByToken($formatToken);
         $userToken = $user->getTokenByTokenValue($formatToken);

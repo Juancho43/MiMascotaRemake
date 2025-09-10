@@ -25,7 +25,7 @@ class DoctrineReportRepository extends ServiceEntityRepository implements Report
     public function findById(string $id): ?Report
     {
         return $this->createQueryBuilder('report')
-            ->where('report.id : id')
+            ->where('report.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();

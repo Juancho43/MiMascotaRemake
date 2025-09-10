@@ -7,7 +7,6 @@ class ReportStatus
 
     private const VALID_STATUSES = [
         'Pending',
-        'Reviewed',
         'Resolved',
         'Dismissed'
     ];
